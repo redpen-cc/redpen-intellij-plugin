@@ -12,6 +12,9 @@ public class RedPenValidate extends AnAction {
     public void actionPerformed(AnActionEvent event) {
         Project project = event.getData(PlatformDataKeys.PROJECT);
         PsiFile file = event.getData(LangDataKeys.PSI_FILE);
-        Messages.showMessageDialog(project, file.getText(), file.getName(), Messages.getInformationIcon());
+        if (file == null)
+            Messages.showMessageDialog(project, "No file currently open", "RedPen", Messages.getInformationIcon());
+        else
+            Messages.showMessageDialog(project, file.getText(), file.getName(), Messages.getInformationIcon());
     }
 }
