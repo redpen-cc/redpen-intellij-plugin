@@ -60,9 +60,10 @@ public class RedPenInspection extends LocalInspectionTool {
       List<ValidationError> errors = redPen.validate(redPenDoc);
 
       PsiElement theElement = file.getChildren()[0];
+      String[] lines = text.split("\r?\n");
 
       List<ProblemDescriptor> problems = errors.stream().map(e ->
-        manager.createProblemDescriptor(theElement, toRange(e, text),
+        manager.createProblemDescriptor(theElement, toRange(e, lines),
           e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)
       ).collect(toList());
 
@@ -73,13 +74,12 @@ public class RedPenInspection extends LocalInspectionTool {
     }
   }
 
-  TextRange toRange(ValidationError e, String text) {
-    return new TextRange(toGlobalOffset(e.getStartPosition(), text), toGlobalOffset(e.getEndPosition(), text));
+  TextRange toRange(ValidationError e, String[] lines) {
+    return new TextRange(toGlobalOffset(e.getStartPosition(), lines), toGlobalOffset(e.getEndPosition(), lines));
   }
 
-  int toGlobalOffset(Optional<LineOffset> lineOffset, String text) {
+  int toGlobalOffset(Optional<LineOffset> lineOffset, String[] lines) {
     if (!lineOffset.isPresent()) return 0;
-    String[] lines = text.split("\r?\n");
     int result = 0;
     for (int i = 1; i < lineOffset.get().lineNum; i++) {
       result += lines[i-1].length();

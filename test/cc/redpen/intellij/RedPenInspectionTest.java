@@ -6,6 +6,9 @@ import cc.redpen.validator.ValidationError;
 import cc.redpen.validator.Validator;
 import cc.redpen.validator.section.WordFrequencyValidator;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.psi.FileViewProvider;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.impl.source.PsiPlainTextFileImpl;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -20,22 +23,22 @@ public class RedPenInspectionTest {
 
   @Test
   public void toGlobalOffset_noOffset() throws Exception {
-    assertEquals(0, inspection.toGlobalOffset(Optional.empty(), ""));
+    assertEquals(0, inspection.toGlobalOffset(Optional.empty(), new String[] {""}));
   }
 
   @Test
   public void toGlobalOffset_singleLine() throws Exception {
-    assertEquals(3, inspection.toGlobalOffset(Optional.of(new LineOffset(1, 3)), "Hello"));
+    assertEquals(3, inspection.toGlobalOffset(Optional.of(new LineOffset(1, 3)), new String[] {"Hello"}));
   }
 
   @Test
   public void toGlobalOffset_multiLine() throws Exception {
-    assertEquals(8, inspection.toGlobalOffset(Optional.of(new LineOffset(2, 3)), "Hello\nWorld"));
+    assertEquals(8, inspection.toGlobalOffset(Optional.of(new LineOffset(2, 3)), new String[] {"Hello", "World"}));
   }
 
   @Test
   public void toRange() throws Exception {
-    TextRange textRange = inspection.toRange(errorGenerator.at(5, 5), "Hello");
+    TextRange textRange = inspection.toRange(errorGenerator.at(5, 5), new String[] {"Hello"});
     assertEquals(new TextRange(5, 5), textRange);
   }
 
