@@ -6,7 +6,6 @@ import cc.redpen.model.Document;
 import cc.redpen.parser.DocumentParser;
 import cc.redpen.parser.LineOffset;
 import cc.redpen.validator.ValidationError;
-import com.google.common.collect.ImmutableMap;
 import com.intellij.codeInsight.daemon.GroupNames;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
@@ -19,18 +18,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
 
 public class RedPenInspection extends LocalInspectionTool {
   RedPenProvider redPenProvider = new RedPenProvider();
-
-  Map<String, DocumentParser> parsers = ImmutableMap.of(
-    "PLAIN_TEXT", DocumentParser.PLAIN,
-    "Markdown", DocumentParser.MARKDOWN,
-    "AsciiDoc", DocumentParser.ASCIIDOC
-  );
 
   @NotNull @Override public String getDisplayName() {
     return "RedPen Validation";
@@ -51,13 +43,13 @@ public class RedPenInspection extends LocalInspectionTool {
 
   @Nullable @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
-    String fileType = file.getFileType().getName();
-    if (!parsers.containsKey(fileType)) return null;
+    DocumentParser parser = redPenProvider.getParser(file);
+    if (parser == null) return null;
 
     try {
       RedPen redPen = redPenProvider.getRedPen();
       String text = file.getText();
-      Document redPenDoc = redPen.parse(parsers.get(fileType), text);
+      Document redPenDoc = redPen.parse(parser, text);
       List<ValidationError> errors = redPen.validate(redPenDoc);
 
       PsiElement theElement = file.getChildren()[0];

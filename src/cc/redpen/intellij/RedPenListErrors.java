@@ -2,7 +2,6 @@ package cc.redpen.intellij;
 
 import cc.redpen.RedPen;
 import cc.redpen.model.Document;
-import cc.redpen.parser.DocumentParser;
 import cc.redpen.parser.LineOffset;
 import cc.redpen.validator.ValidationError;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -33,7 +32,7 @@ public class RedPenListErrors extends AnAction {
 
         try {
             RedPen redPen = redPenProvider.getRedPen();
-            Document redPenDoc = redPen.parse(DocumentParser.PLAIN, file.getText());
+            Document redPenDoc = redPen.parse(redPenProvider.getParser(file), file.getText());
             List<ValidationError> errors = redPen.validate(redPenDoc);
 
             Messages.showMessageDialog(project, errors.stream().map(e ->
