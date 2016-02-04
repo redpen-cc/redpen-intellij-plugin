@@ -2,7 +2,12 @@
 <ivy-module version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
   <info organisation="cc.redpen" module="redpen-intellij-plugin"/>
 
-  <dependencies>
+  <configurations>
+    <conf name="default"/>
+    <conf name="test"/>
+  </configurations>
+
+  <dependencies defaultconf="default->default">
     <dependency org="cc.redpen" name="redpen-core" rev="1.4+"/>
   </dependencies>
 </ivy-module>
