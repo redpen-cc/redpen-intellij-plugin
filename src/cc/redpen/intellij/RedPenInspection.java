@@ -53,7 +53,7 @@ public class RedPenInspection extends LocalInspectionTool {
       List<ValidationError> errors = redPen.validate(redPenDoc);
 
       PsiElement theElement = file.getChildren()[0];
-      String[] lines = text.split("\r?\n");
+      String[] lines = text.split("(?<=\n)");
 
       List<ProblemDescriptor> problems = errors.stream().map(e ->
         manager.createProblemDescriptor(theElement, toRange(e, lines),
