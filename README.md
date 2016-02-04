@@ -14,3 +14,11 @@ This plugin integrates [RedPen](http://redpen.cc) text validation into the Intel
 ## Installation
 
 Stay tuned until we publish the plugin to JetBrains Plugin repository!
+
+## For developers
+
+Before project will compile you need to fetch dependencies into *lib* directory:
+
+  ```ant deps```
+  
+Then open the provided project files with IntelliJ IDEA, setup *Intellij Platform SDK* for the project and run **Plugin** configuration.
