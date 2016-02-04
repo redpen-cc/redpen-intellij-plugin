@@ -21,3 +21,6 @@
 
 # IntelliJ
 /out/
+
+# Ivy
+/lib/
