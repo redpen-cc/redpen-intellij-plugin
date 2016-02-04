@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -41,23 +42,30 @@ public class RedPenInspectionTest {
 
   @Test
   public void toGlobalOffset_noOffset() throws Exception {
-    assertEquals(0, inspection.toGlobalOffset(Optional.empty(), new String[] {""}));
+    assertEquals(0, inspection.toGlobalOffset(null, new String[] {""}));
   }
 
   @Test
   public void toGlobalOffset_singleLine() throws Exception {
-    assertEquals(3, inspection.toGlobalOffset(Optional.of(new LineOffset(1, 3)), new String[] {"Hello"}));
+    assertEquals(3, inspection.toGlobalOffset(new LineOffset(1, 3), new String[] {"Hello"}));
   }
 
   @Test
   public void toGlobalOffset_multiLine() throws Exception {
-    assertEquals(8, inspection.toGlobalOffset(Optional.of(new LineOffset(2, 3)), new String[] {"Hello", "World"}));
+    assertEquals(8, inspection.toGlobalOffset(new LineOffset(2, 3), new String[] {"Hello", "World"}));
   }
 
   @Test
   public void toRange() throws Exception {
     TextRange textRange = inspection.toRange(errorGenerator.at(5, 5), new String[] {"Hello"});
     assertEquals(new TextRange(5, 5), textRange);
+  }
+
+  @Test
+  public void toRange_sentenceLevelError() throws Exception {
+    Sentence sentence = new Sentence("Hello.", singletonList(new LineOffset(1, 25)), emptyList());
+    TextRange textRange = inspection.toRange(errorGenerator.sentence(sentence), new String[] {sentence.getContent()});
+    assertEquals(new TextRange(25, 26), textRange);
   }
 
   @Test
@@ -99,6 +107,12 @@ public class RedPenInspectionTest {
       addErrorWithPosition("Hello", new Sentence("Hello", 1), start, end);
       return errors.get(0);
     }
-  }
 
+    public ValidationError sentence(Sentence sentence) {
+      List<ValidationError> errors = new ArrayList<>();
+      setErrorList(errors);
+      addError("Hello", sentence);
+      return errors.get(0);
+    }
+  }
 }

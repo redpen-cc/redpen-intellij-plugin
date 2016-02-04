@@ -68,15 +68,21 @@ public class RedPenInspection extends LocalInspectionTool {
   }
 
   TextRange toRange(ValidationError e, String[] lines) {
-    return new TextRange(toGlobalOffset(e.getStartPosition(), lines), toGlobalOffset(e.getEndPosition(), lines));
+    LineOffset start = e.getStartPosition().orElse(e.getSentence().getOffset(0).orElse(null));
+    LineOffset end = e.getEndPosition().orElse(addOne(e.getSentence().getOffset(0).orElse(null)));
+    return new TextRange(toGlobalOffset(start, lines), toGlobalOffset(end, lines));
   }
 
-  int toGlobalOffset(Optional<LineOffset> lineOffset, String[] lines) {
-    if (!lineOffset.isPresent()) return 0;
+  private LineOffset addOne(LineOffset lineOffset) {
+    return new LineOffset(lineOffset.lineNum, lineOffset.offset+1);
+  }
+
+  int toGlobalOffset(@Nullable LineOffset lineOffset, String[] lines) {
+    if (lineOffset == null) return 0;
     int result = 0;
-    for (int i = 1; i < lineOffset.get().lineNum; i++) {
+    for (int i = 1; i < lineOffset.lineNum; i++) {
       result += lines[i-1].length();
     }
-    return result + lineOffset.get().offset;
+    return result + lineOffset.offset;
   }
 }
