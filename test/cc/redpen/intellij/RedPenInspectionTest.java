@@ -10,7 +10,8 @@ import cc.redpen.validator.section.WordFrequencyValidator;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -36,9 +37,30 @@ public class RedPenInspectionTest {
   }
 
   @Test
-  public void nonPlainTextFilesAreIgnored() throws Exception {
-    assertNull(inspection.checkFile(mockFileOfType("JAVA"), mock(InspectionManager.class), true));
-    assertNull(inspection.checkFile(mockFileOfType("XML"), mock(InspectionManager.class), true));
+  public void notSupportedFilesAreIgnored() throws Exception {
+    assertNull(inspection.checkFile(mockFileOfType("JAVA", ""), mock(InspectionManager.class), true));
+    assertNull(inspection.checkFile(mockFileOfType("XML", ""), mock(InspectionManager.class), true));
+  }
+
+  @Test
+  public void plainTextIsSupported() throws Exception {
+    when(redPen.validate(any(Document.class))).thenReturn(emptyList());
+    inspection.checkFile(mockTextFile("Hello"), mock(InspectionManager.class), true);
+    verify(redPen).parse(DocumentParser.PLAIN, "Hello");
+  }
+
+  @Test
+  public void markdownIsSupported() throws Exception {
+    when(redPen.validate(any(Document.class))).thenReturn(emptyList());
+    inspection.checkFile(mockFileOfType("Markdown", "Hello"), mock(InspectionManager.class), true);
+    verify(redPen).parse(DocumentParser.MARKDOWN, "Hello");
+  }
+
+  @Test
+  public void asciiDocIsSupported() throws Exception {
+    when(redPen.validate(any(Document.class))).thenReturn(emptyList());
+    inspection.checkFile(mockFileOfType("AsciiDoc", "Hello"), mock(InspectionManager.class), true);
+    verify(redPen).parse(DocumentParser.ASCIIDOC, "Hello");
   }
 
   @Test
@@ -95,15 +117,14 @@ public class RedPenInspectionTest {
   }
 
   private PsiFile mockTextFile(String text) {
-    PsiFile psiFile = mockFileOfType("PLAIN_TEXT");
-    when(psiFile.getText()).thenReturn(text);
-    when(psiFile.getChildren()).thenReturn(new PsiElement[]{mock(PsiElement.class)});
-    return psiFile;
+    return mockFileOfType("PLAIN_TEXT", text);
   }
 
-  private PsiFile mockFileOfType(String typeName) {
+  private PsiFile mockFileOfType(String typeName, String text) {
     PsiFile file = mock(PsiFile.class, RETURNS_DEEP_STUBS);
     when(file.getFileType().getName()).thenReturn(typeName);
+    when(file.getText()).thenReturn(text);
+    when(file.getChildren()).thenReturn(new PsiElement[]{mock(PsiElement.class)});
     return file;
   }
 
