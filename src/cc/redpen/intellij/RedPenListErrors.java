@@ -20,6 +20,8 @@ import java.util.Optional;
 import static java.util.stream.Collectors.joining;
 
 public class RedPenListErrors extends AnAction {
+    RedPenProvider redPenProvider = new RedPenProvider();
+
     public void actionPerformed(AnActionEvent event) {
         Project project = event.getData(PlatformDataKeys.PROJECT);
         PsiFile file = event.getData(LangDataKeys.PSI_FILE);
@@ -30,7 +32,7 @@ public class RedPenListErrors extends AnAction {
         }
 
         try {
-            RedPen redPen = new RedPen("/redpen-conf.xml");
+            RedPen redPen = redPenProvider.getRedPen();
             Document redPenDoc = redPen.parse(DocumentParser.PLAIN, file.getText());
             List<ValidationError> errors = redPen.validate(redPenDoc);
 
