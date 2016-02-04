@@ -9,7 +9,6 @@
             <property name="max_char_num" value="2000"/>
         </validator>
         <validator name="ParagraphNumber"/>
-        <validator name="Spelling"/>
         <validator name="Contraction" />
         <validator name="DoubledWord" />
         <validator name="SuccessiveWord" />
