@@ -1,29 +1,25 @@
 package cc.redpen.intellij;
 
-import cc.redpen.ConfigurationLoader;
 import cc.redpen.RedPen;
 import cc.redpen.RedPenException;
-import cc.redpen.config.Configuration;
 import cc.redpen.model.Document;
 import cc.redpen.parser.DocumentParser;
 import cc.redpen.parser.LineOffset;
 import cc.redpen.validator.ValidationError;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.codeInsight.daemon.GroupNames;
-import com.intellij.codeInspection.*;
-import com.intellij.codeInspection.ex.ProblemDescriptorImpl;
+import com.intellij.codeInspection.InspectionManager;
+import com.intellij.codeInspection.LocalInspectionTool;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiPlainTextFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,7 +28,8 @@ public class RedPenInspection extends LocalInspectionTool {
 
   Map<String, DocumentParser> parsers = ImmutableMap.of(
     "PLAIN_TEXT", DocumentParser.PLAIN,
-    "Markdown", DocumentParser.MARKDOWN
+    "Markdown", DocumentParser.MARKDOWN,
+    "AsciiDoc", DocumentParser.ASCIIDOC
   );
 
   @NotNull @Override public String getDisplayName() {
