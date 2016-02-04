@@ -10,18 +10,13 @@ import cc.redpen.validator.section.WordFrequencyValidator;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.psi.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -38,6 +33,12 @@ public class RedPenInspectionTest {
   public void setUp() throws Exception {
     inspection.redPenProvider = mock(RedPenProvider.class, RETURNS_DEEP_STUBS);
     redPen = inspection.redPenProvider.getRedPen();
+  }
+
+  @Test
+  public void nonPlainTextFilesAreIgnored() throws Exception {
+    assertNull(inspection.checkFile(mock(PsiJavaFile.class), mock(InspectionManager.class), true));
+    assertNull(inspection.checkFile(mock(PsiBinaryFile.class), mock(InspectionManager.class), true));
   }
 
   @Test
@@ -73,7 +74,7 @@ public class RedPenInspectionTest {
     Document doc = redPen.parse(DocumentParser.PLAIN, "Hello");
     when(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3), errorGenerator.at(3, 5)));
 
-    ProblemDescriptor[] problems = inspection.checkFile(mockPsiFile("Hello"), mock(InspectionManager.class), true);
+    ProblemDescriptor[] problems = inspection.checkFile(mockPsiTextFile("Hello"), mock(InspectionManager.class), true);
     assertNotNull(problems);
     assertEquals(2, problems.length);
   }
@@ -85,7 +86,7 @@ public class RedPenInspectionTest {
     ValidationError error = errorGenerator.at(1, 2);
     when(redPen.validate(doc)).thenReturn(singletonList(error));
 
-    inspection.checkFile(mockPsiFile("Hello\nworld"), mock(InspectionManager.class), true);
+    inspection.checkFile(mockPsiTextFile("Hello\nworld"), mock(InspectionManager.class), true);
 
     ArgumentCaptor<String[]> captor = ArgumentCaptor.forClass(String[].class);
     verify(inspection).toRange(eq(error), captor.capture());
@@ -93,8 +94,8 @@ public class RedPenInspectionTest {
     assertArrayEquals(new String[] {"Hello\n", "world"}, captor.getValue());
   }
 
-  private PsiFile mockPsiFile(String text) {
-    PsiFile psiFile = mock(PsiFile.class);
+  private PsiFile mockPsiTextFile(String text) {
+    PsiFile psiFile = mock(PsiPlainTextFile.class);
     when(psiFile.getText()).thenReturn(text);
     when(psiFile.getChildren()).thenReturn(new PsiElement[]{mock(PsiElement.class)});
     return psiFile;
