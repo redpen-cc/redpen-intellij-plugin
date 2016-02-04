@@ -20,7 +20,7 @@
   </extensions>
 
   <actions>
-    <action id="RedPen.Validate" class="cc.redpen.intellij.RedPenValidate" text="RedPen Validate">
+    <action id="RedPen.Validate" class="cc.redpen.intellij.RedPenListErrors" text="RedPen: List Errors">
       <add-to-group group-id="AnalyzeMenu" anchor="last"/>
       <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl alt R"/>
     </action>
