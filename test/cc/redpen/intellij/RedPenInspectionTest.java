@@ -37,8 +37,8 @@ public class RedPenInspectionTest {
 
   @Test
   public void nonPlainTextFilesAreIgnored() throws Exception {
-    assertNull(inspection.checkFile(mock(PsiJavaFile.class), mock(InspectionManager.class), true));
-    assertNull(inspection.checkFile(mock(PsiBinaryFile.class), mock(InspectionManager.class), true));
+    assertNull(inspection.checkFile(mockFileOfType("JAVA"), mock(InspectionManager.class), true));
+    assertNull(inspection.checkFile(mockFileOfType("XML"), mock(InspectionManager.class), true));
   }
 
   @Test
@@ -74,7 +74,7 @@ public class RedPenInspectionTest {
     Document doc = redPen.parse(DocumentParser.PLAIN, "Hello");
     when(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3), errorGenerator.at(3, 5)));
 
-    ProblemDescriptor[] problems = inspection.checkFile(mockPsiTextFile("Hello"), mock(InspectionManager.class), true);
+    ProblemDescriptor[] problems = inspection.checkFile(mockTextFile("Hello"), mock(InspectionManager.class), true);
     assertNotNull(problems);
     assertEquals(2, problems.length);
   }
@@ -86,7 +86,7 @@ public class RedPenInspectionTest {
     ValidationError error = errorGenerator.at(1, 2);
     when(redPen.validate(doc)).thenReturn(singletonList(error));
 
-    inspection.checkFile(mockPsiTextFile("Hello\nworld"), mock(InspectionManager.class), true);
+    inspection.checkFile(mockTextFile("Hello\nworld"), mock(InspectionManager.class), true);
 
     ArgumentCaptor<String[]> captor = ArgumentCaptor.forClass(String[].class);
     verify(inspection).toRange(eq(error), captor.capture());
@@ -94,11 +94,17 @@ public class RedPenInspectionTest {
     assertArrayEquals(new String[] {"Hello\n", "world"}, captor.getValue());
   }
 
-  private PsiFile mockPsiTextFile(String text) {
-    PsiFile psiFile = mock(PsiPlainTextFile.class);
+  private PsiFile mockTextFile(String text) {
+    PsiFile psiFile = mockFileOfType("PLAIN_TEXT");
     when(psiFile.getText()).thenReturn(text);
     when(psiFile.getChildren()).thenReturn(new PsiElement[]{mock(PsiElement.class)});
     return psiFile;
+  }
+
+  private PsiFile mockFileOfType(String typeName) {
+    PsiFile file = mock(PsiFile.class, RETURNS_DEEP_STUBS);
+    when(file.getFileType().getName()).thenReturn(typeName);
+    return file;
   }
 
   static class ErrorGenerator extends WordFrequencyValidator {
