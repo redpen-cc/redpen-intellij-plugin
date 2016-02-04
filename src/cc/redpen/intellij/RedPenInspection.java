@@ -1,7 +1,9 @@
 package cc.redpen.intellij;
 
+import cc.redpen.ConfigurationLoader;
 import cc.redpen.RedPen;
 import cc.redpen.RedPenException;
+import cc.redpen.config.Configuration;
 import cc.redpen.model.Document;
 import cc.redpen.parser.DocumentParser;
 import cc.redpen.parser.LineOffset;
@@ -23,11 +25,11 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 public class RedPenInspection extends LocalInspectionTool {
-  RedPen redPen;
+  Configuration redPenConfig;
 
   public RedPenInspection() {
     try {
-      redPen = new RedPen("/redpen-conf.xml");
+      redPenConfig = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
     }
     catch (RedPenException e) {
       throw new RuntimeException("Cannot read RedPen conf file", e);
@@ -55,7 +57,7 @@ public class RedPenInspection extends LocalInspectionTool {
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
     try {
       String text = file.getText();
-      redPen = new RedPen("/redpen-conf.xml");
+      RedPen redPen = new RedPen(redPenConfig);
       Document redPenDoc = redPen.parse(DocumentParser.PLAIN, text);
       List<ValidationError> errors = redPen.validate(redPenDoc);
 
