@@ -9,7 +9,6 @@
       <sourceFolder url="file://$MODULE_DIR$/conf" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/out" />
     </content>
-    <orderEntry type="jdk" jdkName="IntelliJ IDEA SDK" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
@@ -37,5 +36,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib/test" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="jdk" jdkName="IntelliJ IDEA SDK" jdkType="IDEA JDK" />
   </component>
 </module>

@@ -25,16 +25,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 public class RedPenInspection extends LocalInspectionTool {
-  Configuration redPenConfig;
-
-  public RedPenInspection() {
-    try {
-      redPenConfig = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
-    }
-    catch (RedPenException e) {
-      throw new RuntimeException("Cannot read RedPen conf file", e);
-    }
-  }
+  RedPenProvider redPenProvider = new RedPenProvider();
 
   @NotNull @Override public String getDisplayName() {
     return "RedPen Validation";
@@ -56,8 +47,8 @@ public class RedPenInspection extends LocalInspectionTool {
   @Nullable @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
     try {
+      RedPen redPen = redPenProvider.getRedPen();
       String text = file.getText();
-      RedPen redPen = new RedPen(redPenConfig);
       Document redPenDoc = redPen.parse(DocumentParser.PLAIN, text);
       List<ValidationError> errors = redPen.validate(redPenDoc);
 
