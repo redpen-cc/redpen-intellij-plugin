@@ -47,4 +47,5 @@ public class RedPenInspectionTest {
       return errors.get(0);
     }
   }
+
 }
