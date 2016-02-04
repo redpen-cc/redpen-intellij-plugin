@@ -16,7 +16,7 @@
   <idea-version since-build="131"/>
 
   <extensions defaultExtensionNs="com.intellij">
-    <inspectionToolProvider implementation="cc.redpen.intellij.RedPenProvider"/>
+    <inspectionToolProvider implementation="cc.redpen.intellij.RedPenInspectionProvider"/>
   </extensions>
 
   <actions>
