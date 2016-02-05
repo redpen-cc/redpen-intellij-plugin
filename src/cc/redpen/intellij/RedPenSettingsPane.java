@@ -1,6 +1,5 @@
 package cc.redpen.intellij;
 
-import cc.redpen.config.Configuration;
 import cc.redpen.config.ValidatorConfiguration;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,13 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RedPenSettingsPane {
+  RedPenProvider redPenProvider = RedPenProvider.getInstance();
   private JPanel root;
   JTable validators;
-  private Configuration config;
-
-  public RedPenSettingsPane(Configuration config) {
-    this.config = config;
-  }
 
   public JPanel getPane() {
     DefaultTableModel model = createModel();
@@ -30,8 +25,9 @@ public class RedPenSettingsPane {
 
     validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
-    for (ValidatorConfiguration validatorConfig : config.getValidatorConfigs()) {
-      model.addRow(new Object[] {true, validatorConfig.getConfigurationName(), attributes(validatorConfig)});
+    for (ValidatorConfiguration validator : redPenProvider.getInitialConfig().getValidatorConfigs()) {
+      boolean enabled = redPenProvider.getConfig().getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
+      model.addRow(new Object[] {enabled, validator.getConfigurationName(), attributes(validator)});
     }
 
     validators.doLayout();
@@ -42,7 +38,7 @@ public class RedPenSettingsPane {
     List<ValidatorConfiguration> result = new ArrayList<>();
     TableModel model = validators.getModel();
     for (int i = 0; i < model.getRowCount(); i++) {
-       if ((boolean)model.getValueAt(i, 0)) result.add(config.getValidatorConfigs().get(i));
+       if ((boolean)model.getValueAt(i, 0)) result.add(redPenProvider.getInitialConfig().getValidatorConfigs().get(i));
     }
     return result;
   }

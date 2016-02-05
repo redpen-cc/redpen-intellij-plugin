@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class RedPenProvider {
   private static RedPenProvider instance;
-  Configuration config;
+  Configuration initialConfig, config;
 
   Map<String, DocumentParser> parsers = ImmutableMap.of(
     "PLAIN_TEXT", DocumentParser.PLAIN,
@@ -22,6 +22,7 @@ public class RedPenProvider {
 
   private RedPenProvider() {
     try {
+      initialConfig = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
       config = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
     }
     catch (RedPenException e) {
@@ -45,6 +46,10 @@ public class RedPenProvider {
 
   public DocumentParser getParser(PsiFile file) {
     return parsers.get(file.getFileType().getName());
+  }
+
+  public Configuration getInitialConfig() {
+    return initialConfig;
   }
 
   public Configuration getConfig() {

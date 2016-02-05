@@ -1,6 +1,5 @@
 package cc.redpen.intellij;
 
-import cc.redpen.config.Configuration;
 import cc.redpen.config.ValidatorConfiguration;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -13,7 +12,7 @@ import java.util.List;
 
 public class RedPenSettingsManager implements SearchableConfigurable {
   RedPenProvider redPenProvider = RedPenProvider.getInstance();
-  RedPenSettingsPane settingsPane;
+  RedPenSettingsPane settingsPane = new RedPenSettingsPane();
 
   @NotNull @Override public String getId() {
     return getHelpTopic();
@@ -32,8 +31,6 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   }
 
   @Nullable @Override public JComponent createComponent() {
-    Configuration config = redPenProvider.getConfig();
-    settingsPane = new RedPenSettingsPane(config);
     return settingsPane.getPane();
   }
 

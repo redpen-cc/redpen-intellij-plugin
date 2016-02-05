@@ -3,6 +3,7 @@ package cc.redpen.intellij;
 import cc.redpen.config.Configuration;
 import cc.redpen.config.ValidatorConfiguration;
 import com.google.common.collect.ImmutableMap;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.*;
@@ -12,25 +13,36 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
+  RedPenSettingsPane settingsPane = new RedPenSettingsPane();
+
+  @Before
+  public void setUp() throws Exception {
+    settingsPane.redPenProvider = mock(RedPenProvider.class);
+  }
 
   @Test
   public void validatorsAreListedInSettings() throws Exception {
-    Configuration config = redPenConfig(asList(
+    List<ValidatorConfiguration> allValidators = asList(
       validatorConfig("first", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
-      validatorConfig("second one", emptyMap())));
+      validatorConfig("second one", emptyMap()));
+
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(redPenConfig(allValidators));
+    when(settingsPane.redPenProvider.getConfig()).thenReturn(redPenConfig(singletonList(validatorConfig("second one", emptyMap()))));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
-    RedPenSettingsPane settingsPane = spy(new RedPenSettingsPane(config));
+    settingsPane = spy(settingsPane);
     doReturn(model).when(settingsPane).createModel();
+
     settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
+    assertNotNull(settingsPane.getPane());
 
-    settingsPane.getPane();
-
-    verify(model).addRow(new Object[] {true, "first", "attr2=val2, attr1=val1"});
+    verify(model).addRow(new Object[] {false, "first", "attr2=val2, attr1=val1"});
     verify(model).addRow(new Object[] {true, "second one", ""});
   }
 
@@ -40,7 +52,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
       new ValidatorConfiguration("first"),
       new ValidatorConfiguration("second one")));
 
-    RedPenSettingsPane settingsPane = new RedPenSettingsPane(config);
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
     settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
 
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(2);
