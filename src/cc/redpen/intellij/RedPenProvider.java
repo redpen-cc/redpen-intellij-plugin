@@ -40,4 +40,8 @@ public class RedPenProvider {
   public DocumentParser getParser(PsiFile file) {
     return parsers.get(file.getFileType().getName());
   }
+
+  public Configuration getConfig() {
+    return config;
+  }
 }

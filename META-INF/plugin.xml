@@ -17,6 +17,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <inspectionToolProvider implementation="cc.redpen.intellij.RedPenInspectionProvider"/>
+    <projectConfigurable groupId="editor" instance="cc.redpen.intellij.RedPenSettingsManager" id="reference.settings.ide.settings.redpen"/>
   </extensions>
 
   <actions>
