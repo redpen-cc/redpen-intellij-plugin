@@ -12,9 +12,10 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class RedPenSettingsPaneTest {
+public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void validatorsAreListedInSettings() throws Exception {
@@ -24,7 +25,7 @@ public class RedPenSettingsPaneTest {
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     RedPenSettingsPane settingsPane = spy(new RedPenSettingsPane(config));
-    doReturn(model).when(settingsPane).model();
+    doReturn(model).when(settingsPane).createModel();
     settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
 
     settingsPane.getPane();
@@ -33,10 +34,22 @@ public class RedPenSettingsPaneTest {
     verify(model).addRow(new Object[] {true, "second one", ""});
   }
 
-  private Configuration redPenConfig(List<ValidatorConfiguration> validatorConfigs) {
-    Configuration.ConfigurationBuilder builder = new Configuration.ConfigurationBuilder();
-    validatorConfigs.forEach(builder::addValidatorConfig);
-    return builder.build();
+  @Test
+  public void getActiveValidators() throws Exception {
+    Configuration config = redPenConfig(asList(
+      new ValidatorConfiguration("first"),
+      new ValidatorConfiguration("second one")));
+
+    RedPenSettingsPane settingsPane = new RedPenSettingsPane(config);
+    settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
+
+    when(settingsPane.validators.getModel().getRowCount()).thenReturn(2);
+    when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(false);
+    when(settingsPane.validators.getModel().getValueAt(1, 0)).thenReturn(true);
+
+    List<ValidatorConfiguration> activeValidators = settingsPane.getActiveValidators();
+    assertEquals(1, activeValidators.size());
+    assertEquals("second one", activeValidators.get(0).getConfigurationName());
   }
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {

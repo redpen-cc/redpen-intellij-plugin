@@ -6,6 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RedPenSettingsPane {
   private JPanel root;
@@ -17,7 +20,7 @@ public class RedPenSettingsPane {
   }
 
   public JPanel getPane() {
-    DefaultTableModel model = model();
+    DefaultTableModel model = createModel();
     validators.setModel(model);
     validators.setRowHeight((int)(validators.getFont().getSize() * 1.5));
 
@@ -35,19 +38,28 @@ public class RedPenSettingsPane {
     return root;
   }
 
+  public List<ValidatorConfiguration> getActiveValidators() {
+    List<ValidatorConfiguration> result = new ArrayList<>();
+    TableModel model = validators.getModel();
+    for (int i = 0; i < model.getRowCount(); i++) {
+       if ((boolean)model.getValueAt(i, 0)) result.add(config.getValidatorConfigs().get(i));
+    }
+    return result;
+  }
+
   private String attributes(ValidatorConfiguration validatorConfig) {
     String result = validatorConfig.getAttributes().toString();
     return result.substring(1, result.length() - 1);
   }
 
-  @NotNull DefaultTableModel model() {
+  @NotNull DefaultTableModel createModel() {
     return new DefaultTableModel() {
       @Override public Class<?> getColumnClass(int i) {
         return i == 0 ? Boolean.class : String.class;
       }
 
       @Override public boolean isCellEditable(int row, int column) {
-        return false;
+        return column == 0;
       }
     };
   }
