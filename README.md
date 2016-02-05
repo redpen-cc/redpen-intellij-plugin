@@ -7,7 +7,7 @@ This plugin integrates [RedPen](http://redpen.cc) text validation into the Intel
 ### Features
 
 * Validates text with RedPen as you type
-* Supports Plain Text, Markdown and AsciiDoc file formats
+* Supports Plain Text, Markdown and AsciiDoc file formats (make sure the relevant plugins are also installed)
 * Validation error messages can be listed by pressing *Ctrl+Alt+Shift+R* or via menu *Analyze -> RedPen: List Errors*.
 * Currently, only English is supported
 
