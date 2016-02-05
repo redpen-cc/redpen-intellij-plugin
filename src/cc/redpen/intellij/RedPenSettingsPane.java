@@ -26,12 +26,13 @@ public class RedPenSettingsPane {
       }
     };
     validators.setModel(model);
+    validators.setRowHeight((int)(validators.getFont().getSize() * 1.5));
 
     model.addColumn("");
     model.addColumn("Name");
     model.addColumn("Properties");
 
-    validators.getColumnModel().getColumn(0).setPreferredWidth(20);
+    validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
     for (ValidatorConfiguration validatorConfig : config.getValidatorConfigs()) {
       model.addRow(new Object[] {true, validatorConfig.getValidatorClassName(), validatorConfig.getAttributes().toString()});
