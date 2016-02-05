@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile;
 import java.util.Map;
 
 public class RedPenProvider {
+  private static RedPenProvider instance;
   Configuration config;
 
   Map<String, DocumentParser> parsers = ImmutableMap.of(
@@ -19,13 +20,18 @@ public class RedPenProvider {
     "AsciiDoc", DocumentParser.ASCIIDOC
   );
 
-  public RedPenProvider() {
+  private RedPenProvider() {
     try {
       config = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
     }
     catch (RedPenException e) {
       throw new RuntimeException("Cannot read RedPen conf file", e);
     }
+  }
+
+  public static RedPenProvider getInstance() {
+    if (instance == null) instance = new RedPenProvider();
+    return instance;
   }
 
   public RedPen getRedPen() {

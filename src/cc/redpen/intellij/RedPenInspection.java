@@ -22,7 +22,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 public class RedPenInspection extends LocalInspectionTool {
-  RedPenProvider redPenProvider = new RedPenProvider();
+  RedPenProvider redPenProvider = RedPenProvider.getInstance();
 
   @NotNull @Override public String getDisplayName() {
     return "RedPen Validation";

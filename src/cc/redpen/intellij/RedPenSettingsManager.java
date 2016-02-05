@@ -27,7 +27,7 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   }
 
   @Nullable @Override public JComponent createComponent() {
-    Configuration config = new RedPenProvider().getConfig();
+    Configuration config = RedPenProvider.getInstance().getConfig();
     return new RedPenSettingsPane(config).getPane();
   }
 

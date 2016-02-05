@@ -19,7 +19,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.joining;
 
 public class RedPenListErrors extends AnAction {
-    RedPenProvider redPenProvider = new RedPenProvider();
+    RedPenProvider redPenProvider = RedPenProvider.getInstance();
 
     public void actionPerformed(AnActionEvent event) {
         Project project = event.getData(PlatformDataKeys.PROJECT);
