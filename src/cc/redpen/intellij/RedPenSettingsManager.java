@@ -1,8 +1,12 @@
 package cc.redpen.intellij;
 
 import cc.redpen.config.ValidatorConfiguration;
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.ProjectManager;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -43,11 +47,23 @@ public class RedPenSettingsManager implements SearchableConfigurable {
     List<ValidatorConfiguration> remainingValidators = settingsPane.getActiveValidators();
     validators.clear();
     validators.addAll(remainingValidators);
+    restartInspections();
   }
 
   @Override public void reset() {
   }
 
   @Override public void disposeUIResources() {
+  }
+
+  public void restartInspections() {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      Project[] projects = ProjectManager.getInstance().getOpenProjects();
+      for (Project project : projects) {
+        if (project.isInitialized() && project.isOpen() && !project.isDefault()) {
+          DaemonCodeAnalyzer.getInstance(project).restart();
+        }
+      }
+    });
   }
 }

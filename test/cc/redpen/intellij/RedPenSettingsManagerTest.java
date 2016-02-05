@@ -1,6 +1,7 @@
 package cc.redpen.intellij;
 
 import cc.redpen.config.ValidatorConfiguration;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,7 +12,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsManagerTest extends BaseTest {
-  RedPenSettingsManager manager = new RedPenSettingsManager();
+  RedPenSettingsManager manager = spy(new RedPenSettingsManager());
+
+  @Before
+  public void setUp() throws Exception {
+    doNothing().when(manager).restartInspections();
+  }
 
   @Test
   public void applyEnabledValidators() throws Exception {
@@ -26,5 +32,6 @@ public class RedPenSettingsManagerTest extends BaseTest {
     manager.apply();
 
     assertEquals(activeValidators, manager.redPenProvider.getConfig().getValidatorConfigs());
+    verify(manager).restartInspections();
   }
 }
