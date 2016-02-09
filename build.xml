@@ -3,6 +3,8 @@
   <property name="ivy.version" value="2.4.0"/>
 
   <target name="deps" depends="install-ivy">
+    <delete dir="lib/default"/>
+    <delete dir="lib/test"/>
     <ivy:retrieve pattern="lib/[conf]/[artifact]-[type]-[revision].[ext]" symlink="true"/>
   </target>
 
