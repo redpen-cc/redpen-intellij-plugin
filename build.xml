@@ -32,10 +32,8 @@
     <property name="idea-dir" refid="idea-dir"/>
     <move file="${idea-dir}" tofile="idea"/>
 
-    <delete>
-      <file name="idea-release.json"/>
-      <file name="idea.tar.gz"/>
-    </delete>
+    <delete file="idea-release.json"/>
+    <delete file="idea.tar.gz"/>
   </target>
 
   <import file="redpen-intellij-plugin.xml"/>
