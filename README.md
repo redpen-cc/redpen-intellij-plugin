@@ -16,7 +16,7 @@ This plugin integrates [RedPen](http://redpen.cc) text validation into the Intel
 
 Stay tuned until we publish the plugin to JetBrains Plugin repository!
 
-## For developers
+## For developers [![Build Status](https://travis-ci.org/redpen-cc/redpen-intellij-plugin.svg?branch=master)](https://travis-ci.org/redpen-cc/redpen-intellij-plugin)
 
 Before project will compile you need to fetch dependencies into *lib* directory:
 
