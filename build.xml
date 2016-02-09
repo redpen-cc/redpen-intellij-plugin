@@ -17,6 +17,27 @@
     <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
   </target>
 
+  <target name="download-idea">
+    <delete dir="idea" failonerror="false"/>
+    <get src="https://data.services.jetbrains.com/products/releases?code=IIC&amp;latest=true&amp;type=release" dest="idea-release.json"/>
+    <replaceregexp file="idea-release.json" match="^(.*)$" replace="project.setProperty('idea-link', (\1).IIC[0].downloads.linux.link)"/>
+    <script language="javascript" src="idea-release.json"/>
+
+    <get src="${idea-link}" dest="idea.tar.gz"/>
+    <untar src="idea.tar.gz" dest="." compression="gzip">
+      <patternset includes="idea-*/lib/*.jar"/>
+    </untar>
+
+    <dirset id="idea-dir" dir="." includes="idea-IC-*"/>
+    <property name="idea-dir" refid="idea-dir"/>
+    <move file="${idea-dir}" tofile="idea"/>
+
+    <delete>
+      <file name="idea-release.json"/>
+      <file name="idea.tar.gz"/>
+    </delete>
+  </target>
+
   <import file="redpen-intellij-plugin.xml"/>
   <target name="all.with.deps" depends="deps,all"/>
 
