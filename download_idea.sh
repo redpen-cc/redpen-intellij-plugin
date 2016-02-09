@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash -x
 # Downloads the latest Intellij IDEA Community jars required for script builds
 
 JSON=`wget -qO - 'https://data.services.jetbrains.com/products/releases?code=IIC&latest=true&type=release'`
