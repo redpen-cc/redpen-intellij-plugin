@@ -56,7 +56,7 @@
   
   <!-- JDK definitions -->
   
-  <property name="jdk.bin.intellij_idea_sdk" value="${java.home}/bin"/>
+  <property name="jdk.bin.intellij_idea_sdk" value="${java.home}/../bin"/>
   <path id="jdk.classpath.intellij_idea_sdk">
     <fileset dir="${jdk.home.intellij_idea_sdk}">
       <include name="lib/clojure-1.7.0.jar"/>
