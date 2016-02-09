@@ -171,27 +171,6 @@
       <include name="lib/fluent-hc-4.4.1.jar"/>
       <include name="lib/jzlib-1.1.1.jar"/>
       <include name="lib/cli-parser-1.1.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/deploy.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/cldrdata.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/dnsns.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/jaccess.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/jfxrt.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/localedata.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/nashorn.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/sunec.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/sunjce_provider.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/sunpkcs11.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/zipfs.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/javaws.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jce.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jfxswt.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/management-agent.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/plugin.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/resources.jar"/>
-      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/rt.jar"/>
     </fileset>
   </path>
   
