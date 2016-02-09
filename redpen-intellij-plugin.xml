@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="redpen-intellij-plugin" default="all">
+  
+  <property name="jdk.home.intellij_idea_sdk" value="idea"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.ane"/>
+    <include name="*.apk"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.intellij_idea_sdk" value="${java.home}/bin"/>
+  <path id="jdk.classpath.intellij_idea_sdk">
+    <fileset dir="${jdk.home.intellij_idea_sdk}">
+      <include name="lib/clojure-1.7.0.jar"/>
+      <include name="lib/guava-17.0.jar"/>
+      <include name="lib/asm-commons.jar"/>
+      <include name="lib/velocity.jar"/>
+      <include name="lib/isorelax.jar"/>
+      <include name="lib/ideax.jar"/>
+      <include name="lib/kotlin-runtime.jar"/>
+      <include name="lib/automaton.jar"/>
+      <include name="lib/jna.jar"/>
+      <include name="lib/miglayout-swing.jar"/>
+      <include name="lib/slf4j-log4j12-1.7.10.jar"/>
+      <include name="lib/markdownj-core-0.4.2-SNAPSHOT.jar"/>
+      <include name="lib/idea.jar"/>
+      <include name="lib/microba.jar"/>
+      <include name="lib/jgoodies-forms.jar"/>
+      <include name="lib/xercesImpl.jar"/>
+      <include name="lib/jna-platform.jar"/>
+      <include name="lib/jayatana-1.2.4.jar"/>
+      <include name="lib/slf4j-api-1.7.10.jar"/>
+      <include name="lib/groovy-all-2.3.9.jar"/>
+      <include name="lib/hamcrest-core-1.3.jar"/>
+      <include name="lib/annotations.jar"/>
+      <include name="lib/coverage-agent.jar"/>
+      <include name="lib/bootstrap.jar"/>
+      <include name="lib/jcip-annotations.jar"/>
+      <include name="lib/jsp-api.jar"/>
+      <include name="lib/forms_rt.jar"/>
+      <include name="lib/javac2.jar"/>
+      <include name="lib/junit-4.12.jar"/>
+      <include name="lib/jsch.agentproxy.sshagent.jar"/>
+      <include name="lib/clojure-jsr223-1.5.1.jar"/>
+      <include name="lib/commons-codec-1.9.jar"/>
+      <include name="lib/jdom.jar"/>
+      <include name="lib/xml-apis.jar"/>
+      <include name="lib/winp-1.23.jar"/>
+      <include name="lib/jaxen-1.1.3.jar"/>
+      <include name="lib/xbean.jar"/>
+      <include name="lib/cglib-2.2.2.jar"/>
+      <include name="lib/jgoodies-looks-2.4.2.jar"/>
+      <include name="lib/httpmime-4.4.1.jar"/>
+      <include name="lib/yjp-controller-api-redist.jar"/>
+      <include name="lib/nanoxml-2.2.3.jar"/>
+      <include name="lib/ecj-4.4.jar"/>
+      <include name="lib/serviceMessages.jar"/>
+      <include name="lib/jsch.agentproxy.usocket-nc.jar"/>
+      <include name="lib/coverage-util.jar"/>
+      <include name="lib/jsch.agentproxy.connector-factory.jar"/>
+      <include name="lib/httpcore-4.4.1.jar"/>
+      <include name="lib/httpclient-4.4.1.jar"/>
+      <include name="lib/netty-all-4.1.0.Beta8.jar"/>
+      <include name="lib/protobuf-2.5.0.jar"/>
+      <include name="lib/idea_rt.jar"/>
+      <include name="lib/oromatcher.jar"/>
+      <include name="lib/trang-core.jar"/>
+      <include name="lib/picocontainer.jar"/>
+      <include name="lib/swingx-core-1.6.2.jar"/>
+      <include name="lib/xpp3-1.1.4-min.jar"/>
+      <include name="lib/idea-jsp-openapi.jar"/>
+      <include name="lib/snappy-in-java-0.3.1.jar"/>
+      <include name="lib/kotlin-reflect.jar"/>
+      <include name="lib/commons-net-3.3.jar"/>
+      <include name="lib/optimizedFileManager.jar"/>
+      <include name="lib/jsch.agentproxy.usocket-jna.jar"/>
+      <include name="lib/util.jar"/>
+      <include name="lib/proxy-vole_20131209.jar"/>
+      <include name="lib/asm-all.jar"/>
+      <include name="lib/alloy.jar"/>
+      <include name="lib/jps-model.jar"/>
+      <include name="lib/markdown4j-2.2.jar"/>
+      <include name="lib/commons-httpclient-3.1-patched.jar"/>
+      <include name="lib/openapi.jar"/>
+      <include name="lib/boot.jar"/>
+      <include name="lib/jgoodies-common-1.2.1.jar"/>
+      <include name="lib/servlet-api.jar"/>
+      <include name="lib/jsch.agentproxy.core.jar"/>
+      <include name="lib/jettison-1.3.2.jar"/>
+      <include name="lib/asm.jar"/>
+      <include name="lib/log4j.jar"/>
+      <include name="lib/xmlrpc-2.0.jar"/>
+      <include name="lib/jsch-0.1.52.jar"/>
+      <include name="lib/coverage-instrumenter.jar"/>
+      <include name="lib/resources.jar"/>
+      <include name="lib/sanselan-0.98-snapshot.jar"/>
+      <include name="lib/extensions.jar"/>
+      <include name="lib/jsch.agentproxy.pageant.jar"/>
+      <include name="lib/jing.jar"/>
+      <include name="lib/xstream-1.4.3.jar"/>
+      <include name="lib/jdkAnnotations.jar"/>
+      <include name="lib/jsr173_1.0_api.jar"/>
+      <include name="lib/resolver.jar"/>
+      <include name="lib/jasper21_rt.jar"/>
+      <include name="lib/pty4j-0.5.jar"/>
+      <include name="lib/commons-logging-1.2.jar"/>
+      <include name="lib/jps-builders.jar"/>
+      <include name="lib/jsr166e.jar"/>
+      <include name="lib/icons.jar"/>
+      <include name="lib/imgscalr-lib-4.2.jar"/>
+      <include name="lib/gson-2.3.1.jar"/>
+      <include name="lib/rhino-js-1_7R4.jar"/>
+      <include name="lib/jps-launcher.jar"/>
+      <include name="lib/rngom-20051226-patched.jar"/>
+      <include name="lib/jasper2_rt.jar"/>
+      <include name="lib/asm4-all.jar"/>
+      <include name="lib/batik.jar"/>
+      <include name="lib/purejavacomm.jar"/>
+      <include name="lib/nekohtml-1.9.14.jar"/>
+      <include name="lib/trove4j.jar"/>
+      <include name="lib/resources_en.jar"/>
+      <include name="lib/jh.jar"/>
+      <include name="lib/fluent-hc-4.4.1.jar"/>
+      <include name="lib/jzlib-1.1.1.jar"/>
+      <include name="lib/cli-parser-1.1.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/charsets.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/deploy.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/cldrdata.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/dnsns.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/jaccess.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/jfxrt.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/localedata.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/nashorn.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/sunec.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/sunjce_provider.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/sunpkcs11.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/ext/zipfs.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/javaws.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jce.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jfr.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jfxswt.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/jsse.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/management-agent.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/plugin.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/resources.jar"/>
+      <include name="../../../usr/lib/jvm/java-8-oracle/jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.intellij_idea_sdk}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.intellij_idea_sdk}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.intellij_idea_sdk"/>
+  
+  
+  <!-- Global Libraries -->
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${jdk.home.intellij_idea_sdk}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module redpen-intellij-plugin -->
+  
+  <dirname property="module.redpen-intellij-plugin.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.redpen-intellij-plugin" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.redpen-intellij-plugin" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.redpen-intellij-plugin" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.redpen-intellij-plugin" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="redpen-intellij-plugin.output.dir" value="${module.redpen-intellij-plugin.basedir}/out/production/redpen-intellij-plugin"/>
+  <property name="redpen-intellij-plugin.testoutput.dir" value="${module.redpen-intellij-plugin.basedir}/out/test/redpen-intellij-plugin"/>
+  
+  <path id="redpen-intellij-plugin.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="redpen-intellij-plugin.module.production.classpath">
+    <fileset dir="${basedir}/lib/default">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <path refid="${module.jdk.classpath.redpen-intellij-plugin}"/>
+  </path>
+  
+  <path id="redpen-intellij-plugin.runtime.production.module.classpath">
+    <pathelement location="${redpen-intellij-plugin.output.dir}"/>
+    <fileset dir="${basedir}/lib/default">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="redpen-intellij-plugin.module.classpath">
+    <pathelement location="${redpen-intellij-plugin.output.dir}"/>
+    <fileset dir="${basedir}/lib/default">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/test">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <path refid="${module.jdk.classpath.redpen-intellij-plugin}"/>
+  </path>
+  
+  <path id="redpen-intellij-plugin.runtime.module.classpath">
+    <pathelement location="${redpen-intellij-plugin.testoutput.dir}"/>
+    <pathelement location="${redpen-intellij-plugin.output.dir}"/>
+    <fileset dir="${basedir}/lib/default">
+      <patternset refid="library.patterns"/>
+    </fileset>
+    <fileset dir="${basedir}/lib/test">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.redpen-intellij-plugin">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.redpen-intellij-plugin">
+    <patternset refid="excluded.from.module.redpen-intellij-plugin"/>
+  </patternset>
+  
+  <path id="redpen-intellij-plugin.module.sourcepath">
+    <dirset dir="${module.redpen-intellij-plugin.basedir}">
+      <include name="src"/>
+      <include name="conf"/>
+    </dirset>
+  </path>
+  
+  <path id="redpen-intellij-plugin.module.test.sourcepath">
+    <dirset dir="${module.redpen-intellij-plugin.basedir}">
+      <include name="test"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.redpen-intellij-plugin" depends="compile.module.redpen-intellij-plugin.production,compile.module.redpen-intellij-plugin.tests" description="Compile module redpen-intellij-plugin"/>
+  
+  <target name="compile.module.redpen-intellij-plugin.production" depends="register.custom.compilers" description="Compile module redpen-intellij-plugin; production classes">
+    <mkdir dir="${redpen-intellij-plugin.output.dir}"/>
+    <javac2 destdir="${redpen-intellij-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
+      <compilerarg line="${compiler.args.redpen-intellij-plugin}"/>
+      <bootclasspath refid="redpen-intellij-plugin.module.bootclasspath"/>
+      <classpath refid="redpen-intellij-plugin.module.production.classpath"/>
+      <src refid="redpen-intellij-plugin.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.redpen-intellij-plugin"/>
+    </javac2>
+    
+    <copy todir="${redpen-intellij-plugin.output.dir}">
+      <fileset dir="${module.redpen-intellij-plugin.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.redpen-intellij-plugin.basedir}/conf">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.redpen-intellij-plugin.tests" depends="register.custom.compilers,compile.module.redpen-intellij-plugin.production" description="compile module redpen-intellij-plugin; test classes" unless="skip.tests">
+    <mkdir dir="${redpen-intellij-plugin.testoutput.dir}"/>
+    <javac2 destdir="${redpen-intellij-plugin.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
+      <compilerarg line="${compiler.args.redpen-intellij-plugin}"/>
+      <bootclasspath refid="redpen-intellij-plugin.module.bootclasspath"/>
+      <classpath refid="redpen-intellij-plugin.module.classpath"/>
+      <src refid="redpen-intellij-plugin.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.redpen-intellij-plugin"/>
+    </javac2>
+    
+    <copy todir="${redpen-intellij-plugin.testoutput.dir}">
+      <fileset dir="${module.redpen-intellij-plugin.basedir}/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.redpen-intellij-plugin" description="cleanup module">
+    <delete dir="${redpen-intellij-plugin.output.dir}"/>
+    <delete dir="${redpen-intellij-plugin.testoutput.dir}"/>
+  </target>
+  
+  <property name="redpen-intellij-plugin.plugin.path.jar" value="${module.redpen-intellij-plugin.basedir}/redpen-intellij-plugin.zip"/>
+  
+  <!-- Build archive for plugin 'redpen-intellij-plugin' -->
+  <target name="plugin.build.jar.redpen-intellij-plugin" depends="compile.module.redpen-intellij-plugin" description="Build plugin archive for module &#39;redpen-intellij-plugin&#39;">
+    <property name="tmp.dir.redpen-intellij-plugin" value="${module.redpen-intellij-plugin.basedir}/../temp"/>
+    <mkdir dir="${tmp.dir.redpen-intellij-plugin}"/>
+    <mkdir dir="${tmp.dir.redpen-intellij-plugin}/lib"/>
+    <jar destfile="${tmp.dir.redpen-intellij-plugin}/lib/redpen-intellij-plugin.jar" duplicate="preserve">
+      <zipfileset dir="${module.redpen-intellij-plugin.basedir}/out/production/redpen-intellij-plugin"/>
+      <zipfileset file="${module.redpen-intellij-plugin.basedir}/META-INF/plugin.xml" prefix="META-INF"/>
+      <manifest>
+        <attribute name="Created-By" value="IntelliJ IDEA"/>
+        <attribute name="Manifest-Version" value="1.0"/>
+      </manifest>
+    </jar>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-jar-4.1.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-tree-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-tree-jar-4.1.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-util-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-util-jar-4.1.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/json-jar-20080701.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/json-jar-20080701.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/pegdown-jar-1.4.2.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/pegdown-jar-1.4.2.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/commons-cli-jar-1.2.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/commons-cli-jar-1.2.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/slf4j-api-jar-1.7.6.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/slf4j-api-jar-1.7.6.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-analysis-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-analysis-jar-4.1.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/commons-lang3-jar-3.4.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/commons-lang3-jar-3.4.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/redpen-core-jar-1.4.3.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/redpen-core-jar-1.4.3.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/logback-core-jar-1.1.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/logback-core-jar-1.1.1.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/kuromoji-core-jar-0.9.0.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/kuromoji-core-jar-0.9.0.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/kuromoji-ipadic-jar-0.9.0.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/kuromoji-ipadic-jar-0.9.0.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/logback-classic-jar-1.1.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/logback-classic-jar-1.1.1.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/parboiled-core-bundle-1.1.6.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/parboiled-core-bundle-1.1.6.jar"/>
+    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/parboiled-java-bundle-1.1.6.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/parboiled-java-bundle-1.1.6.jar"/>
+    <zip destfile="${redpen-intellij-plugin.plugin.path.jar}">
+      <fileset dir="${module.redpen-intellij-plugin.basedir}/../temp"/>
+    </zip>
+    <delete dir="${tmp.dir.redpen-intellij-plugin}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.redpen-intellij-plugin" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, plugin.build.jar.redpen-intellij-plugin" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
