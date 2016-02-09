@@ -13,61 +13,29 @@
   <property name="compiler.generate.no.warnings" value="off"/>
   <property name="compiler.args" value=""/>
   <property name="compiler.max.memory" value="700m"/>
-  <patternset id="ignored.files">
-    <exclude name="**/*.hprof/**"/>
-    <exclude name="**/*.pyc/**"/>
-    <exclude name="**/*.pyo/**"/>
-    <exclude name="**/*.rbc/**"/>
-    <exclude name="**/*~/**"/>
-    <exclude name="**/.DS_Store/**"/>
-    <exclude name="**/.git/**"/>
-    <exclude name="**/.hg/**"/>
-    <exclude name="**/.svn/**"/>
-    <exclude name="**/CVS/**"/>
-    <exclude name="**/RCS/**"/>
-    <exclude name="**/SCCS/**"/>
-    <exclude name="**/__pycache__/**"/>
-    <exclude name="**/_svn/**"/>
-    <exclude name="**/rcs/**"/>
-    <exclude name="**/vssver.scc/**"/>
-    <exclude name="**/vssver2.scc/**"/>
-  </patternset>
   <patternset id="library.patterns">
-    <include name="*.egg"/>
     <include name="*.jar"/>
-    <include name="*.ear"/>
-    <include name="*.ane"/>
-    <include name="*.apk"/>
-    <include name="*.swc"/>
-    <include name="*.war"/>
-    <include name="*.zip"/>
   </patternset>
   <patternset id="compiler.resources">
     <exclude name="**/?*.java"/>
     <exclude name="**/?*.form"/>
     <exclude name="**/?*.class"/>
-    <exclude name="**/?*.groovy"/>
-    <exclude name="**/?*.scala"/>
-    <exclude name="**/?*.flex"/>
-    <exclude name="**/?*.kt"/>
-    <exclude name="**/?*.clj"/>
-    <exclude name="**/?*.aj"/>
   </patternset>
-  
+
   <!-- JDK definitions -->
-  
+
   <property name="jdk.bin.intellij_idea_sdk" value="${java.home}/../bin"/>
   <path id="jdk.classpath.intellij_idea_sdk">
     <fileset dir="${jdk.home.intellij_idea_sdk}">
       <include name="lib/*.jar"/>
     </fileset>
   </path>
-  
+
   <property name="project.jdk.home" value="${jdk.home.intellij_idea_sdk}"/>
   <property name="project.jdk.bin" value="${jdk.bin.intellij_idea_sdk}"/>
   <property name="project.jdk.classpath" value="jdk.classpath.intellij_idea_sdk"/>
-  
-  
+
+
   <!-- Global Libraries -->
   <!-- Register Custom Compiler Taskdefs -->
   <property name="javac2.home" value="${jdk.home.intellij_idea_sdk}/lib"/>
@@ -81,42 +49,42 @@
     <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
     <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
   </target>
-  
+
   <!-- Modules -->
-  
-  
+
+
   <!-- Module redpen-intellij-plugin -->
-  
+
   <dirname property="module.redpen-intellij-plugin.basedir" file="${ant.file}"/>
-  
-  
+
+
   <property name="module.jdk.home.redpen-intellij-plugin" value="${project.jdk.home}"/>
   <property name="module.jdk.bin.redpen-intellij-plugin" value="${project.jdk.bin}"/>
   <property name="module.jdk.classpath.redpen-intellij-plugin" value="${project.jdk.classpath}"/>
-  
+
   <property name="compiler.args.redpen-intellij-plugin" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
-  
+
   <property name="redpen-intellij-plugin.output.dir" value="${module.redpen-intellij-plugin.basedir}/out/production/redpen-intellij-plugin"/>
   <property name="redpen-intellij-plugin.testoutput.dir" value="${module.redpen-intellij-plugin.basedir}/out/test/redpen-intellij-plugin"/>
-  
+
   <path id="redpen-intellij-plugin.module.bootclasspath">
     <!-- Paths to be included in compilation bootclasspath -->
   </path>
-  
+
   <path id="redpen-intellij-plugin.module.production.classpath">
     <fileset dir="${basedir}/lib/default">
       <patternset refid="library.patterns"/>
     </fileset>
     <path refid="${module.jdk.classpath.redpen-intellij-plugin}"/>
   </path>
-  
+
   <path id="redpen-intellij-plugin.runtime.production.module.classpath">
     <pathelement location="${redpen-intellij-plugin.output.dir}"/>
     <fileset dir="${basedir}/lib/default">
       <patternset refid="library.patterns"/>
     </fileset>
   </path>
-  
+
   <path id="redpen-intellij-plugin.module.classpath">
     <pathelement location="${redpen-intellij-plugin.output.dir}"/>
     <fileset dir="${basedir}/lib/default">
@@ -127,7 +95,7 @@
     </fileset>
     <path refid="${module.jdk.classpath.redpen-intellij-plugin}"/>
   </path>
-  
+
   <path id="redpen-intellij-plugin.runtime.module.classpath">
     <pathelement location="${redpen-intellij-plugin.testoutput.dir}"/>
     <pathelement location="${redpen-intellij-plugin.output.dir}"/>
@@ -138,32 +106,24 @@
       <patternset refid="library.patterns"/>
     </fileset>
   </path>
-  
-  
-  <patternset id="excluded.from.module.redpen-intellij-plugin">
-    <patternset refid="ignored.files"/>
-  </patternset>
-  
-  <patternset id="excluded.from.compilation.redpen-intellij-plugin">
-    <patternset refid="excluded.from.module.redpen-intellij-plugin"/>
-  </patternset>
-  
+
+
   <path id="redpen-intellij-plugin.module.sourcepath">
     <dirset dir="${module.redpen-intellij-plugin.basedir}">
       <include name="src"/>
       <include name="conf"/>
     </dirset>
   </path>
-  
+
   <path id="redpen-intellij-plugin.module.test.sourcepath">
     <dirset dir="${module.redpen-intellij-plugin.basedir}">
       <include name="test"/>
     </dirset>
   </path>
-  
-  
+
+
   <target name="compile.module.redpen-intellij-plugin" depends="compile.module.redpen-intellij-plugin.production,compile.module.redpen-intellij-plugin.tests" description="Compile module redpen-intellij-plugin"/>
-  
+
   <target name="compile.module.redpen-intellij-plugin.production" depends="register.custom.compilers" description="Compile module redpen-intellij-plugin; production classes">
     <mkdir dir="${redpen-intellij-plugin.output.dir}"/>
     <javac2 destdir="${redpen-intellij-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
@@ -171,9 +131,8 @@
       <bootclasspath refid="redpen-intellij-plugin.module.bootclasspath"/>
       <classpath refid="redpen-intellij-plugin.module.production.classpath"/>
       <src refid="redpen-intellij-plugin.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.redpen-intellij-plugin"/>
     </javac2>
-    
+
     <copy todir="${redpen-intellij-plugin.output.dir}">
       <fileset dir="${module.redpen-intellij-plugin.basedir}/src">
         <patternset refid="compiler.resources"/>
@@ -185,7 +144,7 @@
       </fileset>
     </copy>
   </target>
-  
+
   <target name="compile.module.redpen-intellij-plugin.tests" depends="register.custom.compilers,compile.module.redpen-intellij-plugin.production" description="compile module redpen-intellij-plugin; test classes" unless="skip.tests">
     <mkdir dir="${redpen-intellij-plugin.testoutput.dir}"/>
     <javac2 destdir="${redpen-intellij-plugin.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
@@ -193,7 +152,6 @@
       <bootclasspath refid="redpen-intellij-plugin.module.bootclasspath"/>
       <classpath refid="redpen-intellij-plugin.module.classpath"/>
       <src refid="redpen-intellij-plugin.module.test.sourcepath"/>
-      <patternset refid="excluded.from.compilation.redpen-intellij-plugin"/>
     </javac2>
     
     <copy todir="${redpen-intellij-plugin.testoutput.dir}">
