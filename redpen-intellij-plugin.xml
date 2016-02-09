@@ -157,7 +157,21 @@
       </fileset>
     </copy>
   </target>
-  
+
+  <target name="test" depends="compile.module.redpen-intellij-plugin.tests">
+    <junit printsummary="yes" haltonfailure="yes" fork="yes">
+      <classpath>
+        <path refid="redpen-intellij-plugin.module.classpath"/>
+        <path location="${redpen-intellij-plugin.output.dir}"/>
+        <path location="${redpen-intellij-plugin.testoutput.dir}"/>
+      </classpath>
+      <formatter type="brief" usefile="no"/>
+      <batchtest>
+        <fileset dir="${redpen-intellij-plugin.testoutput.dir}" includes="**/*Test.class" excludes="**/BaseTest.class"/>
+      </batchtest>
+    </junit>
+  </target>
+
   <target name="clean.module.redpen-intellij-plugin" description="cleanup module">
     <delete dir="${redpen-intellij-plugin.output.dir}"/>
     <delete dir="${redpen-intellij-plugin.testoutput.dir}"/>
@@ -188,14 +202,10 @@
     </zip>
     <delete dir="${tmp.dir.redpen-intellij-plugin}"/>
   </target>
-  
-  <target name="init" description="Build initialization">
-    <!-- Perform any build initialization in this target -->
-  </target>
-  
+
   <target name="clean" depends="clean.module.redpen-intellij-plugin" description="cleanup all"/>
   
-  <target name="build.modules" depends="init, clean, plugin.build.jar.redpen-intellij-plugin" description="build all modules"/>
+  <target name="build.modules" depends="clean, plugin.build.jar.redpen-intellij-plugin" description="build all modules"/>
   
-  <target name="all" depends="build.modules" description="build all"/>
+  <target name="all" depends="build.modules,test" description="build all"/>
 </project>

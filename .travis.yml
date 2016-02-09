@@ -3,6 +3,7 @@ language: java
 jdk:
   - oraclejdk8
 
+install: ant deps
 before_script: ./download_idea.sh
 
-script: ant
+script: ant all test
