@@ -182,22 +182,11 @@
         <attribute name="Manifest-Version" value="1.0"/>
       </manifest>
     </jar>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-jar-4.1.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-tree-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-tree-jar-4.1.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-util-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-util-jar-4.1.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/json-jar-20080701.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/json-jar-20080701.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/pegdown-jar-1.4.2.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/pegdown-jar-1.4.2.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/commons-cli-jar-1.2.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/commons-cli-jar-1.2.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/slf4j-api-jar-1.7.6.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/slf4j-api-jar-1.7.6.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/asm-analysis-jar-4.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/asm-analysis-jar-4.1.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/commons-lang3-jar-3.4.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/commons-lang3-jar-3.4.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/redpen-core-jar-1.4.3.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/redpen-core-jar-1.4.3.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/logback-core-jar-1.1.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/logback-core-jar-1.1.1.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/kuromoji-core-jar-0.9.0.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/kuromoji-core-jar-0.9.0.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/kuromoji-ipadic-jar-0.9.0.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/kuromoji-ipadic-jar-0.9.0.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/logback-classic-jar-1.1.1.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/logback-classic-jar-1.1.1.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/parboiled-core-bundle-1.1.6.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/parboiled-core-bundle-1.1.6.jar"/>
-    <copy file="${module.redpen-intellij-plugin.basedir}/lib/default/parboiled-java-bundle-1.1.6.jar" tofile="${tmp.dir.redpen-intellij-plugin}/lib/parboiled-java-bundle-1.1.6.jar"/>
+    <copy todir="${tmp.dir.redpen-intellij-plugin}/lib/">
+      <fileset dir="${module.redpen-intellij-plugin.basedir}/lib/default">
+        <include name="*.jar"/>
+      </fileset>
+    </copy>
     <zip destfile="${redpen-intellij-plugin.plugin.path.jar}">
       <fileset dir="${module.redpen-intellij-plugin.basedir}/../temp"/>
     </zip>
