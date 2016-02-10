@@ -32,6 +32,7 @@ public class RedPenSettingsPane {
   private void addSymbols() {
     DefaultTableModel model = createSymbolsModel();
     symbols.setModel(model);
+    symbols.setRowHeight((int)(validators.getFont().getSize() * 1.5));
 
     model.addColumn("Symbols");
     model.addColumn("Value");
@@ -40,11 +41,12 @@ public class RedPenSettingsPane {
     model.addColumn("Space after");
 
     symbols.getColumnModel().getColumn(0).setMinWidth(250);
+    symbols.setDefaultEditor(Character.class, new SingleCharEditor());
 
     SymbolTable symbolTable = redPenProvider.getConfig().getSymbolTable();
     for (SymbolType key : symbolTable.getNames()) {
       Symbol symbol = symbolTable.getSymbol(key);
-      model.addRow(new Object[] {symbol.getType().toString(), String.valueOf(symbol.getValue()),
+      model.addRow(new Object[] {symbol.getType().toString(), symbol.getValue(),
         new String(symbol.getInvalidChars()), symbol.isNeedBeforeSpace(), symbol.isNeedAfterSpace()});
     }
 
@@ -99,7 +101,7 @@ public class RedPenSettingsPane {
   public List<Symbol> getSymbols() {
     TableModel model = symbols.getModel();
     return range(0, model.getRowCount()).mapToObj(i -> new Symbol(
-      SymbolType.valueOf((String)model.getValueAt(i, 0)), ((String)model.getValueAt(i, 1)).charAt(0), (String)model.getValueAt(i, 2),
+      SymbolType.valueOf((String)model.getValueAt(i, 0)), String.valueOf(model.getValueAt(i, 1)).charAt(0), (String)model.getValueAt(i, 2),
       (boolean)model.getValueAt(i, 3), (boolean)model.getValueAt(i, 4)
     )).collect(toList());
   }
@@ -124,7 +126,7 @@ public class RedPenSettingsPane {
   DefaultTableModel createSymbolsModel() {
     return new DefaultTableModel() {
       @Override public Class<?> getColumnClass(int i) {
-        return i == 3 || i == 4 ? Boolean.class : String.class;
+        return i == 1 ? Character.class : i == 3 || i == 4 ? Boolean.class : String.class;
       }
 
       @Override public boolean isCellEditable(int row, int column) {

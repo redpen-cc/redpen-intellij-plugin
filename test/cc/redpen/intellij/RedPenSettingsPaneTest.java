@@ -120,8 +120,8 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
     assertNotNull(settingsPane.getPane());
 
-    verify(model).addRow(new Object[] {AMPERSAND.toString(), "&", "$%", true, false});
-    verify(model).addRow(new Object[] {ASTERISK.toString(), "*", "", false, true});
+    verify(model).addRow(new Object[] {AMPERSAND.toString(), '&', "$%", true, false});
+    verify(model).addRow(new Object[] {ASTERISK.toString(), '*', "", false, true});
   }
 
   @Test
@@ -129,7 +129,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
     when(settingsPane.symbols.getModel().getRowCount()).thenReturn(2);
 
     when(settingsPane.symbols.getModel().getValueAt(0, 0)).thenReturn("AMPERSAND");
-    when(settingsPane.symbols.getModel().getValueAt(0, 1)).thenReturn("&");
+    when(settingsPane.symbols.getModel().getValueAt(0, 1)).thenReturn('&');
     when(settingsPane.symbols.getModel().getValueAt(0, 2)).thenReturn("$%");
     when(settingsPane.symbols.getModel().getValueAt(0, 3)).thenReturn(true);
     when(settingsPane.symbols.getModel().getValueAt(0, 4)).thenReturn(false);
