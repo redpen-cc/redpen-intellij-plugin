@@ -6,10 +6,15 @@ import cc.redpen.RedPenException;
 import cc.redpen.config.Configuration;
 import cc.redpen.parser.DocumentParser;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.ClassPath;
 import com.intellij.psi.PsiFile;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
 
 public class RedPenProvider {
   private static RedPenProvider instance;
@@ -24,7 +29,7 @@ public class RedPenProvider {
 
   private RedPenProvider() {
     try {
-      addConfig(new ConfigurationLoader().loadFromResource("/redpen-conf.xml"));
+      findConfFiles().stream().forEach(this::loadConfig);
       config = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
     }
     catch (RedPenException e) {
@@ -32,8 +37,25 @@ public class RedPenProvider {
     }
   }
 
-  private void addConfig(Configuration configuration) {
-    configs.put(configuration.getKey(), configuration);
+  List<String> findConfFiles() {
+    try {
+      return ClassPath.from(getClass().getClassLoader()).getResources().stream()
+        .map(ClassPath.ResourceInfo::getResourceName)
+        .filter(f -> f.startsWith("redpen-conf")).collect(toList());
+    }
+    catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private void loadConfig(String fileName) {
+    try {
+      Configuration configuration = new ConfigurationLoader().loadFromResource("/" + fileName);
+      configs.put(configuration.getKey(), configuration);
+    }
+    catch (RedPenException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   public static RedPenProvider getInstance() {
