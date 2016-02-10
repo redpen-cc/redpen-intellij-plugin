@@ -45,6 +45,7 @@ public class RedPenSettingsPane {
          String attributes = (String)model.getValueAt(i, 2);
          Stream.of(attributes.trim().split("\\s*,\\s*")).forEach(s -> {
            String[] attr = s.split("=");
+           if (attr[0].isEmpty()) return;
            validator.addAttribute(attr[0], attr[1]);
          });
          result.add(validator);

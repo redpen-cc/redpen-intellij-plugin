@@ -58,6 +58,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(2);
     when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(false);
     when(settingsPane.validators.getModel().getValueAt(1, 0)).thenReturn(true);
+    when(settingsPane.validators.getModel().getValueAt(1, 2)).thenReturn("");
 
     List<ValidatorConfiguration> activeValidators = settingsPane.getActiveValidators();
     assertEquals(1, activeValidators.size());
