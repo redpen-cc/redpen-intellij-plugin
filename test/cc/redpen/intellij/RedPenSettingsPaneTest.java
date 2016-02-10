@@ -31,14 +31,16 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void languagesAndVariantsArePrepopulated() throws Exception {
-    Configuration dummy = mock(Configuration.class);
-    when(settingsPane.redPenProvider.getAvailableConfigs()).thenReturn(ImmutableMap.of("en", dummy, "ja", dummy));
+    when(settingsPane.redPenProvider.getAvailableConfigs()).thenReturn(ImmutableMap.of("en", mock(Configuration.class), "ja", mock(Configuration.class)));
+    settingsPane.config = settingsPane.redPenProvider.getAvailableConfigs().get("ja");
+    when(settingsPane.config.getKey()).thenReturn("ja");
 
     settingsPane.populateLanguages();
 
     assertEquals(2, settingsPane.language.getItemCount());
     assertEquals("en", settingsPane.language.getItemAt(0));
     assertEquals("ja", settingsPane.language.getItemAt(1));
+    assertEquals("ja", settingsPane.language.getSelectedItem());
   }
 
   @Test

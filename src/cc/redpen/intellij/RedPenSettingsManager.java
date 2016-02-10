@@ -44,6 +44,7 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   }
 
   @Override public void apply() throws ConfigurationException {
+    redPenProvider.config = settingsPane.config;
     applyValidators();
     applySymbols();
     restartInspections();

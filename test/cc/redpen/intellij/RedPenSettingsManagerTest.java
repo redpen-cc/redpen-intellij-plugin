@@ -1,5 +1,6 @@
 package cc.redpen.intellij;
 
+import cc.redpen.config.Configuration;
 import cc.redpen.config.Symbol;
 import cc.redpen.config.ValidatorConfiguration;
 import org.junit.Before;
@@ -22,6 +23,16 @@ public class RedPenSettingsManagerTest extends BaseTest {
     doNothing().when(manager).restartInspections();
     manager.redPenProvider = mock(RedPenProvider.class, RETURNS_DEEP_STUBS);
     manager.settingsPane = mock(RedPenSettingsPane.class);
+  }
+
+  @Test
+  public void applyLanguage() throws Exception {
+    manager.settingsPane.config = mock(Configuration.class);
+    manager.redPenProvider.config = null;
+
+    manager.apply();
+
+    assertEquals(manager.settingsPane.config, manager.redPenProvider.config);
   }
 
   @Test

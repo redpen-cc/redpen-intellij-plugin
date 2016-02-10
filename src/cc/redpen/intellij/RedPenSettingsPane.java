@@ -41,6 +41,7 @@ public class RedPenSettingsPane {
 
   void populateLanguages() {
     redPenProvider.getAvailableConfigs().keySet().forEach(k -> language.addItem(k));
+    language.setSelectedItem(config.getKey());
   }
 
   private void populateSymbols() {
