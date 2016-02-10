@@ -47,7 +47,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
   }
 
   @Test
-  public void getActiveValidators() throws Exception {
+  public void getActiveValidators_returnsOnlySelectedValidators() throws Exception {
     Configuration config = redPenConfig(asList(
       new ValidatorConfiguration("first"),
       new ValidatorConfiguration("second one")));
@@ -62,6 +62,22 @@ public class RedPenSettingsPaneTest extends BaseTest {
     List<ValidatorConfiguration> activeValidators = settingsPane.getActiveValidators();
     assertEquals(1, activeValidators.size());
     assertEquals("second one", activeValidators.get(0).getConfigurationName());
+  }
+
+  @Test
+  public void getActiveValidators_modifiesAttributes() throws Exception {
+    Configuration config = redPenConfig(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300"))));
+
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
+    settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
+
+    when(settingsPane.validators.getModel().getRowCount()).thenReturn(1);
+    when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(true);
+    when(settingsPane.validators.getModel().getValueAt(0, 2)).thenReturn(" width=200 ,   height=300 ");
+
+    List<ValidatorConfiguration> activeValidators = settingsPane.getActiveValidators();
+    assertEquals(1, activeValidators.size());
+    assertEquals("200", activeValidators.get(0).getAttribute("width"));
   }
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
