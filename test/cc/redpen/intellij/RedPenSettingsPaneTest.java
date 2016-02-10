@@ -1,6 +1,7 @@
 package cc.redpen.intellij;
 
 import cc.redpen.config.Configuration;
+import cc.redpen.config.Symbol;
 import cc.redpen.config.ValidatorConfiguration;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
@@ -11,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
 import java.util.List;
 import java.util.Map;
 
+import static cc.redpen.config.SymbolType.AMPERSAND;
+import static cc.redpen.config.SymbolType.ASTERISK;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -25,6 +28,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void setUp() throws Exception {
     settingsPane.redPenProvider = mock(RedPenProvider.class);
     settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
+    settingsPane.symbols = mock(JTable.class, RETURNS_DEEP_STUBS);
   }
 
   @Test
@@ -33,14 +37,13 @@ public class RedPenSettingsPaneTest extends BaseTest {
       validatorConfig("first", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
       validatorConfig("second one", emptyMap()));
 
-    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(redPenConfig(allValidators));
-    when(settingsPane.redPenProvider.getConfig()).thenReturn(redPenConfig(singletonList(validatorConfig("second one", emptyMap()))));
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(redPenConfigWithValidators(allValidators));
+    when(settingsPane.redPenProvider.getConfig()).thenReturn(redPenConfigWithValidators(singletonList(validatorConfig("second one", emptyMap()))));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     settingsPane = spy(settingsPane);
-    doReturn(model).when(settingsPane).createModel();
+    doReturn(model).when(settingsPane).createValidatorsModel();
 
-    settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
     assertNotNull(settingsPane.getPane());
 
     verify(model).addRow(new Object[] {false, "first", "attr2=val2, attr1=val1"});
@@ -49,7 +52,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getActiveValidators_returnsOnlySelectedValidators() throws Exception {
-    Configuration config = redPenConfig(asList(
+    Configuration config = redPenConfigWithValidators(asList(
       new ValidatorConfiguration("first"),
       new ValidatorConfiguration("second one")));
 
@@ -67,7 +70,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getActiveValidators_modifiesAttributes() throws Exception {
-    Configuration config = redPenConfig(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300", "depth", "1"))));
+    Configuration config = redPenConfigWithValidators(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300", "depth", "1"))));
     when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
 
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(1);
@@ -81,7 +84,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getActiveValidators_reportsInvalidAttributes() throws Exception {
-    Configuration config = redPenConfig(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100"))));
+    Configuration config = redPenConfigWithValidators(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100"))));
     when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
     settingsPane = spy(settingsPane);
     doNothing().when(settingsPane).showPropertyError(any(ValidatorConfiguration.class), anyString());
@@ -103,6 +106,22 @@ public class RedPenSettingsPaneTest extends BaseTest {
     when(settingsPane.validators.isEditing()).thenReturn(true);
     settingsPane.getActiveValidators();
     verify(settingsPane.validators.getCellEditor()).stopCellEditing();
+  }
+
+  @Test
+  public void symbolsAreListedInSettings() throws Exception {
+    Configuration config = redPenConfigWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
+
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
+
+    DefaultTableModel model = mock(DefaultTableModel.class);
+    settingsPane = spy(settingsPane);
+    doReturn(model).when(settingsPane).createSymbolsModel();
+
+    assertNotNull(settingsPane.getPane());
+
+    verify(model).addRow(new Object[] {AMPERSAND.toString(), '&', "$%", true, false});
+    verify(model).addRow(new Object[] {ASTERISK.toString(), '*', "", false, true});
   }
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {

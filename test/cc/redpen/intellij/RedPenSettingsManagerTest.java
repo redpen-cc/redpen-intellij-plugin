@@ -23,7 +23,7 @@ public class RedPenSettingsManagerTest extends BaseTest {
   public void applyEnabledValidators() throws Exception {
     List<ValidatorConfiguration> allValidators = asList(new ValidatorConfiguration("1"), new ValidatorConfiguration("2"));
     manager.redPenProvider = mock(RedPenProvider.class, RETURNS_DEEP_STUBS);
-    when(manager.redPenProvider.getConfig()).thenReturn(redPenConfig(allValidators));
+    when(manager.redPenProvider.getConfig()).thenReturn(redPenConfigWithValidators(allValidators));
 
     List<ValidatorConfiguration> activeValidators = new ArrayList<>(allValidators.subList(0, 1));
     manager.settingsPane = mock(RedPenSettingsPane.class);
