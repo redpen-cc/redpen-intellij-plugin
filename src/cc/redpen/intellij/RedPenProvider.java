@@ -8,11 +8,13 @@ import cc.redpen.parser.DocumentParser;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiFile;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class RedPenProvider {
   private static RedPenProvider instance;
-  Configuration initialConfig, config;
+  Map<String, Configuration> configs = new LinkedHashMap<>();
+  Configuration config;
 
   Map<String, DocumentParser> parsers = ImmutableMap.of(
     "PLAIN_TEXT", DocumentParser.PLAIN,
@@ -22,12 +24,16 @@ public class RedPenProvider {
 
   private RedPenProvider() {
     try {
-      initialConfig = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
+      addConfig(new ConfigurationLoader().loadFromResource("/redpen-conf.xml"));
       config = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
     }
     catch (RedPenException e) {
       throw new RuntimeException("Cannot read RedPen conf file", e);
     }
+  }
+
+  private void addConfig(Configuration configuration) {
+    configs.put(configuration.getKey(), configuration);
   }
 
   public static RedPenProvider getInstance() {
@@ -49,7 +55,7 @@ public class RedPenProvider {
   }
 
   public Configuration getInitialConfig() {
-    return initialConfig;
+    return configs.get("en");
   }
 
   public Configuration getConfig() {
