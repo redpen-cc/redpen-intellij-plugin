@@ -44,7 +44,7 @@ public class RedPenSettingsPane {
     SymbolTable symbolTable = redPenProvider.getConfig().getSymbolTable();
     for (SymbolType key : symbolTable.getNames()) {
       Symbol symbol = symbolTable.getSymbol(key);
-      model.addRow(new Object[] {symbol.getType().toString(), symbol.getValue(),
+      model.addRow(new Object[] {symbol.getType().toString(), String.valueOf(symbol.getValue()),
         new String(symbol.getInvalidChars()), symbol.isNeedBeforeSpace(), symbol.isNeedAfterSpace()});
     }
 
@@ -99,7 +99,7 @@ public class RedPenSettingsPane {
   public List<Symbol> getSymbols() {
     TableModel model = symbols.getModel();
     return range(0, model.getRowCount()).mapToObj(i -> new Symbol(
-      SymbolType.valueOf((String)model.getValueAt(i, 0)), (char)model.getValueAt(i, 1), (String)model.getValueAt(i, 2),
+      SymbolType.valueOf((String)model.getValueAt(i, 0)), ((String)model.getValueAt(i, 1)).charAt(0), (String)model.getValueAt(i, 2),
       (boolean)model.getValueAt(i, 3), (boolean)model.getValueAt(i, 4)
     )).collect(toList());
   }
