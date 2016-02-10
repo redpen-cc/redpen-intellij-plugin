@@ -124,12 +124,7 @@ public class RedPenSettingsPane {
   DefaultTableModel createSymbolsModel() {
     return new DefaultTableModel() {
       @Override public Class<?> getColumnClass(int i) {
-        switch (i) {
-          case 1: return Character.class;
-          case 3:
-          case 4: return Boolean.class;
-          default: return String.class;
-        }
+        return i == 3 || i == 4 ? Boolean.class : String.class;
       }
 
       @Override public boolean isCellEditable(int row, int column) {
