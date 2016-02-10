@@ -6,15 +6,10 @@ import cc.redpen.RedPenException;
 import cc.redpen.config.Configuration;
 import cc.redpen.parser.DocumentParser;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.reflect.ClassPath;
 import com.intellij.psi.PsiFile;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
-import static java.util.stream.Collectors.toList;
 
 public class RedPenProvider {
   private static RedPenProvider instance;
@@ -29,22 +24,14 @@ public class RedPenProvider {
 
   private RedPenProvider() {
     try {
-      findConfFiles().stream().forEach(this::loadConfig);
       config = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
+      loadConfig("redpen-conf.xml");
+      loadConfig("redpen-conf-ja.xml");
+      loadConfig("redpen-conf-ja-hankaku.xml");
+      loadConfig("redpen-conf-ja-zenkaku2.xml");
     }
     catch (RedPenException e) {
       throw new RuntimeException("Cannot read RedPen conf file", e);
-    }
-  }
-
-  List<String> findConfFiles() {
-    try {
-      return ClassPath.from(getClass().getClassLoader()).getResources().stream()
-        .map(ClassPath.ResourceInfo::getResourceName)
-        .filter(f -> f.startsWith("redpen-conf")).collect(toList());
-    }
-    catch (IOException e) {
-      throw new RuntimeException(e);
     }
   }
 
