@@ -24,6 +24,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
   @Before
   public void setUp() throws Exception {
     settingsPane.redPenProvider = mock(RedPenProvider.class);
+    settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
   }
 
   @Test
@@ -53,7 +54,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
       new ValidatorConfiguration("second one")));
 
     when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
-    settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
 
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(2);
     when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(false);
@@ -68,9 +68,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
   @Test
   public void getActiveValidators_modifiesAttributes() throws Exception {
     Configuration config = redPenConfig(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300", "depth", "1"))));
-
     when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
-    settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
 
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(1);
     when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(true);
@@ -79,6 +77,25 @@ public class RedPenSettingsPaneTest extends BaseTest {
     List<ValidatorConfiguration> activeValidators = settingsPane.getActiveValidators();
     assertEquals(1, activeValidators.size());
     assertEquals(ImmutableMap.of("width", "200", "height", "300"), activeValidators.get(0).getAttributes());
+  }
+
+  @Test
+  public void getActiveValidators_reportsInvalidAttributes() throws Exception {
+    Configuration config = redPenConfig(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100"))));
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
+    settingsPane = spy(settingsPane);
+    doNothing().when(settingsPane).showPropertyError(any(ValidatorConfiguration.class), anyString());
+
+    when(settingsPane.validators.getModel().getRowCount()).thenReturn(1);
+    when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(true);
+
+    when(settingsPane.validators.getModel().getValueAt(0, 2)).thenReturn("width");
+    settingsPane.getActiveValidators();
+    verify(settingsPane).showPropertyError(config.getValidatorConfigs().get(0), "width");
+
+    when(settingsPane.validators.getModel().getValueAt(0, 2)).thenReturn("=");
+    settingsPane.getActiveValidators();
+    verify(settingsPane).showPropertyError(config.getValidatorConfigs().get(0), "=");
   }
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {

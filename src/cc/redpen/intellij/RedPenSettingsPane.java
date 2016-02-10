@@ -1,6 +1,7 @@
 package cc.redpen.intellij;
 
 import cc.redpen.config.ValidatorConfiguration;
+import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -43,15 +44,21 @@ public class RedPenSettingsPane {
          ValidatorConfiguration validator = redPenProvider.getInitialConfig().getValidatorConfigs().get(i);
          validator.getAttributes().clear();
          String attributes = (String)model.getValueAt(i, 2);
-         Stream.of(attributes.trim().split("\\s*,\\s*")).forEach(s -> {
-           String[] attr = s.split("=");
-           if (attr[0].isEmpty()) return;
-           validator.addAttribute(attr[0], attr[1]);
+         Stream.of(attributes.trim().split("\\s*,\\s*")).filter(s -> !s.isEmpty()).forEach(s -> {
+           String[] attr = s.split("=", 2);
+           if (attr.length < 2 || attr[0].isEmpty())
+             showPropertyError(validator, s);
+           else
+             validator.addAttribute(attr[0], attr[1]);
          });
          result.add(validator);
        }
     }
     return result;
+  }
+
+  void showPropertyError(ValidatorConfiguration validator, String s) {
+    Messages.showMessageDialog("Validator property must be in key=value format: " + s, validator.getConfigurationName(), Messages.getErrorIcon());
   }
 
   private String attributes(ValidatorConfiguration validatorConfig) {
