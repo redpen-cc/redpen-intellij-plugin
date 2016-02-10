@@ -1,5 +1,6 @@
 package cc.redpen.intellij;
 
+import cc.redpen.config.SymbolTable;
 import cc.redpen.config.ValidatorConfiguration;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.openapi.application.ApplicationManager;
@@ -43,11 +44,21 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   }
 
   @Override public void apply() throws ConfigurationException {
+    applyValidators();
+    applySymbols();
+    restartInspections();
+  }
+
+  private void applyValidators() {
     List<ValidatorConfiguration> validators = redPenProvider.getConfig().getValidatorConfigs();
     List<ValidatorConfiguration> remainingValidators = settingsPane.getActiveValidators();
     validators.clear();
     validators.addAll(remainingValidators);
-    restartInspections();
+  }
+
+  private void applySymbols() {
+    SymbolTable symbolTable = redPenProvider.getConfig().getSymbolTable();
+    settingsPane.getSymbols().stream().forEach(symbolTable::overrideSymbol);
   }
 
   @Override public void reset() {

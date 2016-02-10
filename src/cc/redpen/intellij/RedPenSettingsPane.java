@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.IntStream.range;
+
 public class RedPenSettingsPane {
   RedPenProvider redPenProvider = RedPenProvider.getInstance();
   private JPanel root;
@@ -93,6 +96,14 @@ public class RedPenSettingsPane {
     Messages.showMessageDialog("Validator property must be in key=value format: " + s, validator.getConfigurationName(), Messages.getErrorIcon());
   }
 
+  public List<Symbol> getSymbols() {
+    TableModel model = symbols.getModel();
+    return range(0, model.getRowCount()).mapToObj(i -> new Symbol(
+      SymbolType.valueOf((String)model.getValueAt(i, 0)), (char)model.getValueAt(i, 1), (String)model.getValueAt(i, 2),
+      (boolean)model.getValueAt(i, 3), (boolean)model.getValueAt(i, 4)
+    )).collect(toList());
+  }
+
   private String attributes(ValidatorConfiguration validatorConfig) {
     String result = validatorConfig.getAttributes().toString();
     return result.substring(1, result.length() - 1);
@@ -122,7 +133,7 @@ public class RedPenSettingsPane {
       }
 
       @Override public boolean isCellEditable(int row, int column) {
-        return false;
+        return column != 0;
       }
     };
   }

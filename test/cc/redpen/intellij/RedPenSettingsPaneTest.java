@@ -124,6 +124,26 @@ public class RedPenSettingsPaneTest extends BaseTest {
     verify(model).addRow(new Object[] {ASTERISK.toString(), '*', "", false, true});
   }
 
+  @Test
+  public void getSymbols() throws Exception {
+    when(settingsPane.symbols.getModel().getRowCount()).thenReturn(2);
+
+    when(settingsPane.symbols.getModel().getValueAt(0, 0)).thenReturn("AMPERSAND");
+    when(settingsPane.symbols.getModel().getValueAt(0, 1)).thenReturn('&');
+    when(settingsPane.symbols.getModel().getValueAt(0, 2)).thenReturn("$%");
+    when(settingsPane.symbols.getModel().getValueAt(0, 3)).thenReturn(true);
+    when(settingsPane.symbols.getModel().getValueAt(0, 4)).thenReturn(false);
+
+    when(settingsPane.symbols.getModel().getValueAt(1, 0)).thenReturn("ASTERISK");
+    when(settingsPane.symbols.getModel().getValueAt(1, 1)).thenReturn('*');
+    when(settingsPane.symbols.getModel().getValueAt(1, 2)).thenReturn("");
+    when(settingsPane.symbols.getModel().getValueAt(1, 3)).thenReturn(false);
+    when(settingsPane.symbols.getModel().getValueAt(1, 4)).thenReturn(true);
+
+    List<Symbol> symbols = settingsPane.getSymbols();
+    assertEquals(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)), symbols);
+  }
+
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
     ValidatorConfiguration config = new ValidatorConfiguration(name);
     attributes.entrySet().stream().forEach(entry -> config.addAttribute(entry.getKey(), entry.getValue()));
