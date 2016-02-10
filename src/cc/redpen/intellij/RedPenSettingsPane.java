@@ -66,7 +66,7 @@ public class RedPenSettingsPane {
 
     model.addColumn("");
     model.addColumn("Name");
-    model.addColumn("Properties");
+    model.addColumn("Properties (comma-separated)");
 
     validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
