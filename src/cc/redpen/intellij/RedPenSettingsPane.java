@@ -41,6 +41,7 @@ public class RedPenSettingsPane {
     for (int i = 0; i < model.getRowCount(); i++) {
        if ((boolean)model.getValueAt(i, 0)) {
          ValidatorConfiguration validator = redPenProvider.getInitialConfig().getValidatorConfigs().get(i);
+         validator.getAttributes().clear();
          String attributes = (String)model.getValueAt(i, 2);
          Stream.of(attributes.trim().split("\\s*,\\s*")).forEach(s -> {
            String[] attr = s.split("=");

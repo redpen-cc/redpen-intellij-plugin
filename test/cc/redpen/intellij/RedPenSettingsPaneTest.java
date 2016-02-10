@@ -66,7 +66,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getActiveValidators_modifiesAttributes() throws Exception {
-    Configuration config = redPenConfig(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300"))));
+    Configuration config = redPenConfig(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300", "depth", "1"))));
 
     when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
     settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
@@ -77,7 +77,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
     List<ValidatorConfiguration> activeValidators = settingsPane.getActiveValidators();
     assertEquals(1, activeValidators.size());
-    assertEquals("200", activeValidators.get(0).getAttribute("width"));
+    assertEquals(ImmutableMap.of("width", "200", "height", "300"), activeValidators.get(0).getAttributes());
   }
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
