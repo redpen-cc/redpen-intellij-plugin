@@ -15,8 +15,7 @@ import java.util.Map;
 import static cc.redpen.config.SymbolType.AMPERSAND;
 import static cc.redpen.config.SymbolType.ASTERISK;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
+import static java.util.Collections.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
@@ -112,7 +111,8 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void symbolsAreListedInSettings() throws Exception {
     Configuration config = redPenConfigWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
 
-    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(config);
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(redPenConfigWithValidators(emptyList()));
+    when(settingsPane.redPenProvider.getConfig()).thenReturn(config);
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     settingsPane = spy(settingsPane);

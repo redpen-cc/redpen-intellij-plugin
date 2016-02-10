@@ -41,7 +41,7 @@ public class RedPenSettingsPane {
 
     symbols.getColumnModel().getColumn(0).setMinWidth(250);
 
-    SymbolTable symbolTable = redPenProvider.getInitialConfig().getSymbolTable();
+    SymbolTable symbolTable = redPenProvider.getConfig().getSymbolTable();
     for (SymbolType key : symbolTable.getNames()) {
       Symbol symbol = symbolTable.getSymbol(key);
       model.addRow(new Object[] {symbol.getType().toString(), symbol.getValue(),
