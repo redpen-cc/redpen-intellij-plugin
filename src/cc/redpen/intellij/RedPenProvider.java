@@ -80,6 +80,10 @@ public class RedPenProvider {
     return configs.get("en");
   }
 
+  public Map<String, Configuration> getAvailableConfigs() {
+    return configs;
+  }
+
   public Configuration getConfig() {
     return config;
   }

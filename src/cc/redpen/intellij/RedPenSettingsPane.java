@@ -32,7 +32,7 @@ public class RedPenSettingsPane {
   }
 
   void addLanguages() {
-    language.addItem(redPenProvider.getInitialConfig().getKey());
+    redPenProvider.getAvailableConfigs().keySet().forEach(k -> language.addItem(k));
   }
 
   private void addSymbols() {
