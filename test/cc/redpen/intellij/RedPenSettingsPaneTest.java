@@ -16,8 +16,7 @@ import static cc.redpen.config.SymbolType.AMPERSAND;
 import static cc.redpen.config.SymbolType.ASTERISK;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
@@ -35,11 +34,27 @@ public class RedPenSettingsPaneTest extends BaseTest {
     Configuration dummy = mock(Configuration.class);
     when(settingsPane.redPenProvider.getAvailableConfigs()).thenReturn(ImmutableMap.of("en", dummy, "ja", dummy));
 
-    settingsPane.addLanguages();
+    settingsPane.populateLanguages();
 
     assertEquals(2, settingsPane.language.getItemCount());
     assertEquals("en", settingsPane.language.getItemAt(0));
     assertEquals("ja", settingsPane.language.getItemAt(1));
+  }
+
+  @Test
+  public void changingOfLanguageRebuildsValidatorsAndSymbols() throws Exception {
+    when(settingsPane.redPenProvider.getAvailableConfigs()).thenReturn(ImmutableMap.of("en", mock(Configuration.class), "ja", mock(Configuration.class)));
+
+    settingsPane = spy(settingsPane);
+    doNothing().when(settingsPane).build();
+
+    settingsPane.getPane();
+    assertSame(settingsPane.redPenProvider.getConfig(), settingsPane.config);
+    verify(settingsPane).build();
+
+    settingsPane.language.setSelectedItem("ja");
+    assertSame(settingsPane.redPenProvider.getAvailableConfigs().get("ja"), settingsPane.config);
+    verify(settingsPane, times(2)).build();
   }
 
   @Test

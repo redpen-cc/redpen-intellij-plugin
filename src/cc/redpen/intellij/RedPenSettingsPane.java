@@ -1,9 +1,6 @@
 package cc.redpen.intellij;
 
-import cc.redpen.config.Symbol;
-import cc.redpen.config.SymbolTable;
-import cc.redpen.config.SymbolType;
-import cc.redpen.config.ValidatorConfiguration;
+import cc.redpen.config.*;
 import com.intellij.openapi.ui.Messages;
 
 import javax.swing.*;
@@ -18,6 +15,7 @@ import static java.util.stream.IntStream.range;
 
 public class RedPenSettingsPane {
   RedPenProvider redPenProvider = RedPenProvider.getInstance();
+  Configuration config;
   private JPanel root;
   private JTabbedPane tabbedPane;
   JTable validators;
@@ -25,17 +23,28 @@ public class RedPenSettingsPane {
   JComboBox<String> language;
 
   public JPanel getPane() {
-    addLanguages();
-    addValidators();
-    addSymbols();
+    config = redPenProvider.getConfig();
+    populateLanguages();
+    build();
+    language.addActionListener(a -> {
+      //noinspection SuspiciousMethodCalls
+      config = redPenProvider.getAvailableConfigs().get(language.getSelectedItem());
+      build();
+    });
     return root;
   }
 
-  void addLanguages() {
+  void build() {
+    populateValidators();
+    populateSymbols();
+  }
+
+  void populateLanguages() {
     redPenProvider.getAvailableConfigs().keySet().forEach(k -> language.addItem(k));
   }
 
-  private void addSymbols() {
+  private void populateSymbols() {
+    symbols.removeAll();
     DefaultTableModel model = createSymbolsModel();
     symbols.setModel(model);
     symbols.setRowHeight((int)(validators.getFont().getSize() * 1.5));
@@ -49,7 +58,7 @@ public class RedPenSettingsPane {
     symbols.getColumnModel().getColumn(0).setMinWidth(250);
     symbols.setDefaultEditor(Character.class, new SingleCharEditor());
 
-    SymbolTable symbolTable = redPenProvider.getConfig().getSymbolTable();
+    SymbolTable symbolTable = config.getSymbolTable();
     for (SymbolType key : symbolTable.getNames()) {
       Symbol symbol = symbolTable.getSymbol(key);
       model.addRow(new Object[] {symbol.getType().toString(), symbol.getValue(),
@@ -59,7 +68,8 @@ public class RedPenSettingsPane {
     symbols.doLayout();
   }
 
-  private void addValidators() {
+  private void populateValidators() {
+    validators.removeAll();
     DefaultTableModel model = createValidatorsModel();
     validators.setModel(model);
     validators.setRowHeight((int)(validators.getFont().getSize() * 1.5));
@@ -71,7 +81,7 @@ public class RedPenSettingsPane {
     validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
     for (ValidatorConfiguration validator : redPenProvider.getInitialConfig().getValidatorConfigs()) {
-      boolean enabled = redPenProvider.getConfig().getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
+      boolean enabled = config.getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
       model.addRow(new Object[] {enabled, validator.getConfigurationName(), attributes(validator)});
     }
 
