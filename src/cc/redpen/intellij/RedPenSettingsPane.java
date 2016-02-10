@@ -38,6 +38,7 @@ public class RedPenSettingsPane {
 
   public List<ValidatorConfiguration> getActiveValidators() {
     List<ValidatorConfiguration> result = new ArrayList<>();
+    if (validators.isEditing()) validators.getCellEditor().stopCellEditing();
     TableModel model = validators.getModel();
     for (int i = 0; i < model.getRowCount(); i++) {
        if ((boolean)model.getValueAt(i, 0)) {

@@ -98,6 +98,13 @@ public class RedPenSettingsPaneTest extends BaseTest {
     verify(settingsPane).showPropertyError(config.getValidatorConfigs().get(0), "=");
   }
 
+  @Test
+  public void getActiveValidators_appliesActiveCellEditorChanges() throws Exception {
+    when(settingsPane.validators.isEditing()).thenReturn(true);
+    settingsPane.getActiveValidators();
+    verify(settingsPane.validators.getCellEditor()).stopCellEditing();
+  }
+
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
     ValidatorConfiguration config = new ValidatorConfiguration(name);
     attributes.entrySet().stream().forEach(entry -> config.addAttribute(entry.getKey(), entry.getValue()));
