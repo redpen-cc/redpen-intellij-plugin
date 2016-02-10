@@ -1,13 +1,16 @@
 package cc.redpen.intellij;
 
 import javax.swing.*;
+import javax.swing.border.LineBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
+import java.awt.*;
 
 class SingleCharEditor extends DefaultCellEditor {
   public SingleCharEditor() {
     super(new JTextField(new SingleCharDocument(), null, 1));
+    ((JComponent)getComponent()).setBorder(new LineBorder(Color.black));
   }
 
   @Override public boolean stopCellEditing() {
