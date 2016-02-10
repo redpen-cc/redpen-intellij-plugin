@@ -22,11 +22,17 @@ public class RedPenSettingsPane {
   private JTabbedPane tabbedPane;
   JTable validators;
   JTable symbols;
+  JComboBox<String> language;
 
   public JPanel getPane() {
+    addLanguages();
     addValidators();
     addSymbols();
     return root;
+  }
+
+  void addLanguages() {
+    language.addItem(redPenProvider.getInitialConfig().getKey());
   }
 
   private void addSymbols() {

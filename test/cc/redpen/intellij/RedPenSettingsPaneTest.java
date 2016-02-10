@@ -31,6 +31,16 @@ public class RedPenSettingsPaneTest extends BaseTest {
   }
 
   @Test
+  public void languagesAndVariantsArePrepopulated() throws Exception {
+    when(settingsPane.redPenProvider.getInitialConfig()).thenReturn(new Configuration.ConfigurationBuilder().setLanguage("en").build());
+
+    settingsPane.addLanguages();
+
+    assertEquals(1, settingsPane.language.getItemCount());
+    assertEquals("en", settingsPane.language.getItemAt(0));
+  }
+
+  @Test
   public void validatorsAreListedInSettings() throws Exception {
     List<ValidatorConfiguration> allValidators = asList(
       validatorConfig("first", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
