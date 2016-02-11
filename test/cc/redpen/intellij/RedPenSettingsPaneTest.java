@@ -1,6 +1,7 @@
 package cc.redpen.intellij;
 
 import cc.redpen.config.Configuration;
+import cc.redpen.config.ConfigurationExporter;
 import cc.redpen.config.Symbol;
 import cc.redpen.config.ValidatorConfiguration;
 import com.google.common.collect.ImmutableMap;
@@ -10,6 +11,9 @@ import org.junit.Test;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +22,8 @@ import static cc.redpen.config.SymbolType.ASTERISK;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
+import static javax.swing.JFileChooser.CANCEL_OPTION;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -199,6 +205,36 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
     List<Symbol> symbols = settingsPane.getSymbols();
     assertEquals(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)), symbols);
+  }
+
+  @Test
+  public void canCancelExportingConfiguration() throws Exception {
+    settingsPane.fileChooser = mock(JFileChooser.class);
+    settingsPane.initButtons();
+
+    when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(CANCEL_OPTION);
+    settingsPane.exportButton.doClick();
+
+    verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
+    verifyNoMoreInteractions(settingsPane.fileChooser);
+  }
+
+  @Test
+  public void canExportConfiguration() throws Exception {
+    settingsPane.fileChooser = mock(JFileChooser.class);
+    settingsPane.configurationExporter = mock(ConfigurationExporter.class);
+    settingsPane.initButtons();
+
+    when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
+
+    File file = File.createTempFile("redpen-conf", ".xml");
+    file.deleteOnExit();
+    when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
+
+    settingsPane.exportButton.doClick();
+    verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
+    verify(settingsPane.fileChooser).getSelectedFile();
+    verify(settingsPane.configurationExporter).export(eq(settingsPane.config), any(FileOutputStream.class));
   }
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {

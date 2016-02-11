@@ -6,22 +6,28 @@ import com.intellij.openapi.ui.Messages;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
+import static javax.swing.JFileChooser.APPROVE_OPTION;
 
 public class RedPenSettingsPane {
   RedPenProvider redPenProvider;
   Configuration config;
-  private JPanel root;
+  JPanel root;
   private JTabbedPane tabbedPane;
   JTable validators;
   JTable symbols;
   JComboBox<String> language;
   JCheckBox autodetectLanguage;
+  JButton exportButton;
+  JFileChooser fileChooser = new JFileChooser();
+  ConfigurationExporter configurationExporter = new ConfigurationExporter();
 
   public RedPenSettingsPane(RedPenProvider redPenProvider) {
     this.redPenProvider = redPenProvider;
@@ -31,7 +37,20 @@ public class RedPenSettingsPane {
   public JPanel getPane() {
     initLanguages();
     initTabs();
+    initButtons();
     return root;
+  }
+
+  void initButtons() {
+    exportButton.addActionListener(a -> {
+      try {
+        if (fileChooser.showSaveDialog(root) != APPROVE_OPTION) return;
+        configurationExporter.export(config, new FileOutputStream(fileChooser.getSelectedFile()));
+      }
+      catch (IOException e) {
+        Messages.showMessageDialog("Cannot write to file: " + e.getMessage(), "RedPen", Messages.getErrorIcon());
+      }
+    });
   }
 
   void initLanguages() {
