@@ -18,8 +18,7 @@ import static cc.redpen.config.SymbolType.ASTERISK;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
@@ -35,6 +34,20 @@ public class RedPenSettingsPaneTest extends BaseTest {
   @Test
   public void activeConfigIsRetrievedOnCreation() throws Exception {
     assertSame(provider.getActiveConfig(), settingsPane.config);
+  }
+
+  @Test
+  public void autodetectCheckboxIsInitializedToFalse() throws Exception {
+    provider.setAutodetect(false);
+    settingsPane.initLanguages();
+    assertFalse(settingsPane.autodetectLanguage.isSelected());
+  }
+
+  @Test
+  public void autodetectCheckboxIsInitializedToTrue() throws Exception {
+    provider.setAutodetect(true);
+    settingsPane.initLanguages();
+    assertTrue(settingsPane.autodetectLanguage.isSelected());
   }
 
   @Test

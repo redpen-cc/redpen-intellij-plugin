@@ -21,7 +21,7 @@ public class RedPenSettingsPane {
   JTable validators;
   JTable symbols;
   JComboBox<String> language;
-  private JCheckBox autodetectLanguage;
+  JCheckBox autodetectLanguage;
 
   public RedPenSettingsPane(RedPenProvider redPenProvider) {
     this.redPenProvider = redPenProvider;
@@ -36,6 +36,7 @@ public class RedPenSettingsPane {
 
   void initLanguages() {
     redPenProvider.getConfigs().keySet().forEach(k -> language.addItem(k));
+    autodetectLanguage.setSelected(redPenProvider.isAutodetect());
     language.setSelectedItem(config.getKey());
     language.addActionListener(a -> {
       config = redPenProvider.getConfig((String)language.getSelectedItem());

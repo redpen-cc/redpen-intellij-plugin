@@ -6,6 +6,7 @@ import cc.redpen.config.ValidatorConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,7 @@ public class RedPenSettingsManagerTest extends BaseTest {
     doNothing().when(manager).restartInspections();
     manager.redPenProvider = mock(RedPenProvider.class, RETURNS_DEEP_STUBS);
     manager.settingsPane = mock(RedPenSettingsPane.class);
+    manager.settingsPane.autodetectLanguage = mock(JCheckBox.class);
   }
 
   @Test
@@ -34,9 +36,13 @@ public class RedPenSettingsManagerTest extends BaseTest {
     verify(manager.redPenProvider).setActiveConfig(manager.settingsPane.config);
   }
 
-  private void mockConfig(String key) {
-    manager.settingsPane.config = mock(Configuration.class);
-    when(manager.settingsPane.config.getKey()).thenReturn(key);
+  @Test
+  public void applyAutodetect() throws Exception {
+    when(manager.settingsPane.autodetectLanguage.isSelected()).thenReturn(false);
+
+    manager.apply();
+
+    verify(manager.redPenProvider).setAutodetect(false);
   }
 
   @Test

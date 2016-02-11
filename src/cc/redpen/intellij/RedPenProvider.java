@@ -17,6 +17,7 @@ public class RedPenProvider {
   private Map<String, Configuration> initialConfigs = new LinkedHashMap<>();
   private Map<String, Configuration> configs = new LinkedHashMap<>();
   private String configKey = "en";
+  private boolean autodetect = true;
 
   Map<String, DocumentParser> parsers = ImmutableMap.of(
     "PLAIN_TEXT", DocumentParser.PLAIN,
@@ -67,7 +68,7 @@ public class RedPenProvider {
   }
 
   public RedPen getRedPenFor(String text) {
-    configKey = new LanguageDetector().detectLanguage(text);
+    if (autodetect) configKey = new LanguageDetector().detectLanguage(text);
     return getRedPen();
   }
 
@@ -93,5 +94,13 @@ public class RedPenProvider {
 
   public void setActiveConfig(Configuration config) {
     configKey = config.getKey();
+  }
+
+  public void setAutodetect(boolean autodetect) {
+    this.autodetect = autodetect;
+  }
+
+  public boolean isAutodetect() {
+    return autodetect;
   }
 }

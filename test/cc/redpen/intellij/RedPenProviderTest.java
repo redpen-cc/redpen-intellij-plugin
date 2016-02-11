@@ -24,4 +24,12 @@ public class RedPenProviderTest {
     redPen = provider.getRedPenFor("こんにちは");
     assertEquals("ja", redPen.getConfiguration().getKey());
   }
+
+  @Test
+  public void languageAutodetectionCanBeDisabled() throws Exception {
+    provider.setAutodetect(false);
+
+    RedPen redPen = provider.getRedPenFor("こんにちは");
+    assertEquals("en", redPen.getConfiguration().getKey());
+  }
 }
