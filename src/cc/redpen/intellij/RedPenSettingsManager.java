@@ -44,21 +44,21 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   }
 
   @Override public void apply() throws ConfigurationException {
-    redPenProvider.config = settingsPane.config;
+    redPenProvider.setActiveConfig(settingsPane.config);
     applyValidators();
     applySymbols();
     restartInspections();
   }
 
   private void applyValidators() {
-    List<ValidatorConfiguration> validators = redPenProvider.getConfig().getValidatorConfigs();
+    List<ValidatorConfiguration> validators = redPenProvider.getActiveConfig().getValidatorConfigs();
     List<ValidatorConfiguration> remainingValidators = settingsPane.getActiveValidators();
     validators.clear();
     validators.addAll(remainingValidators);
   }
 
   private void applySymbols() {
-    SymbolTable symbolTable = redPenProvider.getConfig().getSymbolTable();
+    SymbolTable symbolTable = redPenProvider.getActiveConfig().getSymbolTable();
     settingsPane.getSymbols().stream().forEach(symbolTable::overrideSymbol);
   }
 

@@ -9,9 +9,9 @@ public class RedPenProviderTest {
 
   @Test
   public void allConfigFilesAreLoaded() throws Exception {
-    assertTrue(provider.configs.keySet().contains("en"));
-    assertTrue(provider.configs.keySet().contains("ja"));
-    assertTrue(provider.configs.keySet().contains("ja.hankaku"));
-    assertTrue(provider.configs.keySet().contains("ja.zenkaku2"));
+    assertTrue(provider.getAvailableConfigs().keySet().contains("en"));
+    assertTrue(provider.getAvailableConfigs().keySet().contains("ja"));
+    assertTrue(provider.getAvailableConfigs().keySet().contains("ja.hankaku"));
+    assertTrue(provider.getAvailableConfigs().keySet().contains("ja.zenkaku2"));
   }
 }

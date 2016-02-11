@@ -13,8 +13,9 @@ import java.util.Map;
 
 public class RedPenProvider {
   private static RedPenProvider instance;
-  Map<String, Configuration> configs = new LinkedHashMap<>();
-  Configuration config;
+  private Map<String, Configuration> initialConfigs = new LinkedHashMap<>();
+  private Map<String, Configuration> configs = new LinkedHashMap<>();
+  private String configKey = "en";
 
   Map<String, DocumentParser> parsers = ImmutableMap.of(
     "PLAIN_TEXT", DocumentParser.PLAIN,
@@ -23,22 +24,21 @@ public class RedPenProvider {
   );
 
   private RedPenProvider() {
-    try {
-      config = new ConfigurationLoader().loadFromResource("/redpen-conf.xml");
-      loadConfig("redpen-conf.xml");
-      loadConfig("redpen-conf-ja.xml");
-      loadConfig("redpen-conf-ja-hankaku.xml");
-      loadConfig("redpen-conf-ja-zenkaku2.xml");
-    }
-    catch (RedPenException e) {
-      throw new RuntimeException("Cannot read RedPen conf file", e);
-    }
+    loadConfig("redpen-conf.xml", configs);
+    loadConfig("redpen-conf-ja.xml", configs);
+    loadConfig("redpen-conf-ja-hankaku.xml", configs);
+    loadConfig("redpen-conf-ja-zenkaku2.xml", configs);
+
+    loadConfig("redpen-conf.xml", initialConfigs);
+    loadConfig("redpen-conf-ja.xml", initialConfigs);
+    loadConfig("redpen-conf-ja-hankaku.xml", initialConfigs);
+    loadConfig("redpen-conf-ja-zenkaku2.xml", initialConfigs);
   }
 
-  private void loadConfig(String fileName) {
+  private void loadConfig(String fileName, Map<String, Configuration> target) {
     try {
       Configuration configuration = new ConfigurationLoader().loadFromResource("/" + fileName);
-      configs.put(configuration.getKey(), configuration);
+      target.put(configuration.getKey(), configuration);
     }
     catch (RedPenException e) {
       throw new RuntimeException(e);
@@ -52,7 +52,7 @@ public class RedPenProvider {
 
   public RedPen getRedPen() {
     try {
-      return new RedPen(config);
+      return new RedPen(configs.get(configKey));
     }
     catch (RedPenException e) {
       throw new RuntimeException(e);
@@ -63,15 +63,19 @@ public class RedPenProvider {
     return parsers.get(file.getFileType().getName());
   }
 
-  public Configuration getInitialConfig() {
-    return configs.get("en");
+  public Configuration getInitialConfig(String key) {
+    return initialConfigs.get(key);
   }
 
   public Map<String, Configuration> getAvailableConfigs() {
     return configs;
   }
 
-  public Configuration getConfig() {
-    return config;
+  public Configuration getActiveConfig() {
+    return configs.get(configKey);
+  }
+
+  public void setActiveConfig(Configuration config) {
+    configKey = config.getKey();
   }
 }

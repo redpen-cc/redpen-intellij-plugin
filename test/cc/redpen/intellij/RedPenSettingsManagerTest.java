@@ -28,24 +28,28 @@ public class RedPenSettingsManagerTest extends BaseTest {
   @Test
   public void applyLanguage() throws Exception {
     manager.settingsPane.config = mock(Configuration.class);
-    manager.redPenProvider.config = null;
 
     manager.apply();
 
-    assertEquals(manager.settingsPane.config, manager.redPenProvider.config);
+    verify(manager.redPenProvider).setActiveConfig(manager.settingsPane.config);
+  }
+
+  private void mockConfig(String key) {
+    manager.settingsPane.config = mock(Configuration.class);
+    when(manager.settingsPane.config.getKey()).thenReturn(key);
   }
 
   @Test
   public void applyValidators() throws Exception {
     List<ValidatorConfiguration> allValidators = asList(new ValidatorConfiguration("1"), new ValidatorConfiguration("2"));
-    when(manager.redPenProvider.getConfig()).thenReturn(redPenConfigWithValidators(allValidators));
+    when(manager.redPenProvider.getActiveConfig()).thenReturn(redPenConfigWithValidators(allValidators));
 
     List<ValidatorConfiguration> activeValidators = new ArrayList<>(allValidators.subList(0, 1));
     when(manager.settingsPane.getActiveValidators()).thenReturn(activeValidators);
 
     manager.apply();
 
-    assertEquals(activeValidators, manager.redPenProvider.getConfig().getValidatorConfigs());
+    assertEquals(activeValidators, manager.redPenProvider.getActiveConfig().getValidatorConfigs());
     verify(manager).restartInspections();
   }
 
@@ -56,7 +60,7 @@ public class RedPenSettingsManagerTest extends BaseTest {
 
     manager.apply();
 
-    verify(manager.redPenProvider.getConfig().getSymbolTable()).overrideSymbol(symbol);
+    verify(manager.redPenProvider.getActiveConfig().getSymbolTable()).overrideSymbol(symbol);
     verify(manager).restartInspections();
   }
 }

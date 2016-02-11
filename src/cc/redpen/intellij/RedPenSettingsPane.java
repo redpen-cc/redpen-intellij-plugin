@@ -23,7 +23,7 @@ public class RedPenSettingsPane {
   JComboBox<String> language;
 
   public JPanel getPane() {
-    config = redPenProvider.getConfig();
+    config = redPenProvider.getActiveConfig();
     populateLanguages();
     build();
     language.addActionListener(a -> {
@@ -81,7 +81,7 @@ public class RedPenSettingsPane {
 
     validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
-    for (ValidatorConfiguration validator : redPenProvider.getInitialConfig().getValidatorConfigs()) {
+    for (ValidatorConfiguration validator : redPenProvider.getInitialConfig(config.getKey()).getValidatorConfigs()) {
       boolean enabled = config.getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
       model.addRow(new Object[] {enabled, validator.getConfigurationName(), attributes(validator)});
     }
@@ -95,7 +95,7 @@ public class RedPenSettingsPane {
     TableModel model = validators.getModel();
     for (int i = 0; i < model.getRowCount(); i++) {
        if ((boolean)model.getValueAt(i, 0)) {
-         ValidatorConfiguration validator = redPenProvider.getInitialConfig().getValidatorConfigs().get(i);
+         ValidatorConfiguration validator = redPenProvider.getInitialConfig(config.getKey()).getValidatorConfigs().get(i);
          validator.getAttributes().clear();
          String attributes = (String)model.getValueAt(i, 2);
          Stream.of(attributes.trim().split("\\s*,\\s*")).filter(s -> !s.isEmpty()).forEach(s -> {
