@@ -67,8 +67,12 @@ public class RedPenProvider {
     return initialConfigs.get(key);
   }
 
-  public Map<String, Configuration> getAvailableConfigs() {
+  public Map<String, Configuration> getConfigs() {
     return configs;
+  }
+
+  public Configuration getConfig(String key) {
+    return configs.get(key);
   }
 
   public Configuration getActiveConfig() {

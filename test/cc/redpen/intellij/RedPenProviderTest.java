@@ -2,16 +2,16 @@ package cc.redpen.intellij;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 public class RedPenProviderTest {
   private RedPenProvider provider = RedPenProvider.getInstance();
 
   @Test
   public void allConfigFilesAreLoaded() throws Exception {
-    assertTrue(provider.getAvailableConfigs().keySet().contains("en"));
-    assertTrue(provider.getAvailableConfigs().keySet().contains("ja"));
-    assertTrue(provider.getAvailableConfigs().keySet().contains("ja.hankaku"));
-    assertTrue(provider.getAvailableConfigs().keySet().contains("ja.zenkaku2"));
+    assertEquals("en", provider.getConfig("en").getKey());
+    assertEquals("ja", provider.getConfig("ja").getKey());
+    assertEquals("ja.hankaku", provider.getConfig("ja.hankaku").getKey());
+    assertEquals("ja.zenkaku2", provider.getConfig("ja.zenkaku2").getKey());
   }
 }

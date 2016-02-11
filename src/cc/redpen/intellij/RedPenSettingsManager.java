@@ -17,7 +17,7 @@ import java.util.List;
 
 public class RedPenSettingsManager implements SearchableConfigurable {
   RedPenProvider redPenProvider = RedPenProvider.getInstance();
-  RedPenSettingsPane settingsPane = new RedPenSettingsPane();
+  RedPenSettingsPane settingsPane = new RedPenSettingsPane(redPenProvider);
 
   @NotNull @Override public String getId() {
     return getHelpTopic();

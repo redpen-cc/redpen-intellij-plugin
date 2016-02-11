@@ -20,22 +20,22 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
-  RedPenSettingsPane settingsPane = new RedPenSettingsPane();
+  RedPenProvider provider = mock(RedPenProvider.class);
+  RedPenSettingsPane settingsPane = new RedPenSettingsPane(provider);
 
   @Before
   public void setUp() throws Exception {
-    settingsPane.redPenProvider = mock(RedPenProvider.class);
     settingsPane.validators = mock(JTable.class, RETURNS_DEEP_STUBS);
     settingsPane.symbols = mock(JTable.class, RETURNS_DEEP_STUBS);
   }
 
   @Test
   public void languagesAndVariantsArePrepopulated() throws Exception {
-    when(settingsPane.redPenProvider.getAvailableConfigs()).thenReturn(ImmutableMap.of("en", mock(Configuration.class), "ja", mock(Configuration.class)));
-    settingsPane.config = settingsPane.redPenProvider.getAvailableConfigs().get("ja");
+    when(settingsPane.redPenProvider.getConfigs()).thenReturn(ImmutableMap.of("en", mock(Configuration.class), "ja", mock(Configuration.class)));
+    settingsPane.config = settingsPane.redPenProvider.getConfigs().get("ja");
     when(settingsPane.config.getKey()).thenReturn("ja");
 
-    settingsPane.populateLanguages();
+    settingsPane.initLanguages();
 
     assertEquals(2, settingsPane.language.getItemCount());
     assertEquals("en", settingsPane.language.getItemAt(0));
@@ -47,19 +47,19 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void changingOfLanguageRebuildsValidatorsAndSymbols() throws Exception {
     Configuration en = config("en");
     Configuration ja = config("ja");
-    when(settingsPane.redPenProvider.getAvailableConfigs()).thenReturn(ImmutableMap.of("en", en, "ja", ja));
+    when(settingsPane.redPenProvider.getConfigs()).thenReturn(ImmutableMap.of("en", en, "ja", ja));
     when(settingsPane.redPenProvider.getActiveConfig()).thenReturn(en);
 
     settingsPane = spy(settingsPane);
-    doNothing().when(settingsPane).build();
+    doNothing().when(settingsPane).initTabs();
 
     settingsPane.getPane();
     assertSame(settingsPane.redPenProvider.getActiveConfig(), settingsPane.config);
-    verify(settingsPane).build();
+    verify(settingsPane).initTabs();
 
     settingsPane.language.setSelectedItem("ja");
-    assertSame(settingsPane.redPenProvider.getAvailableConfigs().get("ja"), settingsPane.config);
-    verify(settingsPane, times(2)).build();
+    assertSame(settingsPane.redPenProvider.getConfigs().get("ja"), settingsPane.config);
+    verify(settingsPane, times(2)).initTabs();
   }
 
   private Configuration config(String key) {

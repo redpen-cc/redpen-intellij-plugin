@@ -14,7 +14,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 
 public class RedPenSettingsPane {
-  RedPenProvider redPenProvider = RedPenProvider.getInstance();
+  RedPenProvider redPenProvider;
   Configuration config;
   private JPanel root;
   private JTabbedPane tabbedPane;
@@ -22,26 +22,29 @@ public class RedPenSettingsPane {
   JTable symbols;
   JComboBox<String> language;
 
-  public JPanel getPane() {
+  public RedPenSettingsPane(RedPenProvider redPenProvider) {
+    this.redPenProvider = redPenProvider;
     config = redPenProvider.getActiveConfig();
-    populateLanguages();
-    build();
-    language.addActionListener(a -> {
-      //noinspection SuspiciousMethodCalls
-      config = redPenProvider.getAvailableConfigs().get(language.getSelectedItem());
-      build();
-    });
+  }
+
+  public JPanel getPane() {
+    initLanguages();
+    initTabs();
     return root;
   }
 
-  void build() {
-    populateValidators();
-    populateSymbols();
+  void initLanguages() {
+    redPenProvider.getConfigs().keySet().forEach(k -> language.addItem(k));
+    language.setSelectedItem(config.getKey());
+    language.addActionListener(a -> {
+      config = redPenProvider.getConfig((String)language.getSelectedItem());
+      initTabs();
+    });
   }
 
-  void populateLanguages() {
-    redPenProvider.getAvailableConfigs().keySet().forEach(k -> language.addItem(k));
-    language.setSelectedItem(config.getKey());
+  void initTabs() {
+    populateValidators();
+    populateSymbols();
   }
 
   private void populateSymbols() {
