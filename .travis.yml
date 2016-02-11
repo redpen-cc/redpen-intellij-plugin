@@ -4,4 +4,4 @@ jdk:
   - oraclejdk8
 
 install: ant deps download-idea
-script: ant all test
+script: ant all
