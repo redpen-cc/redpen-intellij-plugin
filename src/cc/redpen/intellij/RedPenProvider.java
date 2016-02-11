@@ -35,6 +35,12 @@ public class RedPenProvider {
     loadConfig("redpen-conf-ja-zenkaku2.xml", initialConfigs);
   }
 
+  /** For tests */
+  RedPenProvider(Map<String, Configuration> configs) {
+    this.configs = configs;
+    this.initialConfigs = configs;
+  }
+
   private void loadConfig(String fileName, Map<String, Configuration> target) {
     try {
       Configuration configuration = new ConfigurationLoader().loadFromResource("/" + fileName);

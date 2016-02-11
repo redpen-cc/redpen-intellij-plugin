@@ -43,11 +43,11 @@ public class RedPenSettingsPane {
   }
 
   void initTabs() {
-    populateValidators();
-    populateSymbols();
+    initValidators();
+    initSymbols();
   }
 
-  private void populateSymbols() {
+  void initSymbols() {
     symbols.removeAll();
     DefaultTableModel model = createSymbolsModel();
     symbols.setModel(model);
@@ -72,7 +72,7 @@ public class RedPenSettingsPane {
     symbols.doLayout();
   }
 
-  private void populateValidators() {
+  void initValidators() {
     validators.removeAll();
     DefaultTableModel model = createValidatorsModel();
     validators.setModel(model);

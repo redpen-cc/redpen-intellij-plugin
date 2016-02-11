@@ -9,18 +9,21 @@ import org.junit.Test;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.util.List;
 import java.util.Map;
 
 import static cc.redpen.config.SymbolType.AMPERSAND;
 import static cc.redpen.config.SymbolType.ASTERISK;
 import static java.util.Arrays.asList;
-import static java.util.Collections.*;
-import static org.junit.Assert.*;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
-  RedPenProvider provider = mock(RedPenProvider.class);
+  RedPenProvider provider = new RedPenProvider(ImmutableMap.of("en", config("en"), "ja", config("ja")));
   RedPenSettingsPane settingsPane = new RedPenSettingsPane(provider);
 
   @Before
@@ -30,10 +33,13 @@ public class RedPenSettingsPaneTest extends BaseTest {
   }
 
   @Test
+  public void activeConfigIsRetrievedOnCreation() throws Exception {
+    assertSame(provider.getActiveConfig(), settingsPane.config);
+  }
+
+  @Test
   public void languagesAndVariantsArePrepopulated() throws Exception {
-    when(settingsPane.redPenProvider.getConfigs()).thenReturn(ImmutableMap.of("en", mock(Configuration.class), "ja", mock(Configuration.class)));
-    settingsPane.config = settingsPane.redPenProvider.getConfigs().get("ja");
-    when(settingsPane.config.getKey()).thenReturn("ja");
+    settingsPane.config = provider.getConfig("ja");
 
     settingsPane.initLanguages();
 
@@ -44,28 +50,31 @@ public class RedPenSettingsPaneTest extends BaseTest {
   }
 
   @Test
-  public void changingOfLanguageRebuildsValidatorsAndSymbols() throws Exception {
-    Configuration en = config("en");
-    Configuration ja = config("ja");
-    when(settingsPane.redPenProvider.getConfigs()).thenReturn(ImmutableMap.of("en", en, "ja", ja));
-    when(settingsPane.redPenProvider.getActiveConfig()).thenReturn(en);
+  public void getPaneInitsEverything() throws Exception {
+    settingsPane = mock(RedPenSettingsPane.class);
 
+    doCallRealMethod().when(settingsPane).getPane();
+    doCallRealMethod().when(settingsPane).initTabs();
+
+    settingsPane.getPane();
+
+    verify(settingsPane).initLanguages();
+    verify(settingsPane).initValidators();
+    verify(settingsPane).initSymbols();
+  }
+
+  @Test
+  public void changingOfLanguageRebuildsValidatorsAndSymbols() throws Exception {
     settingsPane = spy(settingsPane);
     doNothing().when(settingsPane).initTabs();
 
     settingsPane.getPane();
-    assertSame(settingsPane.redPenProvider.getActiveConfig(), settingsPane.config);
+    assertSame(provider.getActiveConfig(), settingsPane.config);
     verify(settingsPane).initTabs();
 
     settingsPane.language.setSelectedItem("ja");
-    assertSame(settingsPane.redPenProvider.getConfigs().get("ja"), settingsPane.config);
+    assertSame(provider.getConfigs().get("ja"), settingsPane.config);
     verify(settingsPane, times(2)).initTabs();
-  }
-
-  private Configuration config(String key) {
-    Configuration config = mock(Configuration.class);
-    when(config.getKey()).thenReturn(key);
-    return config;
   }
 
   @Test
@@ -74,14 +83,14 @@ public class RedPenSettingsPaneTest extends BaseTest {
       validatorConfig("first", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
       validatorConfig("second one", emptyMap()));
 
-    when(settingsPane.redPenProvider.getInitialConfig("en")).thenReturn(redPenConfigWithValidators(allValidators));
-    when(settingsPane.redPenProvider.getActiveConfig()).thenReturn(redPenConfigWithValidators(singletonList(validatorConfig("second one", emptyMap()))));
+    when(provider.getInitialConfig("en").getValidatorConfigs()).thenReturn(allValidators);
+    settingsPane.config = redPenConfigWithValidators(singletonList(validatorConfig("second one", emptyMap())));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     settingsPane = spy(settingsPane);
     doReturn(model).when(settingsPane).createValidatorsModel();
 
-    assertNotNull(settingsPane.getPane());
+    settingsPane.initValidators();
 
     verify(model).addRow(new Object[] {false, "first", "attr2=val2, attr1=val1"});
     verify(model).addRow(new Object[] {true, "second one", ""});
@@ -89,11 +98,9 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getActiveValidators_returnsOnlySelectedValidators() throws Exception {
-    Configuration config = redPenConfigWithValidators(asList(
+    when(provider.getInitialConfig("en").getValidatorConfigs()).thenReturn(asList(
       new ValidatorConfiguration("first"),
       new ValidatorConfiguration("second one")));
-
-    when(settingsPane.redPenProvider.getInitialConfig("en")).thenReturn(config);
 
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(2);
     when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(false);
@@ -107,8 +114,8 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getActiveValidators_modifiesAttributes() throws Exception {
-    Configuration config = redPenConfigWithValidators(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300", "depth", "1"))));
-    when(settingsPane.redPenProvider.getInitialConfig("en")).thenReturn(config);
+    when(provider.getInitialConfig("en").getValidatorConfigs()).thenReturn(
+      singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300", "depth", "1"))));
 
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(1);
     when(settingsPane.validators.getModel().getValueAt(0, 0)).thenReturn(true);
@@ -121,8 +128,9 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getActiveValidators_reportsInvalidAttributes() throws Exception {
-    Configuration config = redPenConfigWithValidators(singletonList(validatorConfig("Hello", ImmutableMap.of("width", "100"))));
-    when(settingsPane.redPenProvider.getInitialConfig("en")).thenReturn(config);
+    ValidatorConfiguration validator = validatorConfig("Hello", ImmutableMap.of("width", "100"));
+    when(provider.getInitialConfig("en").getValidatorConfigs()).thenReturn(singletonList(validator));
+
     settingsPane = spy(settingsPane);
     doNothing().when(settingsPane).showPropertyError(any(ValidatorConfiguration.class), anyString());
 
@@ -131,11 +139,11 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
     when(settingsPane.validators.getModel().getValueAt(0, 2)).thenReturn("width");
     settingsPane.getActiveValidators();
-    verify(settingsPane).showPropertyError(config.getValidatorConfigs().get(0), "width");
+    verify(settingsPane).showPropertyError(validator, "width");
 
     when(settingsPane.validators.getModel().getValueAt(0, 2)).thenReturn("=");
     settingsPane.getActiveValidators();
-    verify(settingsPane).showPropertyError(config.getValidatorConfigs().get(0), "=");
+    verify(settingsPane).showPropertyError(validator, "=");
   }
 
   @Test
@@ -147,16 +155,13 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void symbolsAreListedInSettings() throws Exception {
-    Configuration config = redPenConfigWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
-
-    when(settingsPane.redPenProvider.getInitialConfig("en")).thenReturn(redPenConfigWithValidators(emptyList()));
-    when(settingsPane.redPenProvider.getActiveConfig()).thenReturn(config);
+    settingsPane.config = redPenConfigWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     settingsPane = spy(settingsPane);
     doReturn(model).when(settingsPane).createSymbolsModel();
 
-    assertNotNull(settingsPane.getPane());
+    settingsPane.initSymbols();
 
     verify(model).addRow(new Object[] {AMPERSAND.toString(), '&', "$%", true, false});
     verify(model).addRow(new Object[] {ASTERISK.toString(), '*', "", false, true});
@@ -164,19 +169,20 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getSymbols() throws Exception {
-    when(settingsPane.symbols.getModel().getRowCount()).thenReturn(2);
+    TableModel model = settingsPane.symbols.getModel();
+    when(model.getRowCount()).thenReturn(2);
 
-    when(settingsPane.symbols.getModel().getValueAt(0, 0)).thenReturn("AMPERSAND");
-    when(settingsPane.symbols.getModel().getValueAt(0, 1)).thenReturn('&');
-    when(settingsPane.symbols.getModel().getValueAt(0, 2)).thenReturn("$%");
-    when(settingsPane.symbols.getModel().getValueAt(0, 3)).thenReturn(true);
-    when(settingsPane.symbols.getModel().getValueAt(0, 4)).thenReturn(false);
+    when(model.getValueAt(0, 0)).thenReturn("AMPERSAND");
+    when(model.getValueAt(0, 1)).thenReturn('&');
+    when(model.getValueAt(0, 2)).thenReturn("$%");
+    when(model.getValueAt(0, 3)).thenReturn(true);
+    when(model.getValueAt(0, 4)).thenReturn(false);
 
-    when(settingsPane.symbols.getModel().getValueAt(1, 0)).thenReturn("ASTERISK");
-    when(settingsPane.symbols.getModel().getValueAt(1, 1)).thenReturn("*");
-    when(settingsPane.symbols.getModel().getValueAt(1, 2)).thenReturn("");
-    when(settingsPane.symbols.getModel().getValueAt(1, 3)).thenReturn(false);
-    when(settingsPane.symbols.getModel().getValueAt(1, 4)).thenReturn(true);
+    when(model.getValueAt(1, 0)).thenReturn("ASTERISK");
+    when(model.getValueAt(1, 1)).thenReturn("*");
+    when(model.getValueAt(1, 2)).thenReturn("");
+    when(model.getValueAt(1, 3)).thenReturn(false);
+    when(model.getValueAt(1, 4)).thenReturn(true);
 
     List<Symbol> symbols = settingsPane.getSymbols();
     assertEquals(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)), symbols);
@@ -185,6 +191,12 @@ public class RedPenSettingsPaneTest extends BaseTest {
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
     ValidatorConfiguration config = new ValidatorConfiguration(name);
     attributes.entrySet().stream().forEach(entry -> config.addAttribute(entry.getKey(), entry.getValue()));
+    return config;
+  }
+
+  private Configuration config(String key) {
+    Configuration config = mock(Configuration.class);
+    when(config.getKey()).thenReturn(key);
     return config;
   }
 }
