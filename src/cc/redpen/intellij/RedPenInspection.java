@@ -47,8 +47,8 @@ public class RedPenInspection extends LocalInspectionTool {
     if (parser == null) return null;
 
     try {
-      RedPen redPen = redPenProvider.getRedPen();
       String text = file.getText();
+      RedPen redPen = redPenProvider.getRedPenFor(text);
       Document redPenDoc = redPen.parse(parser, text);
       List<ValidationError> errors = redPen.validate(redPenDoc);
 

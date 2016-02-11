@@ -21,6 +21,7 @@ public class RedPenSettingsPane {
   JTable validators;
   JTable symbols;
   JComboBox<String> language;
+  private JCheckBox autodetectLanguage;
 
   public RedPenSettingsPane(RedPenProvider redPenProvider) {
     this.redPenProvider = redPenProvider;

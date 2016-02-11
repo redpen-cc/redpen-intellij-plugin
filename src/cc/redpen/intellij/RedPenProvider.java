@@ -5,6 +5,7 @@ import cc.redpen.RedPen;
 import cc.redpen.RedPenException;
 import cc.redpen.config.Configuration;
 import cc.redpen.parser.DocumentParser;
+import cc.redpen.util.LanguageDetector;
 import com.google.common.collect.ImmutableMap;
 import com.intellij.psi.PsiFile;
 
@@ -63,6 +64,11 @@ public class RedPenProvider {
     catch (RedPenException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public RedPen getRedPenFor(String text) {
+    configKey = new LanguageDetector().detectLanguage(text);
+    return getRedPen();
   }
 
   public DocumentParser getParser(PsiFile file) {
