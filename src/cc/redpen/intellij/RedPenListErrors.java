@@ -31,8 +31,9 @@ public class RedPenListErrors extends AnAction {
         }
 
         try {
-            RedPen redPen = redPenProvider.getRedPen();
-            Document redPenDoc = redPen.parse(redPenProvider.getParser(file), file.getText());
+            String text = file.getText();
+            RedPen redPen = redPenProvider.getRedPenFor(text);
+            Document redPenDoc = redPen.parse(redPenProvider.getParser(file), text);
             List<ValidationError> errors = redPen.validate(redPenDoc);
 
             Messages.showMessageDialog(project, errors.stream().map(e ->
