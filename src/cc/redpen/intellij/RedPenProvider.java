@@ -12,6 +12,8 @@ import com.intellij.psi.PsiFile;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toMap;
+
 public class RedPenProvider {
   private static RedPenProvider instance;
   private Map<String, Configuration> initialConfigs = new LinkedHashMap<>();
@@ -26,15 +28,12 @@ public class RedPenProvider {
   );
 
   private RedPenProvider() {
-    loadConfig("redpen-conf.xml", configs);
-    loadConfig("redpen-conf-ja.xml", configs);
-    loadConfig("redpen-conf-ja-hankaku.xml", configs);
-    loadConfig("redpen-conf-ja-zenkaku2.xml", configs);
+    loadConfig("redpen-conf.xml");
+    loadConfig("redpen-conf-ja.xml");
+    loadConfig("redpen-conf-ja-hankaku.xml");
+    loadConfig("redpen-conf-ja-zenkaku2.xml");
 
-    loadConfig("redpen-conf.xml", initialConfigs);
-    loadConfig("redpen-conf-ja.xml", initialConfigs);
-    loadConfig("redpen-conf-ja-hankaku.xml", initialConfigs);
-    loadConfig("redpen-conf-ja-zenkaku2.xml", initialConfigs);
+    configs.putAll(initialConfigs.entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue().clone())));
   }
 
   /** For tests */
@@ -43,10 +42,10 @@ public class RedPenProvider {
     this.initialConfigs = configs;
   }
 
-  private void loadConfig(String fileName, Map<String, Configuration> target) {
+  private void loadConfig(String fileName) {
     try {
       Configuration configuration = new ConfigurationLoader().loadFromResource("/" + fileName);
-      target.put(configuration.getKey(), configuration);
+      initialConfigs.put(configuration.getKey(), configuration);
     }
     catch (RedPenException e) {
       throw new RuntimeException(e);
