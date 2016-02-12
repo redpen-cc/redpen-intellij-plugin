@@ -18,6 +18,8 @@ public class RedPenProviderTest {
 
   @Test
   public void getRedPenFor_autodetectsLanguage() throws Exception {
+    provider.setAutodetect(true);
+
     RedPen redPen = provider.getRedPenFor("Hello");
     assertEquals("en", redPen.getConfiguration().getKey());
 
