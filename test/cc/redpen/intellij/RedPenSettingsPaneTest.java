@@ -173,6 +173,13 @@ public class RedPenSettingsPaneTest extends BaseTest {
   }
 
   @Test
+  public void getSymbols_appliesActiveCellEditorChanges() throws Exception {
+    when(settingsPane.symbols.isEditing()).thenReturn(true);
+    settingsPane.getSymbols();
+    verify(settingsPane.symbols.getCellEditor()).stopCellEditing();
+  }
+
+  @Test
   public void symbolsAreListedInSettings() throws Exception {
     settingsPane.config = redPenConfigWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
 

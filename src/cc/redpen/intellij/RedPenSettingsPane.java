@@ -140,6 +140,8 @@ public class RedPenSettingsPane {
   }
 
   public List<Symbol> getSymbols() {
+    if (symbols.isEditing()) symbols.getCellEditor().stopCellEditing();
+
     TableModel model = symbols.getModel();
     return range(0, model.getRowCount()).mapToObj(i -> new Symbol(
       SymbolType.valueOf((String)model.getValueAt(i, 0)), String.valueOf(model.getValueAt(i, 1)).charAt(0), (String)model.getValueAt(i, 2),
