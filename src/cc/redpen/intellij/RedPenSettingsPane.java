@@ -31,7 +31,7 @@ public class RedPenSettingsPane {
 
   public RedPenSettingsPane(RedPenProvider redPenProvider) {
     this.redPenProvider = redPenProvider;
-    config = redPenProvider.getActiveConfig();
+    config = redPenProvider.getActiveConfig().clone();
   }
 
   public JPanel getPane() {
@@ -42,15 +42,18 @@ public class RedPenSettingsPane {
   }
 
   void initButtons() {
-    exportButton.addActionListener(a -> {
-      try {
-        if (fileChooser.showSaveDialog(root) != APPROVE_OPTION) return;
-        configurationExporter.export(config, new FileOutputStream(fileChooser.getSelectedFile()));
-      }
-      catch (IOException e) {
-        Messages.showMessageDialog("Cannot write to file: " + e.getMessage(), "RedPen", Messages.getErrorIcon());
-      }
-    });
+    exportButton.addActionListener(a -> export());
+  }
+
+  void export() {
+    try {
+      if (fileChooser.showSaveDialog(root) != APPROVE_OPTION) return;
+      save(config);
+      configurationExporter.export(config, new FileOutputStream(fileChooser.getSelectedFile()));
+    }
+    catch (IOException e) {
+      Messages.showMessageDialog("Cannot write to file: " + e.getMessage(), "RedPen", Messages.getErrorIcon());
+    }
   }
 
   void initLanguages() {
@@ -152,6 +155,23 @@ public class RedPenSettingsPane {
   private String attributes(ValidatorConfiguration validatorConfig) {
     String result = validatorConfig.getAttributes().toString();
     return result.substring(1, result.length() - 1);
+  }
+
+  void applyValidatorsChanges(Configuration config) {
+    List<ValidatorConfiguration> validators = config.getValidatorConfigs();
+    List<ValidatorConfiguration> remainingValidators = getActiveValidators();
+    validators.clear();
+    validators.addAll(remainingValidators);
+  }
+
+  void applySymbolsChanges(Configuration config) {
+    SymbolTable symbolTable = config.getSymbolTable();
+    getSymbols().stream().forEach(symbolTable::overrideSymbol);
+  }
+
+  void save(Configuration config) {
+    applyValidatorsChanges(config);
+    applySymbolsChanges(config);
   }
 
   DefaultTableModel createValidatorsModel() {

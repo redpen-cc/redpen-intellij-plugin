@@ -1,19 +1,11 @@
 package cc.redpen.intellij;
 
 import cc.redpen.config.Configuration;
-import cc.redpen.config.Symbol;
-import cc.redpen.config.ValidatorConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
-import static cc.redpen.config.SymbolType.BACKSLASH;
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsManagerTest extends BaseTest {
@@ -46,27 +38,15 @@ public class RedPenSettingsManagerTest extends BaseTest {
   }
 
   @Test
-  public void applyValidators() throws Exception {
-    List<ValidatorConfiguration> allValidators = asList(new ValidatorConfiguration("1"), new ValidatorConfiguration("2"));
-    when(manager.redPenProvider.getActiveConfig()).thenReturn(redPenConfigWithValidators(allValidators));
-
-    List<ValidatorConfiguration> activeValidators = new ArrayList<>(allValidators.subList(0, 1));
-    when(manager.settingsPane.getActiveValidators()).thenReturn(activeValidators);
+  public void applyValidatorsAndSymbols() throws Exception {
+    Configuration config = mock(Configuration.class);
+    when(manager.redPenProvider.getActiveConfig()).thenReturn(config);
+    doCallRealMethod().when(manager.settingsPane).save(config);
 
     manager.apply();
 
-    assertEquals(activeValidators, manager.redPenProvider.getActiveConfig().getValidatorConfigs());
-    verify(manager).restartInspections();
-  }
-
-  @Test
-  public void applySymbols() throws Exception {
-    Symbol symbol = new Symbol(BACKSLASH, '\\');
-    when(manager.settingsPane.getSymbols()).thenReturn(singletonList(symbol));
-
-    manager.apply();
-
-    verify(manager.redPenProvider.getActiveConfig().getSymbolTable()).overrideSymbol(symbol);
+    verify(manager.settingsPane).applyValidatorsChanges(config);
+    verify(manager.settingsPane).applySymbolsChanges(config);
     verify(manager).restartInspections();
   }
 }

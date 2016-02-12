@@ -14,11 +14,11 @@ import javax.swing.table.TableModel;
 import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static cc.redpen.config.SymbolType.AMPERSAND;
-import static cc.redpen.config.SymbolType.ASTERISK;
+import static cc.redpen.config.SymbolType.*;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
-  RedPenProvider provider = new RedPenProvider(ImmutableMap.of("en", config("en"), "ja", config("ja")));
+  RedPenProvider provider = new RedPenProvider(ImmutableMap.of("en", cloneableConfig("en"), "ja", cloneableConfig("ja")));
   RedPenSettingsPane settingsPane = new RedPenSettingsPane(provider);
 
   @Before
@@ -38,8 +38,8 @@ public class RedPenSettingsPaneTest extends BaseTest {
   }
 
   @Test
-  public void activeConfigIsRetrievedOnCreation() throws Exception {
-    assertSame(provider.getActiveConfig(), settingsPane.config);
+  public void activeConfigIsClonedOnCreation() throws Exception {
+    assertSame(provider.getActiveConfig().clone(), settingsPane.config);
   }
 
   @Test
@@ -88,7 +88,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
     doNothing().when(settingsPane).initTabs();
 
     settingsPane.getPane();
-    assertSame(provider.getActiveConfig(), settingsPane.config);
+    assertSame(provider.getActiveConfig().clone(), settingsPane.config);
     verify(settingsPane).initTabs();
 
     settingsPane.language.setSelectedItem("ja");
@@ -218,10 +218,12 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void canCancelExportingConfiguration() throws Exception {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.initButtons();
-
+    settingsPane = spy(settingsPane);
     when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(CANCEL_OPTION);
+
     settingsPane.exportButton.doClick();
 
+    verify(settingsPane, never()).save(any());
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verifyNoMoreInteractions(settingsPane.fileChooser);
   }
@@ -231,6 +233,8 @@ public class RedPenSettingsPaneTest extends BaseTest {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.configurationExporter = mock(ConfigurationExporter.class);
     settingsPane.initButtons();
+    settingsPane = spy(settingsPane);
+    doNothing().when(settingsPane).save(any());
 
     when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
 
@@ -238,15 +242,50 @@ public class RedPenSettingsPaneTest extends BaseTest {
     file.deleteOnExit();
     when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
 
-    settingsPane.exportButton.doClick();
+    settingsPane.export();
+
+    verify(settingsPane).save(settingsPane.config);
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verify(settingsPane.fileChooser).getSelectedFile();
     verify(settingsPane.configurationExporter).export(eq(settingsPane.config), any(FileOutputStream.class));
   }
 
+  @Test
+  public void applyValidators() throws Exception {
+    List<ValidatorConfiguration> allValidators = asList(new ValidatorConfiguration("1"), new ValidatorConfiguration("2"));
+    Configuration config = redPenConfigWithValidators(allValidators);
+
+    List<ValidatorConfiguration> activeValidators = new ArrayList<>(allValidators.subList(0, 1));
+    settingsPane = spy(settingsPane);
+    doReturn(activeValidators).when(settingsPane).getActiveValidators();
+
+    settingsPane.applyValidatorsChanges(config);
+
+    assertEquals(activeValidators, config.getValidatorConfigs());
+  }
+
+  @Test
+  public void applySymbols() throws Exception {
+    Symbol symbol = new Symbol(BACKSLASH, '\\');
+    settingsPane = spy(settingsPane);
+    doReturn(singletonList(symbol)).when(settingsPane).getSymbols();
+    Configuration config = mock(Configuration.class, RETURNS_DEEP_STUBS);
+
+    settingsPane.applySymbolsChanges(config);
+
+    verify(config.getSymbolTable()).overrideSymbol(symbol);
+  }
+
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
     ValidatorConfiguration config = new ValidatorConfiguration(name);
     attributes.entrySet().stream().forEach(entry -> config.addAttribute(entry.getKey(), entry.getValue()));
+    return config;
+  }
+
+  private Configuration cloneableConfig(String key) {
+    Configuration config = config(key);
+    Configuration configClone = config(key);
+    when(config.clone()).thenReturn(configClone);
     return config;
   }
 
