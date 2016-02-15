@@ -222,7 +222,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void canCancelExportingConfiguration() throws Exception {
-    settingsPane.fileChooser = mock(JFileChooser.class);
+    prepareImportExport();
     settingsPane.initButtons();
     when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(CANCEL_OPTION);
 
@@ -235,14 +235,11 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void canExportConfiguration() throws Exception {
-    settingsPane.fileChooser = mock(JFileChooser.class);
-    settingsPane.configurationExporter = mock(ConfigurationExporter.class);
-    doNothing().when(settingsPane).apply(any());
-
-    when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
-
+    prepareImportExport();
     File file = File.createTempFile("redpen-conf", ".xml");
     file.deleteOnExit();
+
+    when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
     when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
 
     settingsPane.exportConfig();
@@ -255,7 +252,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void canCancelImportingConfiguration() throws Exception {
-    settingsPane.fileChooser = mock(JFileChooser.class);
+    prepareImportExport();
     settingsPane.initButtons();
     when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(CANCEL_OPTION);
 
@@ -265,18 +262,14 @@ public class RedPenSettingsPaneTest extends BaseTest {
     verifyNoMoreInteractions(settingsPane.fileChooser);
   }
 
-  @Test @SuppressWarnings("unchecked")
+  @Test
   public void canImportConfiguration() throws Exception {
-    settingsPane.fileChooser = mock(JFileChooser.class);
-    settingsPane.configurationLoader = mock(ConfigurationLoader.class);
-    settingsPane.language = mock(JComboBox.class);
-
-    doNothing().when(settingsPane).initTabs();
-    when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
-
+    prepareImportExport();
     File file = mock(File.class);
-    when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
     Configuration config = config("ja.hankaku");
+
+    when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
+    when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
     when(settingsPane.configurationLoader.load(file)).thenReturn(config);
     when(settingsPane.language.getSelectedItem()).thenReturn("ja.hankaku");
 
@@ -290,19 +283,15 @@ public class RedPenSettingsPaneTest extends BaseTest {
     verify(settingsPane.language).setSelectedItem("ja.hankaku");
   }
 
-  @Test @SuppressWarnings("unchecked")
+  @Test
   public void canImportConfigurationAddingNewLanguage() throws Exception {
-    settingsPane.fileChooser = mock(JFileChooser.class);
-    settingsPane.configurationLoader = mock(ConfigurationLoader.class);
-    settingsPane.language = mock(JComboBox.class);
-
-    doNothing().when(settingsPane).initTabs();
-    when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
-
+    prepareImportExport();
     Configuration config = config("za");
-    when(settingsPane.configurationLoader.load(any(File.class))).thenReturn(config);
     Configuration clone1 = config("za");
     Configuration clone2 = config("za");
+
+    when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
+    when(settingsPane.configurationLoader.load(any(File.class))).thenReturn(config);
     when(config.clone()).thenReturn(clone1, clone2);
 
     settingsPane.importConfig();
@@ -311,6 +300,16 @@ public class RedPenSettingsPaneTest extends BaseTest {
     assertSame(clone2, settingsPane.redPenProvider.getConfig("za"));
     verify(settingsPane.language).addItem("za");
     verify(settingsPane.language, times(2)).setSelectedItem("za");
+  }
+
+  @SuppressWarnings("unchecked")
+  private void prepareImportExport() {
+    settingsPane.fileChooser = mock(JFileChooser.class);
+    settingsPane.configurationLoader = mock(ConfigurationLoader.class);
+    settingsPane.configurationExporter = mock(ConfigurationExporter.class);
+    settingsPane.language = mock(JComboBox.class);
+    doNothing().when(settingsPane).initTabs();
+    doNothing().when(settingsPane).apply(any());
   }
 
   @Test
