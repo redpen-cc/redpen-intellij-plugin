@@ -49,4 +49,12 @@ public class RedPenSettingsManagerTest extends BaseTest {
     verify(manager.settingsPane).applySymbolsChanges(config);
     verify(manager).restartInspections();
   }
+
+  @Test
+  public void reset() throws Exception {
+    manager.reset();
+
+    verify(manager.redPenProvider).reset();
+    verify(manager.settingsPane).reset();
+  }
 }

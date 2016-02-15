@@ -336,22 +336,22 @@ public class RedPenSettingsPaneTest extends BaseTest {
     verify(config.getSymbolTable()).overrideSymbol(symbol);
   }
 
+  @Test
+  public void reset() throws Exception {
+    doNothing().when(settingsPane).initTabs();
+    Configuration config = cloneableConfig("en");
+    settingsPane.redPenProvider = mock(RedPenProvider.class);
+    when(settingsPane.redPenProvider.getConfig("en")).thenReturn(config);
+
+    settingsPane.reset();
+
+    assertSame(config.clone(), settingsPane.config);
+    verify(settingsPane).initTabs();
+  }
+
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
     ValidatorConfiguration config = new ValidatorConfiguration(name);
     attributes.entrySet().stream().forEach(entry -> config.addAttribute(entry.getKey(), entry.getValue()));
-    return config;
-  }
-
-  private Configuration cloneableConfig(String key) {
-    Configuration config = config(key);
-    Configuration configClone = config(key);
-    when(config.clone()).thenReturn(configClone);
-    return config;
-  }
-
-  private Configuration config(String key) {
-    Configuration config = mock(Configuration.class);
-    when(config.getKey()).thenReturn(key);
     return config;
   }
 }

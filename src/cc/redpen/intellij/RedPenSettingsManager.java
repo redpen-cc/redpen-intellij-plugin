@@ -48,6 +48,8 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   }
 
   @Override public void reset() {
+    redPenProvider.reset();
+    settingsPane.reset();
   }
 
   @Override public void disposeUIResources() {

@@ -201,6 +201,11 @@ public class RedPenSettingsPane {
     applySymbolsChanges(config);
   }
 
+  public void reset() {
+    config = redPenProvider.getConfig(config.getKey()).clone();
+    initTabs();
+  }
+
   DefaultTableModel createValidatorsModel() {
     return new DefaultTableModel() {
       @Override public Class<?> getColumnClass(int i) {

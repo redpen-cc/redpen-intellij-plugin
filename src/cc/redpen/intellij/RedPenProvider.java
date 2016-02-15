@@ -12,8 +12,6 @@ import com.intellij.psi.PsiFile;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static java.util.stream.Collectors.toMap;
-
 public class RedPenProvider {
   private static RedPenProvider instance;
   private Map<String, Configuration> initialConfigs = new LinkedHashMap<>();
@@ -27,13 +25,21 @@ public class RedPenProvider {
     "AsciiDoc", DocumentParser.ASCIIDOC
   );
 
+  public static RedPenProvider getInstance() {
+    if (instance == null) instance = new RedPenProvider();
+    return instance;
+  }
+
   private RedPenProvider() {
     loadConfig("redpen-conf.xml");
     loadConfig("redpen-conf-ja.xml");
     loadConfig("redpen-conf-ja-hankaku.xml");
     loadConfig("redpen-conf-ja-zenkaku2.xml");
+    reset();
+  }
 
-    configs.putAll(initialConfigs.entrySet().stream().collect(toMap(Map.Entry::getKey, e -> e.getValue().clone())));
+  public void reset() {
+    initialConfigs.forEach((k,v) -> configs.put(k, v.clone()));
   }
 
   /** For tests */
@@ -55,11 +61,6 @@ public class RedPenProvider {
   public void addConfig(Configuration config) {
     initialConfigs.put(config.getKey(), config.clone());
     configs.put(config.getKey(), config.clone());
-  }
-
-  public static RedPenProvider getInstance() {
-    if (instance == null) instance = new RedPenProvider();
-    return instance;
   }
 
   public RedPen getRedPen() {
