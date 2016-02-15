@@ -43,7 +43,7 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   @Override public void apply() throws ConfigurationException {
     redPenProvider.setActiveConfig(settingsPane.config);
     redPenProvider.setAutodetect(settingsPane.autodetectLanguage.isSelected());
-    settingsPane.save(redPenProvider.getActiveConfig());
+    settingsPane.apply(redPenProvider.getActiveConfig());
     restartInspections();
   }
 

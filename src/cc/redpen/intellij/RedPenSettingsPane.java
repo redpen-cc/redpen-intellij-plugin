@@ -1,9 +1,11 @@
 package cc.redpen.intellij;
 
+import cc.redpen.RedPenException;
 import cc.redpen.config.*;
 import com.intellij.openapi.ui.Messages;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.io.FileOutputStream;
@@ -26,12 +28,15 @@ public class RedPenSettingsPane {
   JComboBox<String> language;
   JCheckBox autodetectLanguage;
   JButton exportButton;
+  JButton importButton;
   JFileChooser fileChooser = new JFileChooser();
   ConfigurationExporter configurationExporter = new ConfigurationExporter();
+  ConfigurationLoader configurationLoader = new ConfigurationLoader();
 
   public RedPenSettingsPane(RedPenProvider redPenProvider) {
     this.redPenProvider = redPenProvider;
     config = redPenProvider.getActiveConfig().clone();
+    fileChooser.setFileFilter(new FileNameExtensionFilter("RedPen Configuration", "xml"));
   }
 
   public JPanel getPane() {
@@ -42,13 +47,24 @@ public class RedPenSettingsPane {
   }
 
   void initButtons() {
-    exportButton.addActionListener(a -> export());
+    exportButton.addActionListener(a -> exportConfig());
+    importButton.addActionListener(a -> importConfig());
   }
 
-  void export() {
+  void importConfig() {
+    try {
+      if (fileChooser.showOpenDialog(root) != APPROVE_OPTION) return;
+      config = configurationLoader.load(fileChooser.getSelectedFile());
+    }
+    catch (RedPenException e) {
+      Messages.showMessageDialog("Cannot load: " + e.getMessage(), "RedPen", Messages.getErrorIcon());
+    }
+  }
+
+  void exportConfig() {
     try {
       if (fileChooser.showSaveDialog(root) != APPROVE_OPTION) return;
-      save(config);
+      apply(config);
       configurationExporter.export(config, new FileOutputStream(fileChooser.getSelectedFile()));
     }
     catch (IOException e) {
@@ -169,7 +185,7 @@ public class RedPenSettingsPane {
     getSymbols().stream().forEach(symbolTable::overrideSymbol);
   }
 
-  void save(Configuration config) {
+  void apply(Configuration config) {
     applyValidatorsChanges(config);
     applySymbolsChanges(config);
   }

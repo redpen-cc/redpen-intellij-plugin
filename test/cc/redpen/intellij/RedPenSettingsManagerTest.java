@@ -41,7 +41,7 @@ public class RedPenSettingsManagerTest extends BaseTest {
   public void applyValidatorsAndSymbols() throws Exception {
     Configuration config = mock(Configuration.class);
     when(manager.redPenProvider.getActiveConfig()).thenReturn(config);
-    doCallRealMethod().when(manager.settingsPane).save(config);
+    doCallRealMethod().when(manager.settingsPane).apply(config);
 
     manager.apply();
 

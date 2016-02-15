@@ -1,9 +1,6 @@
 package cc.redpen.intellij;
 
-import cc.redpen.config.Configuration;
-import cc.redpen.config.ConfigurationExporter;
-import cc.redpen.config.Symbol;
-import cc.redpen.config.ValidatorConfiguration;
+import cc.redpen.config.*;
 import com.google.common.collect.ImmutableMap;
 import org.junit.Before;
 import org.junit.Test;
@@ -215,6 +212,18 @@ public class RedPenSettingsPaneTest extends BaseTest {
   }
 
   @Test
+  public void fileChooserUsesXmlFileFilter() throws Exception {
+    assertEquals("RedPen Configuration", settingsPane.fileChooser.getFileFilter().getDescription());
+    File file = mock(File.class);
+
+    when(file.getName()).thenReturn("blah.xml");
+    assertTrue(settingsPane.fileChooser.getFileFilter().accept(file));
+
+    when(file.getName()).thenReturn("blah.txt");
+    assertFalse(settingsPane.fileChooser.getFileFilter().accept(file));
+  }
+
+  @Test
   public void canCancelExportingConfiguration() throws Exception {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.initButtons();
@@ -223,7 +232,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
     settingsPane.exportButton.doClick();
 
-    verify(settingsPane, never()).save(any());
+    verify(settingsPane, never()).apply(any());
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verifyNoMoreInteractions(settingsPane.fileChooser);
   }
@@ -234,7 +243,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
     settingsPane.configurationExporter = mock(ConfigurationExporter.class);
     settingsPane.initButtons();
     settingsPane = spy(settingsPane);
-    doNothing().when(settingsPane).save(any());
+    doNothing().when(settingsPane).apply(any());
 
     when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
 
@@ -242,12 +251,44 @@ public class RedPenSettingsPaneTest extends BaseTest {
     file.deleteOnExit();
     when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
 
-    settingsPane.export();
+    settingsPane.exportConfig();
 
-    verify(settingsPane).save(settingsPane.config);
+    verify(settingsPane).apply(settingsPane.config);
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verify(settingsPane.fileChooser).getSelectedFile();
     verify(settingsPane.configurationExporter).export(eq(settingsPane.config), any(FileOutputStream.class));
+  }
+
+  @Test
+  public void canCancelImportingConfiguration() throws Exception {
+    settingsPane.fileChooser = mock(JFileChooser.class);
+    settingsPane.initButtons();
+    settingsPane = spy(settingsPane);
+    when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(CANCEL_OPTION);
+
+    settingsPane.importButton.doClick();
+
+    verify(settingsPane.fileChooser).showOpenDialog(settingsPane.root);
+    verifyNoMoreInteractions(settingsPane.fileChooser);
+  }
+
+  @Test
+  public void canImportConfiguration() throws Exception {
+    settingsPane.fileChooser = mock(JFileChooser.class);
+    settingsPane.configurationLoader = mock(ConfigurationLoader.class, RETURNS_DEEP_STUBS);
+    settingsPane.initButtons();
+
+    when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
+
+    File file = File.createTempFile("redpen-conf", ".xml");
+    file.deleteOnExit();
+    when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
+
+    settingsPane.importConfig();
+
+    verify(settingsPane.fileChooser).showOpenDialog(settingsPane.root);
+    verify(settingsPane.fileChooser).getSelectedFile();
+    assertSame(settingsPane.config, settingsPane.configurationLoader.load(file));
   }
 
   @Test
