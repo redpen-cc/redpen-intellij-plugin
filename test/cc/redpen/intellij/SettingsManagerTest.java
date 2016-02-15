@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import javax.swing.*;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class SettingsManagerTest extends BaseTest {
@@ -22,11 +21,11 @@ public class SettingsManagerTest extends BaseTest {
 
   @Test
   public void applyLanguage() throws Exception {
-    manager.settingsPane.config = mock(Configuration.class);
+    manager.settingsPane.setConfig(mock(Configuration.class));
 
     manager.apply();
 
-    verify(manager.provider).setActiveConfig(manager.settingsPane.config);
+    verify(manager.provider).setActiveConfig(manager.settingsPane.getConfig());
   }
 
   @Test
@@ -40,21 +39,14 @@ public class SettingsManagerTest extends BaseTest {
 
   @Test
   public void applyValidatorsAndSymbols() throws Exception {
-    Configuration config = manager.settingsPane.config = cloneableConfig("en");
-    doCallRealMethod().when(manager.settingsPane).apply();
-
     manager.apply();
-
-    assertEquals(config.clone(), manager.settingsPane.config);
-    verify(manager.settingsPane).applyValidatorsChanges();
-    verify(manager.settingsPane).applySymbolsChanges();
+    verify(manager.settingsPane).apply();
     verify(manager).restartInspections();
   }
 
   @Test
   public void reset() throws Exception {
     manager.reset();
-
-    verify(manager.settingsPane).initTabs();
+    verify(manager.settingsPane).resetChanges();
   }
 }

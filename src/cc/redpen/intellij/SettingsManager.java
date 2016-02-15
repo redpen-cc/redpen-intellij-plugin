@@ -41,14 +41,14 @@ public class SettingsManager implements SearchableConfigurable {
   }
 
   @Override public void apply() throws ConfigurationException {
-    provider.setActiveConfig(settingsPane.config);
+    provider.setActiveConfig(settingsPane.getConfig());
     provider.setAutodetect(settingsPane.autodetectLanguage.isSelected());
     settingsPane.apply();
     restartInspections();
   }
 
   @Override public void reset() {
-    settingsPane.initTabs();
+    settingsPane.resetChanges();
   }
 
   @Override public void disposeUIResources() {

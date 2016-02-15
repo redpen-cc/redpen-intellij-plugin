@@ -3,15 +3,19 @@ package cc.redpen.intellij;
 import cc.redpen.RedPenException;
 import cc.redpen.config.*;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.ui.PopupMenuListenerAdapter;
 
 import javax.swing.*;
+import javax.swing.event.PopupMenuEvent;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -20,7 +24,7 @@ import static javax.swing.JFileChooser.APPROVE_OPTION;
 
 public class SettingsPane {
   RedPenProvider provider;
-  Configuration config;
+  private Map<String, Configuration> configs = new LinkedHashMap<>();
   JPanel root;
   private JTabbedPane tabbedPane;
   JTable validators;
@@ -36,8 +40,12 @@ public class SettingsPane {
 
   public SettingsPane(RedPenProvider provider) {
     this.provider = provider;
-    config = provider.getActiveConfig().clone();
+    cloneConfigs();
     fileChooser.setFileFilter(new FileNameExtensionFilter("RedPen Configuration", "xml"));
+  }
+
+  void cloneConfigs() {
+    provider.getConfigs().forEach((k, v) -> configs.put(k, v.clone()));
   }
 
   public JPanel getPane() {
@@ -50,14 +58,13 @@ public class SettingsPane {
   void initButtons() {
     exportButton.addActionListener(a -> exportConfig());
     importButton.addActionListener(a -> importConfig());
-    resetButton.addActionListener(a -> reset());
+    resetButton.addActionListener(a -> resetToDefaults());
   }
 
   void importConfig() {
     try {
       if (fileChooser.showOpenDialog(root) != APPROVE_OPTION) return;
-      config = configurationLoader.load(fileChooser.getSelectedFile());
-      selectLanguage();
+      setConfig(configurationLoader.load(fileChooser.getSelectedFile()));
       initTabs();
     }
     catch (RedPenException e) {
@@ -65,20 +72,11 @@ public class SettingsPane {
     }
   }
 
-  void selectLanguage() {
-    language.setSelectedItem(config.getKey());
-    if (!config.getKey().equals(language.getSelectedItem())) {
-      provider.addConfig(config);
-      language.addItem(config.getKey());
-      language.setSelectedItem(config.getKey());
-    }
-  }
-
   void exportConfig() {
     try {
       if (fileChooser.showSaveDialog(root) != APPROVE_OPTION) return;
       apply();
-      configurationExporter.export(config, new FileOutputStream(fileChooser.getSelectedFile()));
+      configurationExporter.export(getConfig(), new FileOutputStream(fileChooser.getSelectedFile()));
     }
     catch (IOException e) {
       Messages.showMessageDialog("Cannot write to file: " + e.getMessage(), "RedPen", Messages.getErrorIcon());
@@ -88,11 +86,13 @@ public class SettingsPane {
   void initLanguages() {
     provider.getConfigs().keySet().forEach(k -> language.addItem(k));
     autodetectLanguage.setSelected(provider.isAutodetect());
-    language.setSelectedItem(config.getKey());
-    language.addActionListener(a -> {
-      config = provider.getConfig((String)language.getSelectedItem());
-      initTabs();
+    language.setSelectedItem(provider.getActiveConfig().getKey());
+    language.addPopupMenuListener(new PopupMenuListenerAdapter() {
+      @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+        applyLocalChanges();
+      }
     });
+    language.addActionListener(a -> initTabs());
   }
 
   void initTabs() {
@@ -115,7 +115,7 @@ public class SettingsPane {
     symbols.getColumnModel().getColumn(0).setMinWidth(250);
     symbols.setDefaultEditor(Character.class, new SingleCharEditor());
 
-    SymbolTable symbolTable = config.getSymbolTable();
+    SymbolTable symbolTable = getConfig().getSymbolTable();
     for (SymbolType key : symbolTable.getNames()) {
       Symbol symbol = symbolTable.getSymbol(key);
       model.addRow(new Object[] {symbol.getType().toString(), symbol.getValue(),
@@ -137,8 +137,8 @@ public class SettingsPane {
 
     validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
-    for (ValidatorConfiguration validator : provider.getInitialConfig(config.getKey()).getValidatorConfigs()) {
-      boolean enabled = config.getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
+    for (ValidatorConfiguration validator : provider.getInitialConfig(getConfig().getKey()).getValidatorConfigs()) {
+      boolean enabled = getConfig().getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
       model.addRow(new Object[] {enabled, validator.getConfigurationName(), attributes(validator)});
     }
 
@@ -151,7 +151,7 @@ public class SettingsPane {
     TableModel model = validators.getModel();
     for (int i = 0; i < model.getRowCount(); i++) {
        if ((boolean)model.getValueAt(i, 0)) {
-         ValidatorConfiguration validator = provider.getInitialConfig(config.getKey()).getValidatorConfigs().get(i);
+         ValidatorConfiguration validator = provider.getInitialConfig(getConfig().getKey()).getValidatorConfigs().get(i);
          validator.getAttributes().clear();
          String attributes = (String)model.getValueAt(i, 2);
          Stream.of(attributes.trim().split("\\s*,\\s*")).filter(s -> !s.isEmpty()).forEach(s -> {
@@ -187,26 +187,36 @@ public class SettingsPane {
   }
 
   void applyValidatorsChanges() {
-    List<ValidatorConfiguration> validators = config.getValidatorConfigs();
+    List<ValidatorConfiguration> validators = getConfig().getValidatorConfigs();
     List<ValidatorConfiguration> remainingValidators = getActiveValidators();
     validators.clear();
     validators.addAll(remainingValidators);
   }
 
   void applySymbolsChanges() {
-    SymbolTable symbolTable = config.getSymbolTable();
+    SymbolTable symbolTable = getConfig().getSymbolTable();
     getSymbols().stream().forEach(symbolTable::overrideSymbol);
   }
 
-  void apply() {
+  void applyLocalChanges() {
     applyValidatorsChanges();
     applySymbolsChanges();
-    config = config.clone();
   }
 
-  void reset() {
+  public void apply() {
+    applyLocalChanges();
+    provider.getConfigs().putAll(configs);
+    cloneConfigs();
+  }
+
+  public void resetChanges() {
+    cloneConfigs();
+    initTabs();
+  }
+
+  public void resetToDefaults() {
     provider.reset();
-    config = provider.getConfig(config.getKey()).clone();
+    cloneConfigs();
     initTabs();
   }
 
@@ -232,5 +242,20 @@ public class SettingsPane {
         return column != 0;
       }
     };
+  }
+
+  @SuppressWarnings("SuspiciousMethodCalls")
+  public Configuration getConfig() {
+    return configs.get(language.getSelectedItem());
+  }
+
+  public void setConfig(Configuration config) {
+    configs.put(config.getKey(), config);
+    language.setSelectedItem(config.getKey());
+    if (!config.getKey().equals(language.getSelectedItem())) {
+      provider.addConfig(config);
+      language.addItem(config.getKey());
+      language.setSelectedItem(config.getKey());
+    }
   }
 }
