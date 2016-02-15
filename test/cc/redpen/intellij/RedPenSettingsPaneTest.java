@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
   RedPenProvider provider = new RedPenProvider(new LinkedHashMap<>(ImmutableMap.of("en", cloneableConfig("en"), "ja", cloneableConfig("ja"))));
-  RedPenSettingsPane settingsPane = new RedPenSettingsPane(provider);
+  RedPenSettingsPane settingsPane = spy(new RedPenSettingsPane(provider));
 
   @Before
   public void setUp() throws Exception {
@@ -82,7 +82,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void changingOfLanguageRebuildsValidatorsAndSymbols() throws Exception {
-    settingsPane = spy(settingsPane);
     doNothing().when(settingsPane).initTabs();
 
     settingsPane.getPane();
@@ -104,7 +103,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
     settingsPane.config = redPenConfigWithValidators(singletonList(validatorConfig("second one", emptyMap())));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
-    settingsPane = spy(settingsPane);
     doReturn(model).when(settingsPane).createValidatorsModel();
 
     settingsPane.initValidators();
@@ -148,7 +146,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
     ValidatorConfiguration validator = validatorConfig("Hello", ImmutableMap.of("width", "100"));
     when(provider.getInitialConfig("en").getValidatorConfigs()).thenReturn(singletonList(validator));
 
-    settingsPane = spy(settingsPane);
     doNothing().when(settingsPane).showPropertyError(any(ValidatorConfiguration.class), anyString());
 
     when(settingsPane.validators.getModel().getRowCount()).thenReturn(1);
@@ -182,7 +179,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
     settingsPane.config = redPenConfigWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
-    settingsPane = spy(settingsPane);
     doReturn(model).when(settingsPane).createSymbolsModel();
 
     settingsPane.initSymbols();
@@ -228,7 +224,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void canCancelExportingConfiguration() throws Exception {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.initButtons();
-    settingsPane = spy(settingsPane);
     when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(CANCEL_OPTION);
 
     settingsPane.exportButton.doClick();
@@ -242,7 +237,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void canExportConfiguration() throws Exception {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.configurationExporter = mock(ConfigurationExporter.class);
-    settingsPane = spy(settingsPane);
     doNothing().when(settingsPane).apply(any());
 
     when(settingsPane.fileChooser.showSaveDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
@@ -276,13 +270,11 @@ public class RedPenSettingsPaneTest extends BaseTest {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.configurationLoader = mock(ConfigurationLoader.class);
     settingsPane.language = mock(JComboBox.class);
-    settingsPane = spy(settingsPane);
 
     doNothing().when(settingsPane).initTabs();
     when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
 
-    File file = File.createTempFile("redpen-conf", ".xml");
-    file.deleteOnExit();
+    File file = mock(File.class);
     when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
     Configuration config = config("ja.hankaku");
     when(settingsPane.configurationLoader.load(file)).thenReturn(config);
@@ -303,7 +295,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.configurationLoader = mock(ConfigurationLoader.class);
     settingsPane.language = mock(JComboBox.class);
-    settingsPane = spy(settingsPane);
 
     doNothing().when(settingsPane).initTabs();
     when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
@@ -328,7 +319,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
     Configuration config = redPenConfigWithValidators(allValidators);
 
     List<ValidatorConfiguration> activeValidators = new ArrayList<>(allValidators.subList(0, 1));
-    settingsPane = spy(settingsPane);
     doReturn(activeValidators).when(settingsPane).getActiveValidators();
 
     settingsPane.applyValidatorsChanges(config);
@@ -339,7 +329,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
   @Test
   public void applySymbols() throws Exception {
     Symbol symbol = new Symbol(BACKSLASH, '\\');
-    settingsPane = spy(settingsPane);
     doReturn(singletonList(symbol)).when(settingsPane).getSymbols();
     Configuration config = mock(Configuration.class, RETURNS_DEEP_STUBS);
 
