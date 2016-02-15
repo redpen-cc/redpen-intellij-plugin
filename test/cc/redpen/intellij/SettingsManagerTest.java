@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import javax.swing.*;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class SettingsManagerTest extends BaseTest {
@@ -39,14 +40,14 @@ public class SettingsManagerTest extends BaseTest {
 
   @Test
   public void applyValidatorsAndSymbols() throws Exception {
-    Configuration config = mock(Configuration.class);
-    when(manager.provider.getActiveConfig()).thenReturn(config);
-    doCallRealMethod().when(manager.settingsPane).apply(config);
+    Configuration config = manager.settingsPane.config = cloneableConfig("en");
+    doCallRealMethod().when(manager.settingsPane).apply();
 
     manager.apply();
 
-    verify(manager.settingsPane).applyValidatorsChanges(config);
-    verify(manager.settingsPane).applySymbolsChanges(config);
+    assertEquals(config.clone(), manager.settingsPane.config);
+    verify(manager.settingsPane).applyValidatorsChanges();
+    verify(manager.settingsPane).applySymbolsChanges();
     verify(manager).restartInspections();
   }
 
@@ -54,7 +55,6 @@ public class SettingsManagerTest extends BaseTest {
   public void reset() throws Exception {
     manager.reset();
 
-    verify(manager.provider).reset();
-    verify(manager.settingsPane).reset();
+    verify(manager.settingsPane).initTabs();
   }
 }

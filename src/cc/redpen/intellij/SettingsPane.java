@@ -29,6 +29,7 @@ public class SettingsPane {
   JCheckBox autodetectLanguage;
   JButton exportButton;
   JButton importButton;
+  JButton resetButton;
   JFileChooser fileChooser = new JFileChooser();
   ConfigurationExporter configurationExporter = new ConfigurationExporter();
   ConfigurationLoader configurationLoader = new ConfigurationLoader();
@@ -49,6 +50,7 @@ public class SettingsPane {
   void initButtons() {
     exportButton.addActionListener(a -> exportConfig());
     importButton.addActionListener(a -> importConfig());
+    resetButton.addActionListener(a -> reset());
   }
 
   void importConfig() {
@@ -75,7 +77,7 @@ public class SettingsPane {
   void exportConfig() {
     try {
       if (fileChooser.showSaveDialog(root) != APPROVE_OPTION) return;
-      apply(config);
+      apply();
       configurationExporter.export(config, new FileOutputStream(fileChooser.getSelectedFile()));
     }
     catch (IOException e) {
@@ -184,24 +186,26 @@ public class SettingsPane {
     return result.substring(1, result.length() - 1);
   }
 
-  void applyValidatorsChanges(Configuration config) {
+  void applyValidatorsChanges() {
     List<ValidatorConfiguration> validators = config.getValidatorConfigs();
     List<ValidatorConfiguration> remainingValidators = getActiveValidators();
     validators.clear();
     validators.addAll(remainingValidators);
   }
 
-  void applySymbolsChanges(Configuration config) {
+  void applySymbolsChanges() {
     SymbolTable symbolTable = config.getSymbolTable();
     getSymbols().stream().forEach(symbolTable::overrideSymbol);
   }
 
-  void apply(Configuration config) {
-    applyValidatorsChanges(config);
-    applySymbolsChanges(config);
+  void apply() {
+    applyValidatorsChanges();
+    applySymbolsChanges();
+    config = config.clone();
   }
 
-  public void reset() {
+  void reset() {
+    provider.reset();
     config = provider.getConfig(config.getKey()).clone();
     initTabs();
   }

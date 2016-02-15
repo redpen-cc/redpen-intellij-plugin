@@ -100,7 +100,7 @@ public class SettingsPaneTest extends BaseTest {
       validatorConfig("second one", emptyMap()));
 
     when(provider.getInitialConfig("en").getValidatorConfigs()).thenReturn(allValidators);
-    settingsPane.config = redPenConfigWithValidators(singletonList(validatorConfig("second one", emptyMap())));
+    settingsPane.config = configWithValidators(singletonList(validatorConfig("second one", emptyMap())));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     doReturn(model).when(settingsPane).createValidatorsModel();
@@ -176,7 +176,7 @@ public class SettingsPaneTest extends BaseTest {
 
   @Test
   public void symbolsAreListedInSettings() throws Exception {
-    settingsPane.config = redPenConfigWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
+    settingsPane.config = configWithSymbols(asList(new Symbol(AMPERSAND, '&', "$%", true, false), new Symbol(ASTERISK, '*', "", false, true)));
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     doReturn(model).when(settingsPane).createSymbolsModel();
@@ -228,7 +228,7 @@ public class SettingsPaneTest extends BaseTest {
 
     settingsPane.exportButton.doClick();
 
-    verify(settingsPane, never()).apply(any());
+    verify(settingsPane, never()).apply();
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verifyNoMoreInteractions(settingsPane.fileChooser);
   }
@@ -244,7 +244,7 @@ public class SettingsPaneTest extends BaseTest {
 
     settingsPane.exportConfig();
 
-    verify(settingsPane).apply(settingsPane.config);
+    verify(settingsPane).apply();
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verify(settingsPane.fileChooser).getSelectedFile();
     verify(settingsPane.configurationExporter).export(eq(settingsPane.config), any(FileOutputStream.class));
@@ -309,43 +309,46 @@ public class SettingsPaneTest extends BaseTest {
     settingsPane.configurationExporter = mock(ConfigurationExporter.class);
     settingsPane.language = mock(JComboBox.class);
     doNothing().when(settingsPane).initTabs();
-    doNothing().when(settingsPane).apply(any());
+    doNothing().when(settingsPane).apply();
   }
 
   @Test
   public void applyValidators() throws Exception {
     List<ValidatorConfiguration> allValidators = asList(new ValidatorConfiguration("1"), new ValidatorConfiguration("2"));
-    Configuration config = redPenConfigWithValidators(allValidators);
+    settingsPane.config = configWithValidators(allValidators);
 
     List<ValidatorConfiguration> activeValidators = new ArrayList<>(allValidators.subList(0, 1));
     doReturn(activeValidators).when(settingsPane).getActiveValidators();
 
-    settingsPane.applyValidatorsChanges(config);
+    settingsPane.applyValidatorsChanges();
 
-    assertEquals(activeValidators, config.getValidatorConfigs());
+    assertEquals(activeValidators, settingsPane.config.getValidatorConfigs());
   }
 
   @Test
   public void applySymbols() throws Exception {
     Symbol symbol = new Symbol(BACKSLASH, '\\');
     doReturn(singletonList(symbol)).when(settingsPane).getSymbols();
-    Configuration config = mock(Configuration.class, RETURNS_DEEP_STUBS);
+    settingsPane.config = mock(Configuration.class, RETURNS_DEEP_STUBS);
 
-    settingsPane.applySymbolsChanges(config);
+    settingsPane.applySymbolsChanges();
 
-    verify(config.getSymbolTable()).overrideSymbol(symbol);
+    verify(settingsPane.config.getSymbolTable()).overrideSymbol(symbol);
   }
 
   @Test
   public void reset() throws Exception {
+    settingsPane.initButtons();
+
     doNothing().when(settingsPane).initTabs();
     Configuration config = cloneableConfig("en");
     settingsPane.provider = mock(RedPenProvider.class);
     when(settingsPane.provider.getConfig("en")).thenReturn(config);
 
-    settingsPane.reset();
+    settingsPane.resetButton.doClick();
 
     assertSame(config.clone(), settingsPane.config);
+    verify(settingsPane.provider).reset();
     verify(settingsPane).initTabs();
   }
 
