@@ -19,7 +19,7 @@ import java.util.Optional;
 import static java.util.stream.Collectors.joining;
 
 public class RedPenListErrors extends AnAction {
-    RedPenProvider redPenProvider = RedPenProvider.getInstance();
+    RedPenProvider provider = RedPenProvider.getInstance();
 
     public void actionPerformed(AnActionEvent event) {
         Project project = event.getData(PlatformDataKeys.PROJECT);
@@ -32,8 +32,8 @@ public class RedPenListErrors extends AnAction {
 
         try {
             String text = file.getText();
-            RedPen redPen = redPenProvider.getRedPenFor(text);
-            Document redPenDoc = redPen.parse(redPenProvider.getParser(file), text);
+            RedPen redPen = provider.getRedPenFor(text);
+            Document redPenDoc = redPen.parse(provider.getParser(file), text);
             List<ValidationError> errors = redPen.validate(redPenDoc);
 
             Messages.showMessageDialog(project, errors.stream().map(e ->

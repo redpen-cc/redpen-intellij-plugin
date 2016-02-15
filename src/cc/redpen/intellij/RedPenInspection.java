@@ -22,7 +22,7 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 
 public class RedPenInspection extends LocalInspectionTool {
-  RedPenProvider redPenProvider = RedPenProvider.getInstance();
+  RedPenProvider provider = RedPenProvider.getInstance();
 
   @NotNull @Override public String getDisplayName() {
     return "RedPen Validation";
@@ -43,12 +43,12 @@ public class RedPenInspection extends LocalInspectionTool {
 
   @Nullable @Override
   public ProblemDescriptor[] checkFile(@NotNull PsiFile file, @NotNull InspectionManager manager, boolean isOnTheFly) {
-    DocumentParser parser = redPenProvider.getParser(file);
+    DocumentParser parser = provider.getParser(file);
     if (parser == null) return null;
 
     try {
       String text = file.getText();
-      RedPen redPen = redPenProvider.getRedPenFor(text);
+      RedPen redPen = provider.getRedPenFor(text);
       Document redPenDoc = redPen.parse(parser, text);
       List<ValidationError> errors = redPen.validate(redPenDoc);
 

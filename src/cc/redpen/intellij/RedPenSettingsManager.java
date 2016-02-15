@@ -13,8 +13,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class RedPenSettingsManager implements SearchableConfigurable {
-  RedPenProvider redPenProvider = RedPenProvider.getInstance();
-  RedPenSettingsPane settingsPane = new RedPenSettingsPane(redPenProvider);
+  RedPenProvider provider = RedPenProvider.getInstance();
+  RedPenSettingsPane settingsPane = new RedPenSettingsPane(provider);
 
   @NotNull @Override public String getId() {
     return getHelpTopic();
@@ -41,14 +41,14 @@ public class RedPenSettingsManager implements SearchableConfigurable {
   }
 
   @Override public void apply() throws ConfigurationException {
-    redPenProvider.setActiveConfig(settingsPane.config);
-    redPenProvider.setAutodetect(settingsPane.autodetectLanguage.isSelected());
-    settingsPane.apply(redPenProvider.getActiveConfig());
+    provider.setActiveConfig(settingsPane.config);
+    provider.setAutodetect(settingsPane.autodetectLanguage.isSelected());
+    settingsPane.apply(provider.getActiveConfig());
     restartInspections();
   }
 
   @Override public void reset() {
-    redPenProvider.reset();
+    provider.reset();
     settingsPane.reset();
   }
 

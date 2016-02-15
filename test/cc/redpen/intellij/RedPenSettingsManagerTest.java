@@ -14,7 +14,7 @@ public class RedPenSettingsManagerTest extends BaseTest {
   @Before
   public void setUp() throws Exception {
     doNothing().when(manager).restartInspections();
-    manager.redPenProvider = mock(RedPenProvider.class, RETURNS_DEEP_STUBS);
+    manager.provider = mock(RedPenProvider.class, RETURNS_DEEP_STUBS);
     manager.settingsPane = mock(RedPenSettingsPane.class);
     manager.settingsPane.autodetectLanguage = mock(JCheckBox.class);
   }
@@ -25,7 +25,7 @@ public class RedPenSettingsManagerTest extends BaseTest {
 
     manager.apply();
 
-    verify(manager.redPenProvider).setActiveConfig(manager.settingsPane.config);
+    verify(manager.provider).setActiveConfig(manager.settingsPane.config);
   }
 
   @Test
@@ -34,13 +34,13 @@ public class RedPenSettingsManagerTest extends BaseTest {
 
     manager.apply();
 
-    verify(manager.redPenProvider).setAutodetect(false);
+    verify(manager.provider).setAutodetect(false);
   }
 
   @Test
   public void applyValidatorsAndSymbols() throws Exception {
     Configuration config = mock(Configuration.class);
-    when(manager.redPenProvider.getActiveConfig()).thenReturn(config);
+    when(manager.provider.getActiveConfig()).thenReturn(config);
     doCallRealMethod().when(manager.settingsPane).apply(config);
 
     manager.apply();
@@ -54,7 +54,7 @@ public class RedPenSettingsManagerTest extends BaseTest {
   public void reset() throws Exception {
     manager.reset();
 
-    verify(manager.redPenProvider).reset();
+    verify(manager.provider).reset();
     verify(manager.settingsPane).reset();
   }
 }

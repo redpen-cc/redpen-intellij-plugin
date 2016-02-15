@@ -19,7 +19,7 @@ import static java.util.stream.IntStream.range;
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 
 public class RedPenSettingsPane {
-  RedPenProvider redPenProvider;
+  RedPenProvider provider;
   Configuration config;
   JPanel root;
   private JTabbedPane tabbedPane;
@@ -33,9 +33,9 @@ public class RedPenSettingsPane {
   ConfigurationExporter configurationExporter = new ConfigurationExporter();
   ConfigurationLoader configurationLoader = new ConfigurationLoader();
 
-  public RedPenSettingsPane(RedPenProvider redPenProvider) {
-    this.redPenProvider = redPenProvider;
-    config = redPenProvider.getActiveConfig().clone();
+  public RedPenSettingsPane(RedPenProvider provider) {
+    this.provider = provider;
+    config = provider.getActiveConfig().clone();
     fileChooser.setFileFilter(new FileNameExtensionFilter("RedPen Configuration", "xml"));
   }
 
@@ -66,7 +66,7 @@ public class RedPenSettingsPane {
   void selectLanguage() {
     language.setSelectedItem(config.getKey());
     if (!config.getKey().equals(language.getSelectedItem())) {
-      redPenProvider.addConfig(config);
+      provider.addConfig(config);
       language.addItem(config.getKey());
       language.setSelectedItem(config.getKey());
     }
@@ -84,11 +84,11 @@ public class RedPenSettingsPane {
   }
 
   void initLanguages() {
-    redPenProvider.getConfigs().keySet().forEach(k -> language.addItem(k));
-    autodetectLanguage.setSelected(redPenProvider.isAutodetect());
+    provider.getConfigs().keySet().forEach(k -> language.addItem(k));
+    autodetectLanguage.setSelected(provider.isAutodetect());
     language.setSelectedItem(config.getKey());
     language.addActionListener(a -> {
-      config = redPenProvider.getConfig((String)language.getSelectedItem());
+      config = provider.getConfig((String)language.getSelectedItem());
       initTabs();
     });
   }
@@ -135,7 +135,7 @@ public class RedPenSettingsPane {
 
     validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
-    for (ValidatorConfiguration validator : redPenProvider.getInitialConfig(config.getKey()).getValidatorConfigs()) {
+    for (ValidatorConfiguration validator : provider.getInitialConfig(config.getKey()).getValidatorConfigs()) {
       boolean enabled = config.getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
       model.addRow(new Object[] {enabled, validator.getConfigurationName(), attributes(validator)});
     }
@@ -149,7 +149,7 @@ public class RedPenSettingsPane {
     TableModel model = validators.getModel();
     for (int i = 0; i < model.getRowCount(); i++) {
        if ((boolean)model.getValueAt(i, 0)) {
-         ValidatorConfiguration validator = redPenProvider.getInitialConfig(config.getKey()).getValidatorConfigs().get(i);
+         ValidatorConfiguration validator = provider.getInitialConfig(config.getKey()).getValidatorConfigs().get(i);
          validator.getAttributes().clear();
          String attributes = (String)model.getValueAt(i, 2);
          Stream.of(attributes.trim().split("\\s*,\\s*")).filter(s -> !s.isEmpty()).forEach(s -> {
@@ -202,7 +202,7 @@ public class RedPenSettingsPane {
   }
 
   public void reset() {
-    config = redPenProvider.getConfig(config.getKey()).clone();
+    config = provider.getConfig(config.getKey()).clone();
     initTabs();
   }
 

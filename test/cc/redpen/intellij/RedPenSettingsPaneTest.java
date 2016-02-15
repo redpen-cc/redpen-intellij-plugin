@@ -296,8 +296,8 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
     settingsPane.importConfig();
 
-    assertSame(clone1, settingsPane.redPenProvider.getInitialConfig("za"));
-    assertSame(clone2, settingsPane.redPenProvider.getConfig("za"));
+    assertSame(clone1, settingsPane.provider.getInitialConfig("za"));
+    assertSame(clone2, settingsPane.provider.getConfig("za"));
     verify(settingsPane.language).addItem("za");
     verify(settingsPane.language, times(2)).setSelectedItem("za");
   }
@@ -340,8 +340,8 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void reset() throws Exception {
     doNothing().when(settingsPane).initTabs();
     Configuration config = cloneableConfig("en");
-    settingsPane.redPenProvider = mock(RedPenProvider.class);
-    when(settingsPane.redPenProvider.getConfig("en")).thenReturn(config);
+    settingsPane.provider = mock(RedPenProvider.class);
+    when(settingsPane.provider.getConfig("en")).thenReturn(config);
 
     settingsPane.reset();
 

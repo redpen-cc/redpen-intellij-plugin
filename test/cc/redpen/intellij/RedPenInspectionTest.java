@@ -32,8 +32,8 @@ public class RedPenInspectionTest {
 
   @Before
   public void setUp() throws Exception {
-    inspection.redPenProvider = spy(inspection.redPenProvider);
-    doReturn(redPen = mock(RedPen.class)).when(inspection.redPenProvider).getRedPen();
+    inspection.provider = spy(inspection.provider);
+    doReturn(redPen = mock(RedPen.class)).when(inspection.provider).getRedPen();
   }
 
   @Test
