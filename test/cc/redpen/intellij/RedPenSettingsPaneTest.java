@@ -241,7 +241,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void canExportConfiguration() throws Exception {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.configurationExporter = mock(ConfigurationExporter.class);
-    settingsPane.initButtons();
     settingsPane = spy(settingsPane);
     doNothing().when(settingsPane).apply(any());
 
@@ -263,7 +262,6 @@ public class RedPenSettingsPaneTest extends BaseTest {
   public void canCancelImportingConfiguration() throws Exception {
     settingsPane.fileChooser = mock(JFileChooser.class);
     settingsPane.initButtons();
-    settingsPane = spy(settingsPane);
     when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(CANCEL_OPTION);
 
     settingsPane.importButton.doClick();
@@ -272,23 +270,31 @@ public class RedPenSettingsPaneTest extends BaseTest {
     verifyNoMoreInteractions(settingsPane.fileChooser);
   }
 
-  @Test
+  @Test @SuppressWarnings("unchecked")
   public void canImportConfiguration() throws Exception {
     settingsPane.fileChooser = mock(JFileChooser.class);
-    settingsPane.configurationLoader = mock(ConfigurationLoader.class, RETURNS_DEEP_STUBS);
-    settingsPane.initButtons();
+    settingsPane.configurationLoader = mock(ConfigurationLoader.class);
+    settingsPane.language = mock(JComboBox.class);
+    settingsPane = spy(settingsPane);
 
+    doNothing().when(settingsPane).initTabs();
     when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
 
     File file = File.createTempFile("redpen-conf", ".xml");
     file.deleteOnExit();
     when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
+    Configuration config = mock(Configuration.class);
+    when(settingsPane.configurationLoader.load(file)).thenReturn(config);
+    when(config.getKey()).thenReturn("ja.hankaku");
 
     settingsPane.importConfig();
 
     verify(settingsPane.fileChooser).showOpenDialog(settingsPane.root);
     verify(settingsPane.fileChooser).getSelectedFile();
-    assertSame(settingsPane.config, settingsPane.configurationLoader.load(file));
+    verify(settingsPane.configurationLoader).load(file);
+    assertSame(settingsPane.config, config);
+    verify(settingsPane).initTabs();
+    verify(settingsPane.language).setSelectedItem("ja.hankaku");
   }
 
   @Test

@@ -55,6 +55,8 @@ public class RedPenSettingsPane {
     try {
       if (fileChooser.showOpenDialog(root) != APPROVE_OPTION) return;
       config = configurationLoader.load(fileChooser.getSelectedFile());
+      language.setSelectedItem(config.getKey());
+      initTabs();
     }
     catch (RedPenException e) {
       Messages.showMessageDialog("Cannot load: " + e.getMessage(), "RedPen", Messages.getErrorIcon());
