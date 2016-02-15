@@ -55,11 +55,20 @@ public class RedPenSettingsPane {
     try {
       if (fileChooser.showOpenDialog(root) != APPROVE_OPTION) return;
       config = configurationLoader.load(fileChooser.getSelectedFile());
-      language.setSelectedItem(config.getKey());
+      selectLanguage();
       initTabs();
     }
     catch (RedPenException e) {
       Messages.showMessageDialog("Cannot load: " + e.getMessage(), "RedPen", Messages.getErrorIcon());
+    }
+  }
+
+  void selectLanguage() {
+    language.setSelectedItem(config.getKey());
+    if (!config.getKey().equals(language.getSelectedItem())) {
+      redPenProvider.addConfig(config);
+      language.addItem(config.getKey());
+      language.setSelectedItem(config.getKey());
     }
   }
 

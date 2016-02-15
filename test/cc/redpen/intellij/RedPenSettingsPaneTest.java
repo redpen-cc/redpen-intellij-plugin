@@ -12,6 +12,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class RedPenSettingsPaneTest extends BaseTest {
-  RedPenProvider provider = new RedPenProvider(ImmutableMap.of("en", cloneableConfig("en"), "ja", cloneableConfig("ja")));
+  RedPenProvider provider = new RedPenProvider(new LinkedHashMap<>(ImmutableMap.of("en", cloneableConfig("en"), "ja", cloneableConfig("ja"))));
   RedPenSettingsPane settingsPane = new RedPenSettingsPane(provider);
 
   @Before
@@ -283,9 +284,9 @@ public class RedPenSettingsPaneTest extends BaseTest {
     File file = File.createTempFile("redpen-conf", ".xml");
     file.deleteOnExit();
     when(settingsPane.fileChooser.getSelectedFile()).thenReturn(file);
-    Configuration config = mock(Configuration.class);
+    Configuration config = config("ja.hankaku");
     when(settingsPane.configurationLoader.load(file)).thenReturn(config);
-    when(config.getKey()).thenReturn("ja.hankaku");
+    when(settingsPane.language.getSelectedItem()).thenReturn("ja.hankaku");
 
     settingsPane.importConfig();
 
@@ -295,6 +296,30 @@ public class RedPenSettingsPaneTest extends BaseTest {
     assertSame(settingsPane.config, config);
     verify(settingsPane).initTabs();
     verify(settingsPane.language).setSelectedItem("ja.hankaku");
+  }
+
+  @Test @SuppressWarnings("unchecked")
+  public void canImportConfigurationAddingNewLanguage() throws Exception {
+    settingsPane.fileChooser = mock(JFileChooser.class);
+    settingsPane.configurationLoader = mock(ConfigurationLoader.class);
+    settingsPane.language = mock(JComboBox.class);
+    settingsPane = spy(settingsPane);
+
+    doNothing().when(settingsPane).initTabs();
+    when(settingsPane.fileChooser.showOpenDialog(any(Component.class))).thenReturn(APPROVE_OPTION);
+
+    Configuration config = config("za");
+    when(settingsPane.configurationLoader.load(any(File.class))).thenReturn(config);
+    Configuration clone1 = config("za");
+    Configuration clone2 = config("za");
+    when(config.clone()).thenReturn(clone1, clone2);
+
+    settingsPane.importConfig();
+
+    assertSame(clone1, settingsPane.redPenProvider.getInitialConfig("za"));
+    assertSame(clone2, settingsPane.redPenProvider.getConfig("za"));
+    verify(settingsPane.language).addItem("za");
+    verify(settingsPane.language, times(2)).setSelectedItem("za");
   }
 
   @Test

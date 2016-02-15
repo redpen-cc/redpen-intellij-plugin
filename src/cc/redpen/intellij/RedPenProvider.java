@@ -39,7 +39,7 @@ public class RedPenProvider {
   /** For tests */
   RedPenProvider(Map<String, Configuration> configs) {
     this.configs = configs;
-    this.initialConfigs = configs;
+    this.initialConfigs = new LinkedHashMap<>(configs);
   }
 
   private void loadConfig(String fileName) {
@@ -50,6 +50,11 @@ public class RedPenProvider {
     catch (RedPenException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public void addConfig(Configuration config) {
+    initialConfigs.put(config.getKey(), config.clone());
+    configs.put(config.getKey(), config.clone());
   }
 
   public static RedPenProvider getInstance() {
