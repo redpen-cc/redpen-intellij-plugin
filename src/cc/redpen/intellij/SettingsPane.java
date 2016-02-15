@@ -18,7 +18,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.IntStream.range;
 import static javax.swing.JFileChooser.APPROVE_OPTION;
 
-public class RedPenSettingsPane {
+public class SettingsPane {
   RedPenProvider provider;
   Configuration config;
   JPanel root;
@@ -33,7 +33,7 @@ public class RedPenSettingsPane {
   ConfigurationExporter configurationExporter = new ConfigurationExporter();
   ConfigurationLoader configurationLoader = new ConfigurationLoader();
 
-  public RedPenSettingsPane(RedPenProvider provider) {
+  public SettingsPane(RedPenProvider provider) {
     this.provider = provider;
     config = provider.getActiveConfig().clone();
     fileChooser.setFileFilter(new FileNameExtensionFilter("RedPen Configuration", "xml"));

@@ -25,9 +25,9 @@ import static javax.swing.JFileChooser.CANCEL_OPTION;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class RedPenSettingsPaneTest extends BaseTest {
+public class SettingsPaneTest extends BaseTest {
   RedPenProvider provider = new RedPenProvider(new LinkedHashMap<>(ImmutableMap.of("en", cloneableConfig("en"), "ja", cloneableConfig("ja"))));
-  RedPenSettingsPane settingsPane = spy(new RedPenSettingsPane(provider));
+  SettingsPane settingsPane = spy(new SettingsPane(provider));
 
   @Before
   public void setUp() throws Exception {
@@ -68,7 +68,7 @@ public class RedPenSettingsPaneTest extends BaseTest {
 
   @Test
   public void getPaneInitsEverything() throws Exception {
-    settingsPane = mock(RedPenSettingsPane.class);
+    settingsPane = mock(SettingsPane.class);
 
     doCallRealMethod().when(settingsPane).getPane();
     doCallRealMethod().when(settingsPane).initTabs();

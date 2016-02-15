@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
-public class RedPenSettingsManager implements SearchableConfigurable {
+public class SettingsManager implements SearchableConfigurable {
   RedPenProvider provider = RedPenProvider.getInstance();
-  RedPenSettingsPane settingsPane = new RedPenSettingsPane(provider);
+  SettingsPane settingsPane = new SettingsPane(provider);
 
   @NotNull @Override public String getId() {
     return getHelpTopic();

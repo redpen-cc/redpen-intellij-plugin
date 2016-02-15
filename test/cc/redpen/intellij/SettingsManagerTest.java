@@ -8,14 +8,14 @@ import javax.swing.*;
 
 import static org.mockito.Mockito.*;
 
-public class RedPenSettingsManagerTest extends BaseTest {
-  RedPenSettingsManager manager = spy(new RedPenSettingsManager());
+public class SettingsManagerTest extends BaseTest {
+  SettingsManager manager = spy(new SettingsManager());
 
   @Before
   public void setUp() throws Exception {
     doNothing().when(manager).restartInspections();
     manager.provider = mock(RedPenProvider.class, RETURNS_DEEP_STUBS);
-    manager.settingsPane = mock(RedPenSettingsPane.class);
+    manager.settingsPane = mock(SettingsPane.class);
     manager.settingsPane.autodetectLanguage = mock(JCheckBox.class);
   }
 
