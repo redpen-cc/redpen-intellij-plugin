@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 
 public class SettingsManager implements SearchableConfigurable {
-  RedPenProvider provider = RedPenProvider.getInstance();
+  RedPenProvider provider = RedPenProvider.Companion.getInstance();
   SettingsPane settingsPane = new SettingsPane(provider);
 
   @NotNull @Override public String getId() {
