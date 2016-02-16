@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableMap
 import com.intellij.psi.PsiFile
 import java.util.*
 
-class RedPenProvider {
+open class RedPenProvider {
     private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
@@ -52,14 +52,11 @@ class RedPenProvider {
         configs.put(config.key, config.clone())
     }
 
-    val redPen: RedPen
-        get() {
-           return RedPen(configs[configKey])
-        }
+    open fun getRedPen(): RedPen = RedPen(configs[configKey])
 
     fun getRedPenFor(text: String): RedPen {
         if (isAutodetect) configKey = LanguageDetector().detectLanguage(text)
-        return redPen
+        return getRedPen()
     }
 
     fun getParser(file: PsiFile): DocumentParser? {
