@@ -57,7 +57,7 @@ public class RedPenInspection extends LocalInspectionTool {
 
       List<ProblemDescriptor> problems = errors.stream().map(e ->
         manager.createProblemDescriptor(theElement, toRange(e, lines),
-          e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)
+          e.getMessage(), ProblemHighlightType.GENERIC_ERROR, isOnTheFly)
       ).collect(toList());
 
       return problems.toArray(new ProblemDescriptor[problems.size()]);
