@@ -151,7 +151,7 @@ public class SettingsPane {
     TableModel model = validators.getModel();
     for (int i = 0; i < model.getRowCount(); i++) {
        if ((boolean)model.getValueAt(i, 0)) {
-         ValidatorConfiguration validator = provider.getInitialConfig(getConfig().getKey()).getValidatorConfigs().get(i);
+         ValidatorConfiguration validator = provider.getInitialConfig(getConfig().getKey()).getValidatorConfigs().get(i).clone();
          validator.getAttributes().clear();
          String attributes = (String)model.getValueAt(i, 2);
          Stream.of(attributes.trim().split("\\s*,\\s*")).filter(s -> !s.isEmpty()).forEach(s -> {

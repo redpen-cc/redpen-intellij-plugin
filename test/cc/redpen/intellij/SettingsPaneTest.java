@@ -146,6 +146,7 @@ public class SettingsPaneTest extends BaseTest {
     List<ValidatorConfiguration> activeValidators = settingsPane.getActiveValidators();
     assertEquals(1, activeValidators.size());
     assertEquals(ImmutableMap.of("width", "200", "height", "300"), activeValidators.get(0).getAttributes());
+    assertNotSame(provider.getInitialConfig("en").getValidatorConfigs().get(0), activeValidators.get(0));
   }
 
   @Test
