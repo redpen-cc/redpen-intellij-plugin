@@ -110,7 +110,7 @@ class RedPenInspectionTest {
         inspection.checkFile(mockTextFile("Hello\nworld"), mock<InspectionManager>(), true)
 
         val captor = ArgumentCaptor.forClass(Array<String>::class.java)
-        verify(inspection).toRange(eq(error), captor.capture())
+        verify(inspection).toRange(eq(error), captor.capture() ?: emptyArray())
 
         assertArrayEquals(arrayOf("Hello\n", "world"), captor.value)
     }
