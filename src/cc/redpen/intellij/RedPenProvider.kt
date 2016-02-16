@@ -13,7 +13,7 @@ open class RedPenProvider {
     private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
-    var isAutodetect = true
+    open var isAutodetect = true
 
     internal var parsers: Map<String, DocumentParser> = ImmutableMap.of(
             "PLAIN_TEXT", DocumentParser.PLAIN,
@@ -79,7 +79,7 @@ open class RedPenProvider {
         return configs[key]
     }
 
-    var activeConfig: Configuration
+    open var activeConfig: Configuration
         get() = configs[configKey]!!
         set(config) {
             configKey = config.key

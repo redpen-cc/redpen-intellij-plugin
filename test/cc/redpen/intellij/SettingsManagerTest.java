@@ -21,9 +21,10 @@ public class SettingsManagerTest extends BaseTest {
 
   @Test
   public void applyConfigSwitch() throws Exception {
-    manager.settingsPane.setConfig(mock(Configuration.class));
+    Configuration config = config("en");
+    when(manager.settingsPane.getConfig()).thenReturn(config);
     manager.apply();
-    verify(manager.provider).setActiveConfig(manager.settingsPane.getConfig());
+    verify(manager.provider).setActiveConfig(config);
   }
 
   @Test
