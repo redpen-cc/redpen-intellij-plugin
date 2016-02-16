@@ -101,19 +101,21 @@ public class SettingsPaneTest extends BaseTest {
   @Test
   public void validatorsAreListedInSettings() throws Exception {
     List<ValidatorConfiguration> allValidators = asList(
-      validatorConfig("first", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
-      validatorConfig("second one", emptyMap()));
+      validatorConfig("ModifiedAttributes", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
+      validatorConfig("InitialAttributes", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
+      validatorConfig("NoAttributes", emptyMap()));
 
     when(provider.getInitialConfig("en").getValidatorConfigs()).thenReturn(allValidators);
-    doReturn(configWithValidators(singletonList(validatorConfig("second one", emptyMap())))).when(settingsPane).getConfig();
+    doReturn(configWithValidators(singletonList(validatorConfig("ModifiedAttributes", ImmutableMap.of("foo", "bar"))))).when(settingsPane).getConfig();
 
     DefaultTableModel model = mock(DefaultTableModel.class);
     doReturn(model).when(settingsPane).createValidatorsModel();
 
     settingsPane.initValidators();
 
-    verify(model).addRow(new Object[] {false, "first", "attr2=val2, attr1=val1"});
-    verify(model).addRow(new Object[] {true, "second one", ""});
+    verify(model).addRow(new Object[] {true, "ModifiedAttributes", "foo=bar"});
+    verify(model).addRow(new Object[] {false, "InitialAttributes", "attr2=val2, attr1=val1"});
+    verify(model).addRow(new Object[] {false, "NoAttributes", ""});
   }
 
   @Test

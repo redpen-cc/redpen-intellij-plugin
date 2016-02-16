@@ -12,10 +12,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
@@ -137,9 +134,9 @@ public class SettingsPane {
 
     validators.getColumnModel().getColumn(0).setMaxWidth(20);
 
-    for (ValidatorConfiguration validator : provider.getInitialConfig(getConfig().getKey()).getValidatorConfigs()) {
-      boolean enabled = getConfig().getValidatorConfigs().stream().anyMatch(v -> v.getConfigurationName().equals(validator.getConfigurationName()));
-      model.addRow(new Object[] {enabled, validator.getConfigurationName(), attributes(validator)});
+    for (ValidatorConfiguration initialValidator : provider.getInitialConfig(getConfig().getKey()).getValidatorConfigs()) {
+      Optional<ValidatorConfiguration> validator = getConfig().getValidatorConfigs().stream().filter(v -> v.equals(initialValidator)).findFirst();
+      model.addRow(new Object[] { validator.isPresent(), initialValidator.getConfigurationName(), attributes(validator.orElse(initialValidator))});
     }
 
     validators.doLayout();
