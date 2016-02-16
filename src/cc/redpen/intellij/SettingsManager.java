@@ -43,7 +43,7 @@ public class SettingsManager implements SearchableConfigurable {
   @Override public void apply() throws ConfigurationException {
     provider.setActiveConfig(settingsPane.getConfig());
     provider.setAutodetect(settingsPane.autodetectLanguage.isSelected());
-    settingsPane.apply();
+    settingsPane.save();
     restartInspections();
   }
 

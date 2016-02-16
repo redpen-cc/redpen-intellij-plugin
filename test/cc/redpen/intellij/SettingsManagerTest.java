@@ -20,27 +20,30 @@ public class SettingsManagerTest extends BaseTest {
   }
 
   @Test
-  public void applyLanguage() throws Exception {
+  public void applyConfigSwitch() throws Exception {
     manager.settingsPane.setConfig(mock(Configuration.class));
-
     manager.apply();
-
     verify(manager.provider).setActiveConfig(manager.settingsPane.getConfig());
   }
 
   @Test
-  public void applyAutodetect() throws Exception {
+  public void applyAutodetectIfNeeded() throws Exception {
     when(manager.settingsPane.autodetectLanguage.isSelected()).thenReturn(false);
-
     manager.apply();
-
     verify(manager.provider).setAutodetect(false);
+  }
+
+  @Test
+  public void doNotApplyAutodetectIfNotNeeded() throws Exception {
+    when(manager.settingsPane.autodetectLanguage.isSelected()).thenReturn(true);
+    manager.apply();
+    verify(manager.provider).setAutodetect(true);
   }
 
   @Test
   public void applyValidatorsAndSymbols() throws Exception {
     manager.apply();
-    verify(manager.settingsPane).apply();
+    verify(manager.settingsPane).save();
     verify(manager).restartInspections();
   }
 

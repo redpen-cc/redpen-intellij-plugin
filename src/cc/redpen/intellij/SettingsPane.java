@@ -72,7 +72,7 @@ public class SettingsPane {
   void exportConfig() {
     try {
       if (fileChooser.showSaveDialog(root) != APPROVE_OPTION) return;
-      apply();
+      save();
       configurationExporter.export(getConfig(), new FileOutputStream(fileChooser.getSelectedFile()));
     }
     catch (IOException e) {
@@ -86,7 +86,7 @@ public class SettingsPane {
     language.setSelectedItem(provider.getActiveConfig().getKey());
     language.addPopupMenuListener(new PopupMenuListenerAdapter() {
       @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-        applyLocalChanges();
+        applyChanges();
       }
     });
     language.addActionListener(a -> initTabs());
@@ -195,13 +195,13 @@ public class SettingsPane {
     getSymbols().stream().forEach(symbolTable::overrideSymbol);
   }
 
-  void applyLocalChanges() {
+  void applyChanges() {
     applyValidatorsChanges();
     applySymbolsChanges();
   }
 
-  public void apply() {
-    applyLocalChanges();
+  public void save() {
+    applyChanges();
     provider.getConfigs().putAll(configs);
     cloneConfigs();
   }

@@ -36,9 +36,9 @@ public class SettingsPaneTest extends BaseTest {
   }
 
   @Test
-  public void activeConfigIsClonedOnCreation() throws Exception {
-    settingsPane.initLanguages();
-    assertSame(provider.getActiveConfig().clone(), settingsPane.getConfig());
+  public void allConfigsAreClonedOnCreation() throws Exception {
+    assertSame(settingsPane.provider.getInitialConfig("en").clone(), settingsPane.getConfig("en"));
+    assertSame(settingsPane.provider.getInitialConfig("ja").clone(), settingsPane.getConfig("ja"));
   }
 
   @Test
@@ -84,14 +84,14 @@ public class SettingsPaneTest extends BaseTest {
   @Test
   public void changingOfLanguageAppliesOldChangesAndInitsNewValidatorsAndSymbols() throws Exception {
     doNothing().when(settingsPane).initTabs();
-    doNothing().when(settingsPane).applyLocalChanges();
+    doNothing().when(settingsPane).applyChanges();
 
     settingsPane.getPane();
     assertSame(provider.getActiveConfig().clone(), settingsPane.getConfig());
     verify(settingsPane).initTabs();
 
     settingsPane.language.firePopupMenuWillBecomeVisible();
-    verify(settingsPane).applyLocalChanges();
+    verify(settingsPane).applyChanges();
 
     settingsPane.language.setSelectedItem("ja");
     assertSame(provider.getConfig("ja").clone(), settingsPane.getConfig());
@@ -239,7 +239,7 @@ public class SettingsPaneTest extends BaseTest {
 
     settingsPane.exportButton.doClick();
 
-    verify(settingsPane, never()).apply();
+    verify(settingsPane, never()).save();
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verifyNoMoreInteractions(settingsPane.fileChooser);
   }
@@ -255,7 +255,7 @@ public class SettingsPaneTest extends BaseTest {
 
     settingsPane.exportConfig();
 
-    verify(settingsPane).apply();
+    verify(settingsPane).save();
     verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root);
     verify(settingsPane.fileChooser).getSelectedFile();
     verify(settingsPane.configurationExporter).export(eq(settingsPane.getConfig()), any(FileOutputStream.class));
@@ -320,7 +320,7 @@ public class SettingsPaneTest extends BaseTest {
     settingsPane.configurationExporter = mock(ConfigurationExporter.class);
     settingsPane.language = mock(JComboBox.class);
     doNothing().when(settingsPane).initTabs();
-    doNothing().when(settingsPane).apply();
+    doNothing().when(settingsPane).save();
   }
 
   @Test
@@ -349,9 +349,9 @@ public class SettingsPaneTest extends BaseTest {
 
   @Test
   public void applyClonesLocalConfigs() throws Exception {
-    doNothing().when(settingsPane).applyLocalChanges();
-    settingsPane.apply();
-    verify(settingsPane).applyLocalChanges();
+    doNothing().when(settingsPane).applyChanges();
+    settingsPane.save();
+    verify(settingsPane).applyChanges();
     verify(settingsPane).cloneConfigs();
   }
 
@@ -376,6 +376,17 @@ public class SettingsPaneTest extends BaseTest {
 
     verify(settingsPane).cloneConfigs();
     verify(settingsPane).initTabs();
+  }
+
+  @Test
+  public void applyChanges() throws Exception {
+    doNothing().when(settingsPane).applySymbolsChanges();
+    doNothing().when(settingsPane).applyValidatorsChanges();
+
+    settingsPane.applyChanges();
+
+    verify(settingsPane).applySymbolsChanges();
+    verify(settingsPane).applyValidatorsChanges();
   }
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
