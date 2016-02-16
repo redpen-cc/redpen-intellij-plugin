@@ -215,8 +215,7 @@ public class SettingsPane {
   }
 
   public void resetToDefaults() {
-    provider.reset();
-    cloneConfigs();
+    provider.getInitialConfigs().forEach((k, v) -> configs.put(k, v.clone()));
     initTabs();
   }
 
@@ -244,9 +243,12 @@ public class SettingsPane {
     };
   }
 
-  @SuppressWarnings("SuspiciousMethodCalls")
   public Configuration getConfig() {
-    return configs.get(language.getSelectedItem());
+    return getConfig((String)language.getSelectedItem());
+  }
+
+  public Configuration getConfig(String key) {
+    return configs.get(key);
   }
 
   public void setConfig(Configuration config) {

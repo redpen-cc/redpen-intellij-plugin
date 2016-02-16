@@ -357,12 +357,11 @@ public class SettingsPaneTest extends BaseTest {
   public void resetToDefaults() throws Exception {
     settingsPane.initButtons();
     doNothing().when(settingsPane).initTabs();
-    settingsPane.provider = mock(RedPenProvider.class);
 
     settingsPane.resetButton.doClick();
 
-    verify(settingsPane.provider).reset();
-    verify(settingsPane).cloneConfigs();
+    assertEquals(settingsPane.provider.getInitialConfig("en").clone(), settingsPane.getConfig("en"));
+    assertEquals(settingsPane.provider.getInitialConfig("ja").clone(), settingsPane.getConfig("ja"));
     verify(settingsPane).initTabs();
   }
 
@@ -379,7 +378,7 @@ public class SettingsPaneTest extends BaseTest {
 
   private ValidatorConfiguration validatorConfig(String name, Map<String, String> attributes) {
     ValidatorConfiguration config = new ValidatorConfiguration(name);
-    attributes.entrySet().stream().forEach(entry -> config.addAttribute(entry.getKey(), entry.getValue()));
+    attributes.forEach(config::addAttribute);
     return config;
   }
 }

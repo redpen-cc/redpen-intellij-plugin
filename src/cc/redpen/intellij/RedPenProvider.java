@@ -81,6 +81,10 @@ public class RedPenProvider {
     return parsers.get(file.getFileType().getName());
   }
 
+  public Map<String, Configuration> getInitialConfigs() {
+    return initialConfigs;
+  }
+
   public Configuration getInitialConfig(String key) {
     return initialConfigs.get(key);
   }
