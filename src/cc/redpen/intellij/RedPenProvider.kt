@@ -21,6 +21,7 @@ open class RedPenProvider {
             "AsciiDoc", DocumentParser.ASCIIDOC)
 
     companion object {
+        @JvmStatic
         val instance : RedPenProvider by lazy { RedPenProvider() }
     }
 
