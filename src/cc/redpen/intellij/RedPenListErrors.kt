@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.ui.Messages.showMessageDialog
 import java.util.*
 
 class RedPenListErrors : AnAction() {
@@ -18,7 +19,7 @@ class RedPenListErrors : AnAction() {
         val file = event.getData(LangDataKeys.PSI_FILE)
         val title = "RedPen " + RedPen.VERSION
         if (file == null) {
-            Messages.showMessageDialog(project, "No file currently active", title, Messages.getInformationIcon())
+            showMessageDialog(project, "No file currently active", title, Messages.getInformationIcon())
             return
         }
 
@@ -28,12 +29,11 @@ class RedPenListErrors : AnAction() {
             val redPenDoc = redPen.parse(provider.getParser(file), text)
             val errors = redPen.validate(redPenDoc)
 
-            Messages.showMessageDialog(project, errors.map({ e -> getLineNumber(e) + ":" + getOffset(e.startPosition) + "-" + getOffset(e.endPosition) + " " + e.message })
+            showMessageDialog(project, errors.map({ e -> getLineNumber(e) + ":" + getOffset(e.startPosition) + "-" + getOffset(e.endPosition) + " " + e.message })
                     .joinToString("\n"), file.name, Messages.getInformationIcon())
         } catch (e: Exception) {
-            Messages.showMessageDialog(project, e.toString(), title, Messages.getInformationIcon())
+            showMessageDialog(project, e.toString(), title, Messages.getInformationIcon())
         }
-
     }
 
     private fun getLineNumber(e: ValidationError): String {
