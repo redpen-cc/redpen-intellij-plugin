@@ -160,6 +160,11 @@ class RedPenInspectionTest : BaseTest() {
         assertNotNull(captor.value.component)
     }
 
+    @Test
+    fun doNotSerializeSettings() {
+        assertFalse(inspection.serializationFilter.accepts(mock(), mock()));
+    }
+
     private fun mockTextFile(text: String): PsiFile {
         return mockFileOfType("PLAIN_TEXT", text)
     }

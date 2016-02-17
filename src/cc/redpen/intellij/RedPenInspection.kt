@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.psi.PsiFile
+import com.intellij.util.xmlb.SerializationFilter
 
 open class RedPenInspection : LocalInspectionTool() {
     internal var provider = RedPenProvider.instance
@@ -87,5 +88,9 @@ open class RedPenInspection : LocalInspectionTool() {
             result += lines[i - 1].length
         }
         return result + lineOffset.offset
+    }
+
+    public override fun getSerializationFilter(): SerializationFilter {
+        return SerializationFilter { a, o -> false }
     }
 }
