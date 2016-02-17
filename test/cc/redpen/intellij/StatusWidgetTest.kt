@@ -1,6 +1,5 @@
 package cc.redpen.intellij
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -13,7 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 
-class StatusWidgetTest {
+class StatusWidgetTest : BaseTest() {
     val psiManager = mock<PsiManager>(RETURNS_DEEP_STUBS)
     val project = mock<Project>(RETURNS_DEEP_STUBS)
     val provider = mock<RedPenProvider>(RETURNS_DEEP_STUBS)
@@ -23,7 +22,6 @@ class StatusWidgetTest {
     @Before
     fun setUp() {
         whenever(project.getComponent(PsiManager::class.java)).thenReturn(psiManager)
-        ApplicationManager.setApplication(mock(), mock())
     }
 
     @Test

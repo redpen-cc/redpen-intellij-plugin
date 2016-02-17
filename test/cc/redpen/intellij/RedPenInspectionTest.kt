@@ -9,7 +9,6 @@ import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import cc.redpen.validator.section.WordFrequencyValidator
 import com.intellij.codeInspection.InspectionManager
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -155,7 +154,6 @@ class RedPenInspectionTest : BaseTest() {
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
         doNothing().whenever(inspection).addWidgetToStatusBar(any(), any())
         val captor = ArgumentCaptor.forClass(StatusWidget::class.java)
-        ApplicationManager.setApplication(mock(), mock())
         doReturn(mapOf<String, Configuration>()).whenever(inspection.provider).getConfigs()
 
         inspection.createStatusWidget(file)
