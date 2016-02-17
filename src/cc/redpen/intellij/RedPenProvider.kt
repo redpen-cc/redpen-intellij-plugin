@@ -60,9 +60,9 @@ open class RedPenProvider {
         return getRedPen()
     }
 
-    fun getConfigKeyFor(text: String) = if (isAutodetect) LanguageDetector().detectLanguage(text) else configKey
+    open fun getConfigKeyFor(text: String) = if (isAutodetect) LanguageDetector().detectLanguage(text) else configKey
 
-    fun getParser(file: PsiFile): DocumentParser? {
+    open fun getParser(file: PsiFile): DocumentParser? {
         return parsers[file.fileType.name]
     }
 
