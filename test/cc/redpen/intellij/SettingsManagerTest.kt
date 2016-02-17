@@ -6,7 +6,6 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import org.mockito.Mockito.doNothing
 
@@ -16,8 +15,8 @@ class SettingsManagerTest : BaseTest() {
 
     @Before
     fun setUp() {
-        doNothing().`when`(manager).restartInspections()
-        manager.provider = Mockito.mock(RedPenProvider::class.java, RETURNS_DEEP_STUBS)
+        doNothing().whenever(manager).restartInspections()
+        manager.provider = mock(RETURNS_DEEP_STUBS)
         manager.settingsPane = mock()
         manager.settingsPane.autodetectLanguage = mock()
         whenever(manager.settingsPane.config).thenReturn(config);

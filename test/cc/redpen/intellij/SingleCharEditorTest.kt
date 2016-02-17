@@ -14,19 +14,19 @@ class SingleCharEditorTest {
 
     @Test
     fun editingCannotBeStoppedIfMoreChars() {
-        (editor.getComponent() as JTextField).text = "ab"
+        (editor.component as JTextField).text = "ab"
         assertFalse(editor.stopCellEditing())
     }
 
     @Test
     fun editingCanBeStoppedIfSingleChar() {
-        (editor.getComponent() as JTextField).text = "a"
+        (editor.component as JTextField).text = "a"
         assertTrue(editor.stopCellEditing())
     }
 
     @Test
     fun cannotInputMoreThanOneChar() {
-        val document = (editor.getComponent() as JTextField).document
+        val document = (editor.component as JTextField).document
         document.insertString(0, "a", null)
         assertEquals("a", document.getText(0, document.length))
 

@@ -4,16 +4,12 @@ import cc.redpen.config.Configuration
 import cc.redpen.config.Symbol
 import cc.redpen.config.SymbolType.*
 import cc.redpen.config.ValidatorConfiguration
-import com.google.common.collect.ImmutableMap
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Matchers
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
-import java.awt.Component
 import java.io.File
-import java.io.FileOutputStream
 import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyMap
@@ -22,7 +18,7 @@ import javax.swing.JFileChooser.CANCEL_OPTION
 import javax.swing.table.DefaultTableModel
 
 class SettingsPaneTest : BaseTest() {
-    internal var provider = RedPenProvider(LinkedHashMap(ImmutableMap.of("en", cloneableConfig("en"), "ja", cloneableConfig("ja"))))
+    internal var provider = RedPenProvider(LinkedHashMap(mapOf("en" to cloneableConfig("en"), "ja" to cloneableConfig("ja"))))
     internal var settingsPane = spy(SettingsPane(provider))
 
     @Before
@@ -97,12 +93,12 @@ class SettingsPaneTest : BaseTest() {
     @Test
     fun validatorsAreListedInSettings() {
         val allValidators = asList(
-                validatorConfig("ModifiedAttributes", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
-                validatorConfig("InitialAttributes", ImmutableMap.of("attr1", "val1", "attr2", "val2")),
-                validatorConfig("NoAttributes", emptyMap<String, String>()))
+                validatorConfig("ModifiedAttributes", mapOf("attr1" to "val1", "attr2" to "val2")),
+                validatorConfig("InitialAttributes", mapOf("attr1" to "val1", "attr2" to "val2")),
+                validatorConfig("NoAttributes", emptyMap()))
 
         whenever(provider.getInitialConfig("en")!!.validatorConfigs).thenReturn(allValidators)
-        doReturn(configWithValidators(listOf(validatorConfig("ModifiedAttributes", ImmutableMap.of("foo", "bar"))))).whenever(settingsPane).config
+        doReturn(configWithValidators(listOf(validatorConfig("ModifiedAttributes", mapOf("foo" to "bar"))))).whenever(settingsPane).config
 
         val model = mock<DefaultTableModel>()
         doReturn(model).whenever(settingsPane).createValidatorsModel()
@@ -135,7 +131,7 @@ class SettingsPaneTest : BaseTest() {
     fun getActiveValidators_modifiesAttributes() {
         settingsPane.initLanguages()
         whenever(provider.getInitialConfig("en")!!.validatorConfigs).thenReturn(
-                listOf(validatorConfig("Hello", ImmutableMap.of("width", "100", "height", "300", "depth", "1"))))
+                listOf(validatorConfig("Hello", mapOf("width" to "100", "height" to "300", "depth" to "1"))))
 
         whenever(settingsPane.validators.model.rowCount).thenReturn(1)
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
@@ -143,14 +139,14 @@ class SettingsPaneTest : BaseTest() {
 
         val activeValidators = settingsPane.activeValidators
         assertEquals(1, activeValidators.size.toLong())
-        assertEquals(ImmutableMap.of("width", "200", "height", "300"), activeValidators[0].attributes)
+        assertEquals(mapOf("width" to "200", "height" to "300"), activeValidators[0].attributes)
         assertNotSame(provider.getInitialConfig("en")!!.validatorConfigs[0], activeValidators[0])
     }
 
     @Test
     fun getActiveValidators_reportsInvalidAttributes() {
         settingsPane.initLanguages()
-        val validator = validatorConfig("Hello", ImmutableMap.of("width", "100"))
+        val validator = validatorConfig("Hello", mapOf("width" to "100"))
         whenever(provider.getInitialConfig("en")!!.validatorConfigs).thenReturn(listOf(validator))
 
         doNothing().whenever(settingsPane).showPropertyError(any(), any())
@@ -231,7 +227,7 @@ class SettingsPaneTest : BaseTest() {
     fun canCancelExportingConfiguration() {
         prepareImportExport()
         settingsPane.initButtons()
-        whenever(settingsPane.fileChooser.showSaveDialog(Matchers.any(Component::class.java))).thenReturn(CANCEL_OPTION)
+        whenever(settingsPane.fileChooser.showSaveDialog(any())).thenReturn(CANCEL_OPTION)
 
         settingsPane.exportButton.doClick()
 
@@ -246,7 +242,7 @@ class SettingsPaneTest : BaseTest() {
         val file = File.createTempFile("redpen-conf", ".xml")
         file.deleteOnExit()
 
-        whenever(settingsPane.fileChooser.showSaveDialog(Matchers.any(Component::class.java))).thenReturn(APPROVE_OPTION)
+        whenever(settingsPane.fileChooser.showSaveDialog(any())).thenReturn(APPROVE_OPTION)
         whenever(settingsPane.fileChooser.selectedFile).thenReturn(file)
 
         settingsPane.exportConfig()
@@ -254,14 +250,14 @@ class SettingsPaneTest : BaseTest() {
         verify(settingsPane).save()
         verify(settingsPane.fileChooser).showSaveDialog(settingsPane.root)
         verify(settingsPane.fileChooser).selectedFile
-        verify(settingsPane.configurationExporter).export(Matchers.eq(settingsPane.config), Matchers.any(FileOutputStream::class.java))
+        verify(settingsPane.configurationExporter).export(eq(settingsPane.config), any())
     }
 
     @Test
     fun canCancelImportingConfiguration() {
         prepareImportExport()
         settingsPane.initButtons()
-        whenever(settingsPane.fileChooser.showOpenDialog(Matchers.any(Component::class.java))).thenReturn(CANCEL_OPTION)
+        whenever(settingsPane.fileChooser.showOpenDialog(any())).thenReturn(CANCEL_OPTION)
 
         settingsPane.importButton.doClick()
 
@@ -275,7 +271,7 @@ class SettingsPaneTest : BaseTest() {
         val file = mock<File>()
         val config = config("ja.hankaku")
 
-        whenever(settingsPane.fileChooser.showOpenDialog(Matchers.any(Component::class.java))).thenReturn(APPROVE_OPTION)
+        whenever(settingsPane.fileChooser.showOpenDialog(any())).thenReturn(APPROVE_OPTION)
         whenever(settingsPane.fileChooser.selectedFile).thenReturn(file)
         whenever(settingsPane.configurationLoader.load(file)).thenReturn(config)
         whenever(settingsPane.language.selectedItem).thenReturn("ja.hankaku")

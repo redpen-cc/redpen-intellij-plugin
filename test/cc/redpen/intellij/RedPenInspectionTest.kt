@@ -8,16 +8,13 @@ import cc.redpen.parser.DocumentParser
 import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import cc.redpen.validator.section.WordFrequencyValidator
-import com.intellij.codeInspection.InspectionManager
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
-import org.mockito.Matchers
 import org.mockito.Mockito
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import org.mockito.Mockito.doReturn
@@ -39,28 +36,28 @@ class RedPenInspectionTest : BaseTest() {
 
     @Test
     fun notSupportedFilesAreIgnored() {
-        assertNull(inspection.checkFile(mockFileOfType("JAVA", ""), mock<InspectionManager>(), true))
-        assertNull(inspection.checkFile(mockFileOfType("XML", ""), mock<InspectionManager>(), true))
+        assertNull(inspection.checkFile(mockFileOfType("JAVA", ""), mock(), true))
+        assertNull(inspection.checkFile(mockFileOfType("XML", ""), mock(), true))
     }
 
     @Test
     fun plainTextIsSupported() {
-        whenever<List<ValidationError>>(redPen.validate(Matchers.any(Document::class.java))).thenReturn(emptyList<ValidationError>())
-        inspection.checkFile(mockTextFile("Hello"), mock<InspectionManager>(), true)
+        whenever<List<ValidationError>>(redPen.validate(any<Document>())).thenReturn(emptyList())
+        inspection.checkFile(mockTextFile("Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.PLAIN, "Hello")
     }
 
     @Test
     fun markdownIsSupported() {
-        whenever<List<ValidationError>>(redPen.validate(Matchers.any(Document::class.java))).thenReturn(emptyList<ValidationError>())
-        inspection.checkFile(mockFileOfType("Markdown", "Hello"), mock<InspectionManager>(), true)
+        whenever<List<ValidationError>>(redPen.validate(any<Document>())).thenReturn(emptyList())
+        inspection.checkFile(mockFileOfType("Markdown", "Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.MARKDOWN, "Hello")
     }
 
     @Test
     fun asciiDocIsSupported() {
-        whenever<List<ValidationError>>(redPen.validate(Matchers.any(Document::class.java))).thenReturn(emptyList<ValidationError>())
-        inspection.checkFile(mockFileOfType("AsciiDoc", "Hello"), mock<InspectionManager>(), true)
+        whenever<List<ValidationError>>(redPen.validate(any<Document>())).thenReturn(emptyList())
+        inspection.checkFile(mockFileOfType("AsciiDoc", "Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.ASCIIDOC, "Hello")
     }
 
@@ -87,7 +84,7 @@ class RedPenInspectionTest : BaseTest() {
 
     @Test
     fun toRange_sentenceLevelError() {
-        val sentence = Sentence("Hello.", listOf(LineOffset(1, 25)), emptyList<String>())
+        val sentence = Sentence("Hello.", listOf(LineOffset(1, 25)), emptyList())
         val textRange = inspection.toRange(errorGenerator.sentence(sentence), arrayOf(sentence.content))
         assertEquals(TextRange(25, 26), textRange)
     }
@@ -97,7 +94,7 @@ class RedPenInspectionTest : BaseTest() {
         val doc = redPen.parse(DocumentParser.PLAIN, "Hello")
         whenever(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3), errorGenerator.at(3, 5)))
 
-        val problems = inspection.checkFile(mockTextFile("Hello"), mock<InspectionManager>(), true)
+        val problems = inspection.checkFile(mockTextFile("Hello"), mock(), true)
         assertNotNull(problems)
         assertEquals(2, problems?.size)
     }
@@ -108,7 +105,7 @@ class RedPenInspectionTest : BaseTest() {
         val error = errorGenerator.at(1, 2)
         whenever(redPen.validate(doc)).thenReturn(listOf(error))
 
-        inspection.checkFile(mockTextFile("Hello\nworld"), mock<InspectionManager>(), true)
+        inspection.checkFile(mockTextFile("Hello\nworld"), mock(), true)
 
         val captor = ArgumentCaptor.forClass(Array<String>::class.java)
         verify(inspection).toRange(eq(error), captor.capture() ?: emptyArray())
@@ -175,7 +172,7 @@ class RedPenInspectionTest : BaseTest() {
         val file = Mockito.mock(PsiFile::class.java, RETURNS_DEEP_STUBS)
         whenever(file.fileType.name).thenReturn(typeName)
         whenever(file.text).thenReturn(text)
-        whenever(file.children).thenReturn(arrayOf(mock<PsiElement>()))
+        whenever(file.children).thenReturn(arrayOf(mock()))
         return file
     }
 
