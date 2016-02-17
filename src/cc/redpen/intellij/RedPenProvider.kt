@@ -13,7 +13,7 @@ open class RedPenProvider {
     private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
-    open var isAutodetect = true
+    open var autodetect = true
 
     internal var parsers: Map<String, DocumentParser> = ImmutableMap.of(
             "PLAIN_TEXT", DocumentParser.PLAIN,
@@ -60,7 +60,7 @@ open class RedPenProvider {
         return getRedPen()
     }
 
-    open fun getConfigKeyFor(text: String) = if (isAutodetect) LanguageDetector().detectLanguage(text) else configKey
+    open fun getConfigKeyFor(text: String) = if (autodetect) LanguageDetector().detectLanguage(text) else configKey
 
     open fun getParser(file: PsiFile): DocumentParser? {
         return parsers[file.fileType.name]

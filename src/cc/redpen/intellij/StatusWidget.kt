@@ -57,7 +57,7 @@ open class StatusWidget constructor(project: Project, var provider: RedPenProvid
 
                 override fun actionPerformed(e: AnActionEvent) {
                     provider.activeConfig = it.value
-                    provider.isAutodetect = false
+                    provider.autodetect = false
                     DaemonCodeAnalyzer.getInstance(e.project).restart()
                 }
             })

@@ -32,14 +32,14 @@ class SettingsManagerTest : BaseTest() {
     fun applyAutodetectIfNeeded() {
         whenever(manager.settingsPane.autodetectLanguage.isSelected).thenReturn(false)
         manager.apply()
-        verify(manager.provider).isAutodetect = false;
+        verify(manager.provider).autodetect = false;
     }
 
     @Test
     fun doNotApplyAutodetectIfNotNeeded() {
         whenever(manager.settingsPane.autodetectLanguage.isSelected).thenReturn(true)
         manager.apply()
-        verify(manager.provider).isAutodetect = true;
+        verify(manager.provider).autodetect = true;
     }
 
     @Test

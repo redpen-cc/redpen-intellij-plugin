@@ -37,7 +37,7 @@ open class SettingsManager : SearchableConfigurable {
 
     override fun apply() {
         provider.activeConfig = settingsPane.config
-        provider.isAutodetect = settingsPane.autodetectLanguage.isSelected
+        provider.autodetect = settingsPane.autodetectLanguage.isSelected
         settingsPane.save()
         restartInspections()
     }

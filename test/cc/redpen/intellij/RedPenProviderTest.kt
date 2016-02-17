@@ -17,7 +17,7 @@ class RedPenProviderTest : BaseTest() {
 
     @Test
     fun getRedPenFor_autodetectsLanguage() {
-        provider.isAutodetect = true
+        provider.autodetect = true
 
         var redPen = provider.getRedPenFor("Hello")
         assertEquals("en", redPen.configuration.key)
@@ -28,7 +28,7 @@ class RedPenProviderTest : BaseTest() {
 
     @Test
     fun languageAutodetectionCanBeDisabled() {
-        provider.isAutodetect = false
+        provider.autodetect = false
 
         val redPen = provider.getRedPenFor("こんにちは")
         assertEquals("en", redPen.configuration.key)

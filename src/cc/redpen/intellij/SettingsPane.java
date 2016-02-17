@@ -82,7 +82,7 @@ public class SettingsPane {
 
   void initLanguages() {
     provider.getConfigs().keySet().forEach(k -> language.addItem(k));
-    autodetectLanguage.setSelected(provider.isAutodetect());
+    autodetectLanguage.setSelected(provider.getAutodetect());
     language.setSelectedItem(provider.getActiveConfig().getKey());
     language.addPopupMenuListener(new PopupMenuListenerAdapter() {
       @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
