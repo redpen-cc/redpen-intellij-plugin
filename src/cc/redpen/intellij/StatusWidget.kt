@@ -9,7 +9,7 @@ import com.intellij.openapi.wm.impl.status.EditorBasedWidget
 import com.intellij.openapi.wm.impl.status.TextPanel
 import com.intellij.psi.PsiManager
 
-class StatusWidget internal constructor(project: Project) : EditorBasedWidget(project), CustomStatusBarWidget {
+open class StatusWidget constructor(project: Project) : EditorBasedWidget(project), CustomStatusBarWidget {
     internal var provider = RedPenProvider.instance
     private val component = TextPanel.ExtraSize()
 
@@ -21,7 +21,7 @@ class StatusWidget internal constructor(project: Project) : EditorBasedWidget(pr
         return null
     }
 
-    fun update(configKey: String) {
+    open fun update(configKey: String) {
         component.text = "RedPen: " + configKey
     }
 

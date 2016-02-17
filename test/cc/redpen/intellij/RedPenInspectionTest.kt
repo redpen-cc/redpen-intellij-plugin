@@ -140,7 +140,6 @@ class RedPenInspectionTest : BaseTest() {
         val config = config("ja")
 
         whenever(redPen.configuration).thenReturn(config)
-        doNothing().whenever(inspection.statusWidget)!!.update(any())
 
         inspection.checkFile(file, mock(), true)
 
