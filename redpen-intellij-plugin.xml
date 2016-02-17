@@ -13,6 +13,7 @@
     <include name="*.jar"/>
   </patternset>
   <patternset id="compiler.resources">
+    <exclude name="**/?*.kt"/>
     <exclude name="**/?*.java"/>
     <exclude name="**/?*.form"/>
     <exclude name="**/?*.class"/>
@@ -98,21 +99,6 @@
     </fileset>
   </path>
 
-
-  <path id="redpen-intellij-plugin.module.sourcepath">
-    <dirset dir="${module.redpen-intellij-plugin.basedir}">
-      <include name="src"/>
-      <include name="conf"/>
-    </dirset>
-  </path>
-
-  <path id="redpen-intellij-plugin.module.test.sourcepath">
-    <dirset dir="${module.redpen-intellij-plugin.basedir}">
-      <include name="test"/>
-    </dirset>
-  </path>
-
-
   <target name="compile.module.redpen-intellij-plugin" depends="compile.module.redpen-intellij-plugin.production,compile.module.redpen-intellij-plugin.tests" description="Compile module redpen-intellij-plugin"/>
 
   <target name="compile.module.redpen-intellij-plugin.production" depends="register.custom.compilers" description="Compile module redpen-intellij-plugin; production classes">
@@ -123,7 +109,7 @@
     <javac2 destdir="${redpen-intellij-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
       <compilerarg line="${compiler.args.redpen-intellij-plugin}"/>
       <classpath refid="redpen-intellij-plugin.module.production.classpath"/>
-      <src refid="redpen-intellij-plugin.module.sourcepath"/>
+      <src path="${module.redpen-intellij-plugin.basedir}/src"/>
     </javac2>
 
     <copy todir="${redpen-intellij-plugin.output.dir}">
