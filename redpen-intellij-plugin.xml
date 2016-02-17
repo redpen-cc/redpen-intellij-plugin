@@ -62,10 +62,6 @@
   <property name="redpen-intellij-plugin.output.dir" value="${module.redpen-intellij-plugin.basedir}/out/production/redpen-intellij-plugin"/>
   <property name="redpen-intellij-plugin.testoutput.dir" value="${module.redpen-intellij-plugin.basedir}/out/test/redpen-intellij-plugin"/>
 
-  <path id="redpen-intellij-plugin.module.bootclasspath">
-    <!-- Paths to be included in compilation bootclasspath -->
-  </path>
-
   <path id="redpen-intellij-plugin.module.production.classpath">
     <fileset dir="${basedir}/lib/default">
       <patternset refid="library.patterns"/>
@@ -126,7 +122,6 @@
     </kotlinc>
     <javac2 destdir="${redpen-intellij-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
       <compilerarg line="${compiler.args.redpen-intellij-plugin}"/>
-      <bootclasspath refid="redpen-intellij-plugin.module.bootclasspath"/>
       <classpath refid="redpen-intellij-plugin.module.production.classpath"/>
       <src refid="redpen-intellij-plugin.module.sourcepath"/>
     </javac2>
