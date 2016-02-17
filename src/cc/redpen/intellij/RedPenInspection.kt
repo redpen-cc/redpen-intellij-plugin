@@ -34,9 +34,9 @@ open class RedPenInspection : LocalInspectionTool() {
         return true
     }
 
-    open fun createStatusWidget(file: PsiFile): StatusWidget {
-        val widget = StatusWidget(file.project, provider)
-        addWidgetToStatusBar(file.project, widget)
+    open fun createStatusWidget(project: Project): StatusWidget {
+        val widget = StatusWidget(project, provider)
+        addWidgetToStatusBar(project, widget)
         return widget
     }
 
@@ -67,7 +67,7 @@ open class RedPenInspection : LocalInspectionTool() {
     }
 
     open fun updateStatus(file: PsiFile, redPen: RedPen) {
-        if (statusWidget == null) statusWidget = createStatusWidget(file)
+        if (statusWidget == null) statusWidget = createStatusWidget(file.project)
         statusWidget!!.update(redPen.configuration.key)
     }
 
