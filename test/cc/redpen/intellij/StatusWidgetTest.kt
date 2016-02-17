@@ -16,12 +16,12 @@ import org.mockito.Mockito.RETURNS_DEEP_STUBS
 class StatusWidgetTest {
     val psiManager = mock<PsiManager>(RETURNS_DEEP_STUBS)
     val project = mock<Project>(RETURNS_DEEP_STUBS)
-    val widget = StatusWidget(project)
+    val provider = mock<RedPenProvider>(RETURNS_DEEP_STUBS)
+    val widget = StatusWidget(project, provider)
     val newFile = mock<VirtualFile>()
 
     @Before
     fun setUp() {
-        widget.provider = mock(RETURNS_DEEP_STUBS)
         whenever(project.getComponent(PsiManager::class.java)).thenReturn(psiManager)
         ApplicationManager.setApplication(mock(), mock())
     }
@@ -29,7 +29,7 @@ class StatusWidgetTest {
     @Test
     fun selectionChanged() {
         whenever(psiManager.findFile(newFile)!!.text).thenReturn("Hello")
-        whenever(widget.provider.getConfigKeyFor("Hello")).thenReturn("ja")
+        whenever(provider.getConfigKeyFor("Hello")).thenReturn("ja")
 
         widget.selectionChanged(FileEditorManagerEvent(mock(), mock(), mock(), newFile, mock()))
         assertEquals("RedPen: ja", widget.component.text)
@@ -37,7 +37,7 @@ class StatusWidgetTest {
 
     @Test
     fun selectionChanged_noParser() {
-        whenever(widget.provider.getParser(psiManager.findFile(newFile)!!)).thenReturn(null)
+        whenever(provider.getParser(psiManager.findFile(newFile)!!)).thenReturn(null)
         widget.selectionChanged(FileEditorManagerEvent(mock(), mock(), mock(), newFile, mock()))
         assertNull(widget.component.text)
     }

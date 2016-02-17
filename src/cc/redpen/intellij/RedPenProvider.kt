@@ -74,7 +74,7 @@ open class RedPenProvider {
         return initialConfigs[key]
     }
 
-    fun getConfigs(): Map<String, Configuration> {
+    open fun getConfigs(): Map<String, Configuration> {
         return configs
     }
 

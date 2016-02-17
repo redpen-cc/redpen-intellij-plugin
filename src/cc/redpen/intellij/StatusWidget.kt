@@ -22,8 +22,7 @@ import java.awt.Graphics
 import java.awt.Point
 import java.awt.event.MouseEvent
 
-open class StatusWidget constructor(project: Project) : EditorBasedWidget(project), CustomStatusBarWidget {
-    internal var provider = RedPenProvider.instance
+open class StatusWidget constructor(project: Project, var provider: RedPenProvider) : EditorBasedWidget(project), CustomStatusBarWidget {
     var actionGroup = DefaultActionGroup()
     private val component = object: TextPanel.ExtraSize() {
         protected override fun paintComponent(g: Graphics) {
@@ -45,12 +44,17 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
         }.installOn(component)
         component.border = StatusBarWidget.WidgetBorder.WIDE
 
-        val actionManager = ActionManager.getInstance()
+        registerActions()
+    }
+
+    open fun registerActions() {
+        val actionManager = ActionManager.getInstance() ?: return
         provider.getConfigs().forEach {
-            actionGroup.add(object: AnAction() {
+            actionGroup.add(object : AnAction() {
                 init {
                     templatePresentation.text = it.key
                 }
+
                 override fun actionPerformed(e: AnActionEvent) {
                     provider.activeConfig = it.value
                     provider.isAutodetect = false
