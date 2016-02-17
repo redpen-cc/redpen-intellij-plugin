@@ -46,13 +46,12 @@
     <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
   </target>
 
-  <!-- Modules -->
-
+  <property name="kotlin.lib" value="${jdk.home.intellij_idea_sdk}/plugins/Kotlin/kotlinc/lib"/>
+  <typedef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
 
   <!-- Module redpen-intellij-plugin -->
 
   <dirname property="module.redpen-intellij-plugin.basedir" file="${ant.file}"/>
-
 
   <property name="module.jdk.home.redpen-intellij-plugin" value="${project.jdk.home}"/>
   <property name="module.jdk.bin.redpen-intellij-plugin" value="${project.jdk.bin}"/>
@@ -122,6 +121,9 @@
 
   <target name="compile.module.redpen-intellij-plugin.production" depends="register.custom.compilers" description="Compile module redpen-intellij-plugin; production classes">
     <mkdir dir="${redpen-intellij-plugin.output.dir}"/>
+    <kotlinc src="${module.redpen-intellij-plugin.basedir}/src" output="${redpen-intellij-plugin.output.dir}" moduleName="intellij">
+      <classpath refid="redpen-intellij-plugin.module.production.classpath"/>
+    </kotlinc>
     <javac2 destdir="${redpen-intellij-plugin.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
       <compilerarg line="${compiler.args.redpen-intellij-plugin}"/>
       <bootclasspath refid="redpen-intellij-plugin.module.bootclasspath"/>
@@ -143,13 +145,12 @@
 
   <target name="compile.module.redpen-intellij-plugin.tests" depends="register.custom.compilers,compile.module.redpen-intellij-plugin.production" description="compile module redpen-intellij-plugin; test classes">
     <mkdir dir="${redpen-intellij-plugin.testoutput.dir}"/>
-    <javac2 destdir="${redpen-intellij-plugin.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.redpen-intellij-plugin}/javac">
-      <compilerarg line="${compiler.args.redpen-intellij-plugin}"/>
-      <bootclasspath refid="redpen-intellij-plugin.module.bootclasspath"/>
+    <kotlinc output="${redpen-intellij-plugin.testoutput.dir}" moduleName="intellij">
+      <src path="${module.redpen-intellij-plugin.basedir}/src"/>
+      <src path="${module.redpen-intellij-plugin.basedir}/test"/>
       <classpath refid="redpen-intellij-plugin.module.classpath"/>
-      <src refid="redpen-intellij-plugin.module.test.sourcepath"/>
-    </javac2>
-    
+    </kotlinc>
+
     <copy todir="${redpen-intellij-plugin.testoutput.dir}">
       <fileset dir="${module.redpen-intellij-plugin.basedir}/test">
         <patternset refid="compiler.resources"/>
