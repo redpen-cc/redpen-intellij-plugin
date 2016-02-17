@@ -56,9 +56,11 @@ open class RedPenProvider {
     open fun getRedPen(): RedPen = RedPen(configs[configKey])
 
     fun getRedPenFor(text: String): RedPen {
-        if (isAutodetect) configKey = LanguageDetector().detectLanguage(text)
+        configKey = getConfigKeyFor(text)
         return getRedPen()
     }
+
+    fun getConfigKeyFor(text: String) = if (isAutodetect) LanguageDetector().detectLanguage(text) else configKey
 
     fun getParser(file: PsiFile): DocumentParser? {
         return parsers[file.fileType.name]
