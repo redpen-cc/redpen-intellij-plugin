@@ -1,5 +1,6 @@
 package cc.redpen.intellij
 
+import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.project.Project
@@ -8,10 +9,20 @@ import com.intellij.openapi.wm.StatusBarWidget
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget
 import com.intellij.openapi.wm.impl.status.TextPanel
 import com.intellij.psi.PsiManager
+import java.awt.Graphics
 
 open class StatusWidget constructor(project: Project) : EditorBasedWidget(project), CustomStatusBarWidget {
     internal var provider = RedPenProvider.instance
-    private val component = TextPanel.ExtraSize()
+    private val component = object: TextPanel.ExtraSize() {
+        protected override fun paintComponent(g: Graphics) {
+            super.paintComponent(g)
+            if (text != null) {
+                val arrows = AllIcons.Ide.Statusbar_arrows
+                arrows.paintIcon(this, g, bounds.width - insets.right - arrows.iconWidth - 2,
+                        bounds.height / 2 - arrows.iconHeight / 2)
+            }
+        }
+    }
 
     override fun ID(): String {
         return "RedPen"
