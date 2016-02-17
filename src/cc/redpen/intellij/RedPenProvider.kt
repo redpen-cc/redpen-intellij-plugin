@@ -5,7 +5,6 @@ import cc.redpen.config.Configuration
 import cc.redpen.config.ConfigurationLoader
 import cc.redpen.parser.DocumentParser
 import cc.redpen.util.LanguageDetector
-import com.google.common.collect.ImmutableMap
 import com.intellij.psi.PsiFile
 import java.util.*
 
@@ -15,10 +14,10 @@ open class RedPenProvider {
     private var configKey = "en"
     open var autodetect = true
 
-    internal var parsers: Map<String, DocumentParser> = ImmutableMap.of(
-            "PLAIN_TEXT", DocumentParser.PLAIN,
-            "Markdown", DocumentParser.MARKDOWN,
-            "AsciiDoc", DocumentParser.ASCIIDOC)
+    internal var parsers: Map<String, DocumentParser> = mapOf(
+            "PLAIN_TEXT" to DocumentParser.PLAIN,
+            "Markdown" to DocumentParser.MARKDOWN,
+            "AsciiDoc" to DocumentParser.ASCIIDOC)
 
     companion object {
         @JvmStatic
