@@ -1,6 +1,7 @@
 package cc.redpen.intellij;
 
 import cc.redpen.RedPen;
+import cc.redpen.config.Configuration;
 import cc.redpen.model.Document;
 import cc.redpen.model.Sentence;
 import cc.redpen.parser.DocumentParser;
@@ -25,7 +26,7 @@ import static java.util.Collections.singletonList;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-public class RedPenInspectionTest {
+public class RedPenInspectionTest extends BaseTest {
   RedPenInspection inspection = new RedPenInspection();
   ErrorGenerator errorGenerator = new ErrorGenerator();
   RedPen redPen;
@@ -114,6 +115,52 @@ public class RedPenInspectionTest {
     verify(inspection).toRange(eq(error), captor.capture());
 
     assertArrayEquals(new String[] {"Hello\n", "world"}, captor.getValue());
+  }
+
+  @Test
+  public void checkFile_createsAndUpdatesStatusWidget() throws Exception {
+    inspection = spy(inspection);
+    PsiFile file = mockTextFile("Hello");
+    Configuration config = config("ja");
+    StatusWidget statusWidget = mock(StatusWidget.class);
+
+    when(redPen.getConfiguration()).thenReturn(config);
+    doNothing().when(statusWidget).update(any());
+    doReturn(statusWidget).when(inspection).createStatusWidget(any());
+
+    inspection.checkFile(file, mock(InspectionManager.class), true);
+
+    verify(inspection).createStatusWidget(file);
+    verify(inspection.statusWidget).update("ja");
+  }
+
+  @Test
+  public void checkFile_createsStatusWidgetOnlyDuringFirstRun() throws Exception {
+    inspection = spy(inspection);
+    inspection.statusWidget = mock(StatusWidget.class);
+    PsiFile file = mockTextFile("Hello");
+    Configuration config = config("ja");
+
+    when(redPen.getConfiguration()).thenReturn(config);
+    doNothing().when(inspection.statusWidget).update(any());
+
+    inspection.checkFile(file, mock(InspectionManager.class), true);
+
+    verify(inspection, never()).createStatusWidget(file);
+    verify(inspection.statusWidget).update("ja");
+  }
+
+  @Test
+  public void createStatusWidget() throws Exception {
+    inspection = spy(inspection);
+    PsiFile file = mock(PsiFile.class, RETURNS_DEEP_STUBS);
+    doNothing().when(inspection).addWidgetToStatusBar(any(), any());
+    ArgumentCaptor<StatusWidget> captor = ArgumentCaptor.forClass(StatusWidget.class);
+
+    inspection.createStatusWidget(file);
+
+    verify(inspection).addWidgetToStatusBar(eq(file.getProject()), captor.capture());
+    assertNotNull(captor.getValue().getComponent());
   }
 
   private PsiFile mockTextFile(String text) {

@@ -73,8 +73,12 @@ public class RedPenProvider {
   }
 
   public RedPen getRedPenFor(String text) {
-    if (autodetect) configKey = new LanguageDetector().detectLanguage(text);
+    configKey = getConfigKeyFor(text);
     return getRedPen();
+  }
+
+  public String getConfigKeyFor(String text) {
+    return autodetect ? new LanguageDetector().detectLanguage(text) : configKey;
   }
 
   public DocumentParser getParser(PsiFile file) {

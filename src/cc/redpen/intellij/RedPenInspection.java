@@ -11,7 +11,9 @@ import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalInspectionTool;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.wm.WindowManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ import static java.util.stream.Collectors.toList;
 
 public class RedPenInspection extends LocalInspectionTool {
   RedPenProvider provider = RedPenProvider.getInstance();
+  StatusWidget statusWidget;
 
   @NotNull @Override public String getDisplayName() {
     return "RedPen Validation";
@@ -49,6 +52,10 @@ public class RedPenInspection extends LocalInspectionTool {
     try {
       String text = file.getText();
       RedPen redPen = provider.getRedPenFor(text);
+
+      if (statusWidget == null) statusWidget = createStatusWidget(file);
+      statusWidget.update(redPen.getConfiguration().getKey());
+
       Document redPenDoc = redPen.parse(parser, text);
       List<ValidationError> errors = redPen.validate(redPenDoc);
 
@@ -65,6 +72,17 @@ public class RedPenInspection extends LocalInspectionTool {
     catch (RedPenException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  StatusWidget createStatusWidget(@NotNull PsiFile file) {
+    Project project = file.getProject();
+    StatusWidget widget = new StatusWidget(project);
+    addWidgetToStatusBar(project, widget);
+    return widget;
+  }
+
+  void addWidgetToStatusBar(Project project, StatusWidget widget) {
+    WindowManager.getInstance().getStatusBar(project).addWidget(widget, "before Encoding");
   }
 
   TextRange toRange(ValidationError e, String[] lines) {
