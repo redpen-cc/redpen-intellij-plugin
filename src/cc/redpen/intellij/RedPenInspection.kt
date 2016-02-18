@@ -16,7 +16,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.util.xmlb.SerializationFilter
 
 open class RedPenInspection : LocalInspectionTool() {
-    internal var provider = RedPenProvider.getInstance()
+    internal var provider = RedPenProvider.instance
     internal var statusWidget: StatusWidget? = null
 
     override fun getDisplayName(): String {

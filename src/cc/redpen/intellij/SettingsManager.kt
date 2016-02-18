@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
 open class SettingsManager : SearchableConfigurable {
-    internal var provider = RedPenProvider.getInstance()
+    internal var provider = RedPenProvider.instance
     internal var settingsPane = SettingsPane(provider)
 
     override fun getId(): String {

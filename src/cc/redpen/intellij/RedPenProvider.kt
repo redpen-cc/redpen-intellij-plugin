@@ -23,7 +23,7 @@ open class RedPenProvider : PersistentStateComponent<MutableMap<String, Configur
 
     companion object {
         @JvmStatic
-        fun getInstance(): RedPenProvider = ApplicationManager.getApplication().getComponent(RedPenProvider::class.java)!!
+        val instance: RedPenProvider by lazy { ApplicationManager.getApplication().getComponent(RedPenProvider::class.java) ?: RedPenProvider() }
     }
 
     private constructor() {
