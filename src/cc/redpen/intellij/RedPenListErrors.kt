@@ -12,7 +12,7 @@ import com.intellij.openapi.ui.Messages.showMessageDialog
 import java.util.*
 
 class RedPenListErrors : AnAction() {
-    internal var provider = RedPenProvider.instance
+    internal var provider = RedPenProvider.getInstance()
 
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.getData(PlatformDataKeys.PROJECT)

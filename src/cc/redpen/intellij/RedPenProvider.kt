@@ -5,10 +5,12 @@ import cc.redpen.config.Configuration
 import cc.redpen.config.ConfigurationLoader
 import cc.redpen.parser.DocumentParser
 import cc.redpen.util.LanguageDetector
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.psi.PsiFile
 import java.util.*
 
-open class RedPenProvider {
+open class RedPenProvider : PersistentStateComponent<MutableMap<String, Configuration>> {
     private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
@@ -21,7 +23,7 @@ open class RedPenProvider {
 
     companion object {
         @JvmStatic
-        val instance : RedPenProvider by lazy { RedPenProvider() }
+        fun getInstance(): RedPenProvider = ApplicationManager.getApplication().getComponent(RedPenProvider::class.java)!!
     }
 
     private constructor() {
@@ -30,6 +32,14 @@ open class RedPenProvider {
         loadConfig("redpen-conf-ja-hankaku.xml")
         loadConfig("redpen-conf-ja-zenkaku2.xml")
         reset()
+    }
+
+    override fun getState(): MutableMap<String, Configuration> {
+        return configs;
+    }
+
+    override fun loadState(state: MutableMap<String, Configuration>) {
+        configs = state
     }
 
     fun reset() {
