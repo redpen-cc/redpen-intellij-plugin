@@ -32,7 +32,8 @@ open class SettingsManager : SearchableConfigurable {
     }
 
     override fun isModified(): Boolean {
-        return true
+        settingsPane.applyChanges()
+        return !provider.getConfigs().equals(settingsPane.configs)
     }
 
     override fun apply() {
