@@ -113,7 +113,7 @@ open class RedPenProvider : SettingsSavingComponent {
             configKey = config.key
         }
 
-    fun setConfig(file: PsiFile, config: Configuration) {
+    open fun setConfig(file: PsiFile, config: Configuration) {
         activeConfig = config
         configKeysByFile[file.virtualFile.path] = config.key
     }

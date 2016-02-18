@@ -66,4 +66,15 @@ class RedPenProviderTest : BaseTest() {
 
         provider.configDir.deleteRecursively()
     }
+
+    @Test
+    fun setConfig() {
+        val config = config("en")
+        val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
+        whenever(file.virtualFile.path).thenReturn("/path")
+
+        provider.setConfig(file, config)
+
+        assertEquals("en", provider.configKeysByFile["/path"])
+    }
 }

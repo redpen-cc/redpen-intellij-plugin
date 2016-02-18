@@ -1,10 +1,17 @@
 package cc.redpen.intellij
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.openapi.actionSystem.ActionManager
+import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -38,5 +45,23 @@ class StatusWidgetTest : BaseTest() {
         whenever(provider.getParser(psiManager.findFile(newFile)!!)).thenReturn(null)
         widget.selectionChanged(FileEditorManagerEvent(mock(), mock(), mock(), newFile, mock()))
         assertNull(widget.component.text)
+    }
+
+    @Test
+    fun remembersManuallySelectedFile() {
+        val event = mock<AnActionEvent>(RETURNS_DEEP_STUBS)
+        val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
+        val config = config("en")
+        val codeAnalyzer = mock<DaemonCodeAnalyzer>()
+        whenever(ApplicationManager.getApplication().getComponent(ActionManager::class.java)).thenReturn(mock())
+        whenever(event.getData(LangDataKeys.PSI_FILE)).thenReturn(file)
+        whenever(event.project!!.getComponent(DaemonCodeAnalyzer::class.java)).thenReturn(codeAnalyzer)
+        whenever(provider.getConfigs()).thenReturn(mapOf("en" to config))
+
+        widget.registerActions()
+        widget.actionGroup.childActionsOrStubs[0].actionPerformed(event)
+
+        verify(provider).setConfig(file, config)
+        verify(codeAnalyzer).restart()
     }
 }
