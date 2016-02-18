@@ -25,6 +25,7 @@
 
     <get src="${idea-link}" dest="idea.tar.gz"/>
     <untar src="idea.tar.gz" dest="." compression="gzip">
+      <patternset includes="idea-*/bin/*"/>
       <patternset includes="idea-*/lib/*.jar"/>
       <patternset includes="idea-*/plugins/Kotlin/**/*.jar"/>
     </untar>
