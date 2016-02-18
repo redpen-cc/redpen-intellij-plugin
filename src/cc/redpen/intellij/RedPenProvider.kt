@@ -2,15 +2,19 @@ package cc.redpen.intellij
 
 import cc.redpen.RedPen
 import cc.redpen.config.Configuration
+import cc.redpen.config.ConfigurationExporter
 import cc.redpen.config.ConfigurationLoader
 import cc.redpen.parser.DocumentParser
 import cc.redpen.util.LanguageDetector
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.PersistentStateComponent
+import com.intellij.openapi.application.PathManager
+import com.intellij.openapi.components.SettingsSavingComponent
 import com.intellij.psi.PsiFile
+import java.io.File
+import java.io.FileOutputStream
 import java.util.*
 
-open class RedPenProvider : PersistentStateComponent<MutableMap<String, Configuration>> {
+open class RedPenProvider : SettingsSavingComponent {
     private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
@@ -34,12 +38,12 @@ open class RedPenProvider : PersistentStateComponent<MutableMap<String, Configur
         reset()
     }
 
-    override fun getState(): MutableMap<String, Configuration> {
-        return configs;
-    }
-
-    override fun loadState(state: MutableMap<String, Configuration>) {
-        configs = state
+    override fun save() {
+        val dir = File(PathManager.getConfigPath(), "redpen")
+        dir.mkdirs()
+        configs.values.forEach { c ->
+            FileOutputStream(File(dir, c.key + ".xml")).use { out -> ConfigurationExporter().export(c, out) }
+        }
     }
 
     fun reset() {
