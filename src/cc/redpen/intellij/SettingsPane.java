@@ -248,6 +248,10 @@ public class SettingsPane {
     return configs.get(key);
   }
 
+  public Map<String, Configuration> getConfigs() {
+    return configs;
+  }
+
   public void setConfig(Configuration config) {
     configs.put(config.getKey(), config);
     language.setSelectedItem(config.getKey());
