@@ -3,6 +3,7 @@ package cc.redpen.intellij
 import cc.redpen.RedPen
 import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
+import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInsight.daemon.GroupNames
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
@@ -60,10 +61,14 @@ open class RedPenInspection : LocalInspectionTool() {
 
         val problems = errors.map({ e ->
             manager.createProblemDescriptor(theElement, toRange(e, lines),
-                    e.getMessage(), ProblemHighlightType.GENERIC_ERROR, isOnTheFly)
+                    e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)
         })
 
         return problems.toTypedArray()
+    }
+
+    override fun getDefaultLevel(): HighlightDisplayLevel {
+        return HighlightDisplayLevel.ERROR
     }
 
     open fun updateStatus(file: PsiFile, redPen: RedPen) {
