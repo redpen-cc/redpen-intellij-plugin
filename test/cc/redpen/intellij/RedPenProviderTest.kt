@@ -5,7 +5,7 @@ import org.junit.Assert.assertNotSame
 import org.junit.Test
 
 class RedPenProviderTest : BaseTest() {
-    val provider = RedPenProvider.instance
+    val provider = RedPenProvider.getInstance()
 
     @Test
     fun allConfigFilesAreLoaded() {
