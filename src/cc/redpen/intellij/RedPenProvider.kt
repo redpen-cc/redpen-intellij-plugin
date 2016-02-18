@@ -11,6 +11,7 @@ import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.SettingsSavingComponent
 import com.intellij.psi.PsiFile
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.*
 
@@ -20,6 +21,7 @@ open class RedPenProvider : SettingsSavingComponent {
     private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
+    internal var configKeysByFile = Properties()
     open var autodetect = true
 
     internal var parsers: Map<String, DocumentParser> = mapOf(
@@ -34,6 +36,7 @@ open class RedPenProvider : SettingsSavingComponent {
 
     private constructor() {
         listOf("en.xml", "ja.xml", "ja.hankaku.xml", "ja.zenkaku2.xml").forEach { loadConfig(it) }
+        loadConfigKeysByFile()
     }
 
     /** For tests  */
@@ -57,11 +60,17 @@ open class RedPenProvider : SettingsSavingComponent {
         }
     }
 
+    internal fun loadConfigKeysByFile() {
+        val file = File(configDir, "files.xml")
+        if (file.exists()) FileInputStream(file).use { configKeysByFile.loadFromXML(it) }
+    }
+
     override fun save() {
         configDir.mkdirs()
         configs.values.forEach { c ->
             FileOutputStream(File(configDir, c.key + ".xml")).use { out -> ConfigurationExporter().export(c, out) }
         }
+        FileOutputStream(File(configDir, "files.xml")).use { out -> configKeysByFile.storeToXML(out, null) }
     }
 
     fun addConfig(config: Configuration) {
@@ -71,8 +80,8 @@ open class RedPenProvider : SettingsSavingComponent {
 
     open fun getRedPen(): RedPen = RedPen(configs[configKey])
 
-    fun getRedPenFor(text: String): RedPen {
-        configKey = getConfigKeyFor(text)
+    fun getRedPenFor(file: PsiFile): RedPen {
+        configKey = configKeysByFile.getProperty(file.virtualFile.path) ?: getConfigKeyFor(file.text)
         return getRedPen()
     }
 
@@ -103,4 +112,9 @@ open class RedPenProvider : SettingsSavingComponent {
         set(config) {
             configKey = config.key
         }
+
+    fun setConfig(file: PsiFile, config: Configuration) {
+        activeConfig = config
+        configKeysByFile[file.virtualFile.path] = config.key
+    }
 }

@@ -48,16 +48,16 @@ open class RedPenInspection : LocalInspectionTool() {
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         val parser = provider.getParser(file) ?: return null
 
-        val text = file.text
-        val redPen = provider.getRedPenFor(text)
+        val redPen = provider.getRedPenFor(file)
 
         updateStatus(file, redPen)
 
+        val text = file.text
         val redPenDoc = redPen.parse(parser, text)
         val errors = redPen.validate(redPenDoc)
 
         val theElement = file.children[0]
-        val lines = text.split("(?<=\n)".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+        val lines = text.split("(?<=\n)".toRegex())
 
         val problems = errors.map({ e ->
             manager.createProblemDescriptor(theElement, toRange(e, lines),
@@ -76,7 +76,7 @@ open class RedPenInspection : LocalInspectionTool() {
         statusWidget!!.update(redPen.configuration.key)
     }
 
-    internal open fun toRange(e: ValidationError, lines: Array<String>): TextRange {
+    internal open fun toRange(e: ValidationError, lines: List<String>): TextRange {
         val start = e.startPosition.orElse(e.sentence.getOffset(0).orElse(null))
         val end = e.endPosition.orElse(addOne(e.sentence.getOffset(0).orElse(null)))
         return TextRange(toGlobalOffset(start, lines), toGlobalOffset(end, lines))
@@ -86,7 +86,7 @@ open class RedPenInspection : LocalInspectionTool() {
         return LineOffset(lineOffset.lineNum, lineOffset.offset + 1)
     }
 
-    internal fun toGlobalOffset(lineOffset: LineOffset?, lines: Array<String>): Int {
+    internal fun toGlobalOffset(lineOffset: LineOffset?, lines: List<String>): Int {
         if (lineOffset == null) return 0
         var result = 0
         for (i in 1..lineOffset.lineNum - 1) {

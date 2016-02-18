@@ -24,8 +24,8 @@ class RedPenListErrors : AnAction() {
         }
 
         try {
+            val redPen = provider.getRedPenFor(file)
             val text = file.text
-            val redPen = provider.getRedPenFor(text)
             val redPenDoc = redPen.parse(provider.getParser(file), text)
             val errors = redPen.validate(redPenDoc)
 

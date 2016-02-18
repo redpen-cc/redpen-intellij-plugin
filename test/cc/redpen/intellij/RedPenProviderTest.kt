@@ -3,12 +3,17 @@ package cc.redpen.intellij
 import cc.redpen.config.ConfigurationLoader
 import cc.redpen.config.Symbol
 import cc.redpen.config.SymbolType.AMPERSAND
+import com.intellij.psi.PsiFile
+import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.*
 import org.junit.Test
+import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.io.File
 
 class RedPenProviderTest : BaseTest() {
     val provider = RedPenProvider.instance
+    val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
 
     @Test
     fun allConfigFilesAreLoaded() {
@@ -22,18 +27,21 @@ class RedPenProviderTest : BaseTest() {
     fun getRedPenFor_autodetectsLanguage() {
         provider.autodetect = true
 
-        var redPen = provider.getRedPenFor("Hello")
+        whenever(file.text).thenReturn("Hello")
+        var redPen = provider.getRedPenFor(file)
         assertEquals("en", redPen.configuration.key)
 
-        redPen = provider.getRedPenFor("こんにちは")
+        whenever(file.text).thenReturn("こんにちは")
+        redPen = provider.getRedPenFor(file)
         assertEquals("ja", redPen.configuration.key)
     }
 
     @Test
     fun languageAutodetectionCanBeDisabled() {
         provider.autodetect = false
+        whenever(file.text).thenReturn("")
 
-        val redPen = provider.getRedPenFor("こんにちは")
+        val redPen = provider.getRedPenFor(file)
         assertEquals("en", redPen.configuration.key)
     }
 
@@ -41,6 +49,7 @@ class RedPenProviderTest : BaseTest() {
     fun saveAndLoad() {
         provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
         provider.getConfig("ja")!!.symbolTable.overrideSymbol(Symbol(AMPERSAND, '*'))
+        provider.configKeysByFile["hello.txt"] = "ja"
         provider.save()
 
         assertEquals(provider.getConfig("en"), ConfigurationLoader().load(File(provider.configDir, "en.xml")))
@@ -50,6 +59,10 @@ class RedPenProviderTest : BaseTest() {
         assertEquals('*', provider.getConfig("ja")!!.symbolTable.getSymbol(AMPERSAND).value)
         assertFalse(provider.getInitialConfig("ja")!!.equals(provider.getConfig("ja")))
         assertTrue(provider.getInitialConfig("en")!!.equals(provider.getConfig("en")))
+
+        provider.configKeysByFile.remove("hello.txt")
+        provider.loadConfigKeysByFile()
+        assertEquals("ja", provider.configKeysByFile["hello.txt"])
 
         provider.configDir.deleteRecursively()
     }

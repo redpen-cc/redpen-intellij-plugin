@@ -4,6 +4,7 @@ import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
+import com.intellij.openapi.actionSystem.LangDataKeys.PSI_FILE
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
@@ -56,7 +57,7 @@ open class StatusWidget constructor(project: Project, var provider: RedPenProvid
                 }
 
                 override fun actionPerformed(e: AnActionEvent) {
-                    provider.activeConfig = it.value
+                    provider.setConfig(e.getData(PSI_FILE)!!, it.value)
                     provider.autodetect = false
                     DaemonCodeAnalyzer.getInstance(e.project).restart()
                 }

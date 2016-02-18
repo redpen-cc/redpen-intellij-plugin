@@ -63,29 +63,29 @@ class RedPenInspectionTest : BaseTest() {
 
     @Test
     fun toGlobalOffset_noOffset() {
-        assertEquals(0, inspection.toGlobalOffset(null, arrayOf("")))
+        assertEquals(0, inspection.toGlobalOffset(null, listOf("")))
     }
 
     @Test
     fun toGlobalOffset_singleLine() {
-        assertEquals(3, inspection.toGlobalOffset(LineOffset(1, 3), arrayOf("Hello")))
+        assertEquals(3, inspection.toGlobalOffset(LineOffset(1, 3), listOf("Hello")))
     }
 
     @Test
     fun toGlobalOffset_multiLine() {
-        assertEquals(8, inspection.toGlobalOffset(LineOffset(2, 3), arrayOf("Hello", "World")))
+        assertEquals(8, inspection.toGlobalOffset(LineOffset(2, 3), listOf("Hello", "World")))
     }
 
     @Test
     fun toRange() {
-        val textRange = inspection.toRange(errorGenerator.at(5, 5), arrayOf("Hello"))
+        val textRange = inspection.toRange(errorGenerator.at(5, 5), listOf("Hello"))
         assertEquals(TextRange(5, 5), textRange)
     }
 
     @Test
     fun toRange_sentenceLevelError() {
         val sentence = Sentence("Hello.", listOf(LineOffset(1, 25)), emptyList())
-        val textRange = inspection.toRange(errorGenerator.sentence(sentence), arrayOf(sentence.content))
+        val textRange = inspection.toRange(errorGenerator.sentence(sentence), listOf(sentence.content))
         assertEquals(TextRange(25, 26), textRange)
     }
 
@@ -107,10 +107,11 @@ class RedPenInspectionTest : BaseTest() {
 
         inspection.checkFile(mockTextFile("Hello\nworld"), mock(), true)
 
-        val captor = ArgumentCaptor.forClass(Array<String>::class.java)
-        verify(inspection).toRange(eq(error), captor.capture() ?: emptyArray())
+        val captor = ArgumentCaptor.forClass(List::class.java)
+        @Suppress("UNCHECKED_CAST")
+        verify(inspection).toRange(eq(error), captor.capture() as List<String>? ?: emptyList())
 
-        assertArrayEquals(arrayOf("Hello\n", "world"), captor.value)
+        assertEquals(listOf("Hello\n", "world"), captor.value)
     }
 
     @Test
