@@ -13,7 +13,7 @@ import java.io.File
 
 class RedPenProviderTest : BaseTest() {
     val provider = RedPenProvider.instance
-    val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
+    val file = mockTextFile("hello")
 
     @Test
     fun allConfigFilesAreLoaded() {
@@ -71,10 +71,10 @@ class RedPenProviderTest : BaseTest() {
     fun setConfig() {
         val config = config("en")
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
-        whenever(file.virtualFile.path).thenReturn("/path")
+        whenever(file.virtualFile.path).thenReturn("/path/to/foo")
 
         provider.setConfig(file, config)
 
-        assertEquals("en", provider.configKeysByFile["/path"])
+        assertEquals("en", provider.configKeysByFile["/path/to/foo"])
     }
 }

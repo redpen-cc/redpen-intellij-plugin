@@ -4,9 +4,11 @@ import cc.redpen.config.Configuration
 import cc.redpen.config.Symbol
 import cc.redpen.config.ValidatorConfiguration
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.psi.PsiFile
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.BeforeClass
+import org.mockito.Mockito
 
 abstract class BaseTest {
     companion object {
@@ -39,5 +41,18 @@ abstract class BaseTest {
         val config = mock<Configuration>()
         whenever(config.key).thenReturn(key)
         return config
+    }
+
+    protected fun mockTextFile(text: String): PsiFile {
+        return mockFileOfType("PLAIN_TEXT", text)
+    }
+
+    protected fun mockFileOfType(typeName: String, text: String): PsiFile {
+        val file = mock<PsiFile>(Mockito.RETURNS_DEEP_STUBS)
+        whenever(file.fileType.name).thenReturn(typeName)
+        whenever(file.text).thenReturn(text)
+        whenever(file.children).thenReturn(arrayOf(mock()))
+        whenever(file.virtualFile.path).thenReturn("/path")
+        return file
     }
 }

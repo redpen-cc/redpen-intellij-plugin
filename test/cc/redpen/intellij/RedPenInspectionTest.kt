@@ -10,7 +10,6 @@ import cc.redpen.validator.ValidationError
 import cc.redpen.validator.section.WordFrequencyValidator
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiFile
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Before
@@ -160,18 +159,6 @@ class RedPenInspectionTest : BaseTest() {
     @Test
     fun doNotSerializeSettings() {
         assertFalse(inspection.serializationFilter.accepts(mock(), mock()));
-    }
-
-    private fun mockTextFile(text: String): PsiFile {
-        return mockFileOfType("PLAIN_TEXT", text)
-    }
-
-    private fun mockFileOfType(typeName: String, text: String): PsiFile {
-        val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
-        whenever(file.fileType.name).thenReturn(typeName)
-        whenever(file.text).thenReturn(text)
-        whenever(file.children).thenReturn(arrayOf(mock()))
-        return file
     }
 
     internal class ErrorGenerator : WordFrequencyValidator() {
