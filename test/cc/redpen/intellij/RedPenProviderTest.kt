@@ -1,8 +1,11 @@
 package cc.redpen.intellij
 
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotSame
+import cc.redpen.config.ConfigurationLoader
+import cc.redpen.config.Symbol
+import cc.redpen.config.SymbolType.AMPERSAND
+import org.junit.Assert.*
 import org.junit.Test
+import java.io.File
 
 class RedPenProviderTest : BaseTest() {
     val provider = RedPenProvider.instance
@@ -35,12 +38,19 @@ class RedPenProviderTest : BaseTest() {
     }
 
     @Test
-    fun reset() {
-        val config = provider.getConfig("en")
+    fun saveAndLoad() {
+        provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
+        provider.getConfig("ja")!!.symbolTable.overrideSymbol(Symbol(AMPERSAND, '*'))
+        provider.save()
 
-        provider.reset()
+        assertEquals(provider.getConfig("en"), ConfigurationLoader().load(File(provider.configDir, "en.xml")))
+        assertEquals(provider.getConfig("ja"), ConfigurationLoader().load(File(provider.configDir, "ja.xml")))
 
-        assertNotSame(config, provider.getConfig("en"))
-        assertEquals("en", provider.getConfig("en")?.key)
+        provider.loadConfig("ja.xml")
+        assertEquals('*', provider.getConfig("ja")!!.symbolTable.getSymbol(AMPERSAND).value)
+        assertFalse(provider.getInitialConfig("ja")!!.equals(provider.getConfig("ja")))
+        assertTrue(provider.getInitialConfig("en")!!.equals(provider.getConfig("en")))
+
+        provider.configDir.deleteRecursively()
     }
 }

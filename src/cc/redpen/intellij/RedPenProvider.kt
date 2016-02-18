@@ -15,6 +15,8 @@ import java.io.FileOutputStream
 import java.util.*
 
 open class RedPenProvider : SettingsSavingComponent {
+    var configDir = File(PathManager.getConfigPath(), "redpen")
+
     private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
@@ -31,23 +33,7 @@ open class RedPenProvider : SettingsSavingComponent {
     }
 
     private constructor() {
-        loadConfig("redpen-conf.xml")
-        loadConfig("redpen-conf-ja.xml")
-        loadConfig("redpen-conf-ja-hankaku.xml")
-        loadConfig("redpen-conf-ja-zenkaku2.xml")
-        reset()
-    }
-
-    override fun save() {
-        val dir = File(PathManager.getConfigPath(), "redpen")
-        dir.mkdirs()
-        configs.values.forEach { c ->
-            FileOutputStream(File(dir, c.key + ".xml")).use { out -> ConfigurationExporter().export(c, out) }
-        }
-    }
-
-    fun reset() {
-        initialConfigs.forEach { e -> configs.put(e.key, e.value.clone()) }
+        listOf("en.xml", "ja.xml", "ja.hankaku.xml", "ja.zenkaku2.xml").forEach { loadConfig(it) }
     }
 
     /** For tests  */
@@ -56,9 +42,26 @@ open class RedPenProvider : SettingsSavingComponent {
         this.initialConfigs = LinkedHashMap(configs)
     }
 
-    private fun loadConfig(fileName: String) {
-        val configuration = ConfigurationLoader().loadFromResource("/" + fileName)
-        initialConfigs.put(configuration.key, configuration)
+    internal fun loadConfig(fileName: String) {
+        val loader = ConfigurationLoader()
+
+        val initialConfig = loader.loadFromResource("/" + fileName)
+        initialConfigs[initialConfig.key] = initialConfig
+
+        val file = File(configDir, fileName)
+        if (file.exists()) {
+            val config = loader.load(file)
+            configs[config.key] = config
+        } else {
+            configs[initialConfig.key] = initialConfig.clone()
+        }
+    }
+
+    override fun save() {
+        configDir.mkdirs()
+        configs.values.forEach { c ->
+            FileOutputStream(File(configDir, c.key + ".xml")).use { out -> ConfigurationExporter().export(c, out) }
+        }
     }
 
     fun addConfig(config: Configuration) {
