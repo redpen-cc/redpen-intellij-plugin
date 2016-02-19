@@ -15,9 +15,10 @@
 
   <idea-version since-build="131"/>
 
-  <application-components>
+  <project-components>
     <component><implementation-class>cc.redpen.intellij.RedPenProvider</implementation-class></component>
-  </application-components>
+    <component><implementation-class>cc.redpen.intellij.StatusWidget</implementation-class></component>
+  </project-components>
 
   <extensions defaultExtensionNs="com.intellij">
     <inspectionToolProvider implementation="cc.redpen.intellij.RedPenInspectionProvider"/>

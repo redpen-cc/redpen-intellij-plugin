@@ -7,12 +7,14 @@ import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.LangDataKeys.PSI_FILE
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.CustomStatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidget
+import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget
 import com.intellij.openapi.wm.impl.status.TextPanel
 import com.intellij.psi.PsiManager
@@ -23,7 +25,9 @@ import java.awt.Graphics
 import java.awt.Point
 import java.awt.event.MouseEvent
 
-open class StatusWidget constructor(project: Project, var provider: RedPenProvider) : EditorBasedWidget(project), CustomStatusBarWidget {
+open class StatusWidget constructor(project: Project) : EditorBasedWidget(project), CustomStatusBarWidget, ProjectComponent {
+    val provider = RedPenProvider.forProject(project)
+
     var actionGroup = DefaultActionGroup()
     private val component = object: TextPanel.ExtraSize() {
         protected override fun paintComponent(g: Graphics) {
@@ -47,6 +51,18 @@ open class StatusWidget constructor(project: Project, var provider: RedPenProvid
 
         registerActions()
     }
+
+    override fun projectOpened() {
+        WindowManager.getInstance().getStatusBar(project).addWidget(this, "before Encoding")
+    }
+
+    override fun projectClosed() {}
+
+    override fun getComponentName(): String = "StatusWidget"
+
+    override fun initComponent() {}
+
+    override fun disposeComponent() {}
 
     open fun registerActions() {
         val actionManager = ActionManager.getInstance() ?: return

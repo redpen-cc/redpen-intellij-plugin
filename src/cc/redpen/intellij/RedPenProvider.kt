@@ -6,9 +6,9 @@ import cc.redpen.config.ConfigurationExporter
 import cc.redpen.config.ConfigurationLoader
 import cc.redpen.parser.DocumentParser
 import cc.redpen.util.LanguageDetector
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.components.SettingsSavingComponent
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.Project.DIRECTORY_STORE_FOLDER
 import com.intellij.psi.PsiFile
 import java.io.File
 import java.io.FileInputStream
@@ -16,30 +16,36 @@ import java.io.FileOutputStream
 import java.util.*
 
 open class RedPenProvider : SettingsSavingComponent {
-    var configDir = File(PathManager.getConfigPath(), "redpen")
+    val project: Project
+    var configDir: File
 
     open var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     open var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
     internal var configKeysByFile = Properties()
 
-    internal var parsers: Map<String, DocumentParser> = mapOf(
-            "PLAIN_TEXT" to DocumentParser.PLAIN,
-            "Markdown" to DocumentParser.MARKDOWN,
-            "AsciiDoc" to DocumentParser.ASCIIDOC)
-
     companion object {
         @JvmStatic
-        val instance: RedPenProvider by lazy { ApplicationManager.getApplication().getComponent(RedPenProvider::class.java) ?: RedPenProvider() }
+        val parsers: Map<String, DocumentParser> = mapOf(
+                "PLAIN_TEXT" to DocumentParser.PLAIN,
+                "Markdown" to DocumentParser.MARKDOWN,
+                "AsciiDoc" to DocumentParser.ASCIIDOC)
+
+        @JvmStatic
+        fun forProject(project: Project) = project.getComponent(RedPenProvider::class.java)!!
     }
 
-    private constructor() {
+    internal constructor(project: Project) {
+        this.project = project
+        this.configDir = File(project.basePath + '/' + DIRECTORY_STORE_FOLDER, "redpen")
         listOf("en.xml", "ja.xml", "ja.hankaku.xml", "ja.zenkaku2.xml").forEach { loadConfig(it) }
         loadConfigKeysByFile()
     }
 
     /** For tests  */
-    internal constructor(configs: MutableMap<String, Configuration>) {
+    internal constructor(project: Project, configs: MutableMap<String, Configuration>) {
+        this.project = project
+        this.configDir = File(System.getProperty("java.io.tmpdir"))
         this.configs = configs
         this.initialConfigs = LinkedHashMap(configs)
     }
@@ -79,7 +85,7 @@ open class RedPenProvider : SettingsSavingComponent {
 
     open fun getRedPen(): RedPen = RedPen(configs[configKey])
 
-    fun getRedPenFor(file: PsiFile): RedPen {
+    open fun getRedPenFor(file: PsiFile): RedPen {
         configKey = getConfigKeyFor(file)
         return getRedPen()
     }

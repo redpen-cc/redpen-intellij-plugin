@@ -6,7 +6,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
@@ -15,25 +14,21 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 
 class StatusWidgetTest : BaseTest() {
     val psiManager = mock<PsiManager>(RETURNS_DEEP_STUBS)
-    val project = mock<Project>(RETURNS_DEEP_STUBS)
-    val provider = mock<RedPenProvider>(RETURNS_DEEP_STUBS)
-    val widget = StatusWidget(project, provider)
+    val widget = StatusWidget(project)
     val newFile = mock<VirtualFile>()
 
-    @Before
-    fun setUp() {
+    init {
         whenever(project.getComponent(PsiManager::class.java)).thenReturn(psiManager)
     }
 
     @Test
     fun selectionChanged() {
-        val psiFile = mock<PsiFile>()
+        val psiFile = mockTextFile("hello")
         whenever(psiManager.findFile(newFile)).thenReturn(psiFile)
         whenever(provider.getConfigKeyFor(psiFile)).thenReturn("ja")
 

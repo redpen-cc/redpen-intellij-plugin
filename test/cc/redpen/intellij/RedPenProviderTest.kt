@@ -7,13 +7,18 @@ import com.intellij.psi.PsiFile
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.io.File
 
 class RedPenProviderTest : BaseTest() {
-    val provider = RedPenProvider.instance
     val file = mockTextFile("hello")
+
+    @Before
+    fun setUp() {
+        provider = RedPenProvider(project)
+    }
 
     @Test
     fun allConfigFilesAreLoaded() {

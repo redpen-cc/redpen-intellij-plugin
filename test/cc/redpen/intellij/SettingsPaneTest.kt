@@ -6,7 +6,6 @@ import cc.redpen.config.SymbolType.*
 import cc.redpen.config.ValidatorConfiguration
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.io.File
@@ -18,11 +17,11 @@ import javax.swing.JFileChooser.CANCEL_OPTION
 import javax.swing.table.DefaultTableModel
 
 class SettingsPaneTest : BaseTest() {
-    internal var provider = RedPenProvider(LinkedHashMap(mapOf("en" to cloneableConfig("en"), "ja" to cloneableConfig("ja"))))
-    internal var settingsPane = spy(SettingsPane(provider))
+    var settingsPane: SettingsPane
 
-    @Before
-    fun setUp() {
+    init {
+        provider = RedPenProvider(project, LinkedHashMap(mapOf("en" to cloneableConfig("en"), "ja" to cloneableConfig("ja"))))
+        settingsPane = spy(SettingsPane(provider))
         settingsPane.validators = mock(RETURNS_DEEP_STUBS)
         settingsPane.symbols = mock(RETURNS_DEEP_STUBS)
     }

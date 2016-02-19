@@ -1,20 +1,15 @@
 package cc.redpen.intellij
 
-import cc.redpen.RedPen
-import cc.redpen.config.Configuration
 import cc.redpen.model.Document
 import cc.redpen.model.Sentence
 import cc.redpen.parser.DocumentParser
 import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import cc.redpen.validator.section.WordFrequencyValidator
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
-import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
@@ -22,14 +17,6 @@ import java.util.Collections.emptyList
 class RedPenInspectionTest : BaseTest() {
     internal var inspection = spy(RedPenInspection())
     internal var errorGenerator = ErrorGenerator()
-    internal var redPen: RedPen = mock()
-
-    @Before
-    fun setUp() {
-        inspection.provider = spy(inspection.provider)
-        doNothing().whenever(inspection).updateStatus(any(), any())
-        doReturn(redPen).whenever(inspection.provider).getRedPen()
-    }
 
     @Test
     fun notSupportedFilesAreIgnored() {
@@ -111,46 +98,15 @@ class RedPenInspectionTest : BaseTest() {
     }
 
     @Test
-    fun checkFile_createsAndUpdatesStatusWidget() {
+    fun checkFile_updatesStatusWidget() {
         doCallRealMethod().whenever(inspection).updateStatus(any(), any())
         val file = mockTextFile("Hello")
         val config = config("ja")
         val statusWidget = mock<StatusWidget>()
         whenever(redPen.configuration).thenReturn(config)
         doNothing().whenever(statusWidget).update(any())
-        doReturn(statusWidget).whenever(inspection).createStatusWidget(any())
         inspection.checkFile(file, mock(), true)
-        verify(inspection).createStatusWidget(file.project)
-        verify(inspection.statusWidget)!!.update("ja")
-    }
-
-    @Test
-    fun checkFile_createsStatusWidgetOnlyDuringFirstRun() {
-        doCallRealMethod().whenever(inspection).updateStatus(any(), any())
-        inspection.statusWidget = mock()
-        val file = mockTextFile("Hello")
-        val config = config("ja")
-
-        whenever(redPen.configuration).thenReturn(config)
-
-        inspection.checkFile(file, mock(), true)
-
-        verify(inspection, never()).createStatusWidget(any())
-        verify(inspection.statusWidget)!!.update("ja")
-    }
-
-    @Test
-    fun createStatusWidget() {
-        doCallRealMethod().whenever(inspection).updateStatus(any(), any())
-        val project = mock<Project>(RETURNS_DEEP_STUBS)
-        doNothing().whenever(inspection).addWidgetToStatusBar(any(), any())
-        val captor = argumentCaptor<StatusWidget>()
-        doReturn(mapOf<String, Configuration>()).whenever(inspection.provider).configs
-
-        inspection.createStatusWidget(project)
-
-        verify(inspection).addWidgetToStatusBar(eq(project), capture(captor))
-        assertNotNull(captor.value.component)
+        verify(project.getComponent(StatusWidget::class.java))!!.update("ja")
     }
 
     @Test

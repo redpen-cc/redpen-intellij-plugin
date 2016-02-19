@@ -12,10 +12,9 @@ import com.intellij.openapi.ui.Messages.showMessageDialog
 import java.util.*
 
 class RedPenListErrors : AnAction() {
-    internal var provider = RedPenProvider.instance
-
     override fun actionPerformed(event: AnActionEvent) {
-        val project = event.getData(PlatformDataKeys.PROJECT)
+        val project = event.getData(PlatformDataKeys.PROJECT)!!
+        val provider = RedPenProvider.forProject(project)
         val file = event.getData(LangDataKeys.PSI_FILE)
         val title = "RedPen " + RedPen.VERSION
         if (file == null) {
