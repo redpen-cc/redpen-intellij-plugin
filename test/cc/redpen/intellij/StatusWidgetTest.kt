@@ -13,7 +13,6 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 
@@ -33,14 +32,20 @@ class StatusWidgetTest : BaseTest() {
         whenever(provider.getConfigKeyFor(psiFile)).thenReturn("ja")
 
         widget.selectionChanged(FileEditorManagerEvent(mock(), mock(), mock(), newFile, mock()))
-        assertEquals("RedPen: ja", widget.component.text)
+        assertEquals("ja", widget.component.text)
     }
 
     @Test
     fun selectionChanged_noParser() {
         whenever(provider.getParser(psiManager.findFile(newFile)!!)).thenReturn(null)
         widget.selectionChanged(FileEditorManagerEvent(mock(), mock(), mock(), newFile, mock()))
-        assertNull(widget.component.text)
+        assertEquals("n/a", widget.component.text)
+    }
+
+    @Test
+    fun selectionChanged_noFile() {
+        widget.selectionChanged(FileEditorManagerEvent(mock(), mock(), mock(), null, mock()))
+        assertEquals("n/a", widget.component.text)
     }
 
     @Test
