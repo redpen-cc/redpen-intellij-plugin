@@ -44,7 +44,7 @@ class SettingsManagerTest : BaseTest() {
 
     @Test
     fun isNotModified() {
-        val configs = manager.provider.getConfigs()
+        val configs = manager.provider.configs
         whenever(manager.settingsPane.configs).thenReturn(configs)
         assertFalse(manager.isModified)
         verify(manager.settingsPane).applyChanges()

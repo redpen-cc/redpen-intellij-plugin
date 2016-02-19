@@ -27,7 +27,7 @@ open class SettingsManager : SearchableConfigurable {
         return "reference.settings.ide.settings.redpen"
     }
 
-    override fun createComponent(): JComponent? {
+    override fun createComponent(): JComponent {
         return settingsPane.pane
     }
 

@@ -145,7 +145,7 @@ class RedPenInspectionTest : BaseTest() {
         val project = mock<Project>(RETURNS_DEEP_STUBS)
         doNothing().whenever(inspection).addWidgetToStatusBar(any(), any())
         val captor = argumentCaptor<StatusWidget>()
-        doReturn(mapOf<String, Configuration>()).whenever(inspection.provider).getConfigs()
+        doReturn(mapOf<String, Configuration>()).whenever(inspection.provider).configs
 
         inspection.createStatusWidget(project)
 
