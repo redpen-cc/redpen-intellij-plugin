@@ -47,16 +47,17 @@ class SettingsPaneTest : BaseTest() {
 
     @Test
     fun getPaneInitsEverything() {
-        settingsPane = mock()
-
-        doCallRealMethod().whenever(settingsPane).pane
-        doCallRealMethod().whenever(settingsPane).initTabs()
+        doNothing().whenever(settingsPane).initLanguages()
+        doNothing().whenever(settingsPane).initValidators()
+        doNothing().whenever(settingsPane).initSymbols()
+        doNothing().whenever(settingsPane).initButtons()
 
         settingsPane.pane
 
         verify(settingsPane).initLanguages()
         verify(settingsPane).initValidators()
         verify(settingsPane).initSymbols()
+        verify(settingsPane).initButtons()
     }
 
     @Test
@@ -87,7 +88,7 @@ class SettingsPaneTest : BaseTest() {
         doReturn(configWithValidators(listOf(validatorConfig("ModifiedAttributes", mapOf("foo" to "bar"))))).whenever(settingsPane).config
 
         val model = mock<DefaultTableModel>()
-        doReturn(model).whenever(settingsPane).createValidatorsModel()
+        whenever(settingsPane.validators.model).thenReturn(model)
 
         settingsPane.initValidators()
 
@@ -168,7 +169,7 @@ class SettingsPaneTest : BaseTest() {
         settingsPane.config = configWithSymbols(asList(Symbol(AMPERSAND, '&', "$%", true, false), Symbol(ASTERISK, '*', "", false, true)))
 
         val model = mock<DefaultTableModel>()
-        doReturn(model).whenever(settingsPane).createSymbolsModel()
+        whenever(settingsPane.symbols.model).thenReturn(model)
 
         settingsPane.initSymbols()
 
@@ -228,6 +229,7 @@ class SettingsPaneTest : BaseTest() {
         val file = File.createTempFile("redpen-conf", ".xml")
         file.deleteOnExit()
 
+        doReturn(config("en")).whenever(settingsPane).config
         whenever(settingsPane.fileChooser.showSaveDialog(any())).thenReturn(APPROVE_OPTION)
         whenever(settingsPane.fileChooser.selectedFile).thenReturn(file)
 
@@ -327,6 +329,7 @@ class SettingsPaneTest : BaseTest() {
     @Test
     fun applyClonesLocalConfigs() {
         doNothing().whenever(settingsPane).applyChanges()
+        doNothing().whenever(settingsPane).cloneConfigs()
         settingsPane.save()
         verify(settingsPane).applyChanges()
         verify(settingsPane).cloneConfigs()

@@ -52,9 +52,8 @@ class SettingsManagerTest : BaseTest() {
 
     @Test
     fun isModified() {
-        whenever(manager.settingsPane.configs).thenReturn(mapOf())
+        whenever(manager.settingsPane.configs).thenReturn(hashMapOf())
         assertTrue(manager.isModified)
         verify(manager.settingsPane).applyChanges()
     }
-
 }

@@ -57,7 +57,7 @@ class StatusWidgetTest : BaseTest() {
         whenever(ApplicationManager.getApplication().getComponent(ActionManager::class.java)).thenReturn(mock())
         whenever(event.getData(LangDataKeys.PSI_FILE)).thenReturn(file)
         whenever(event.project!!.getComponent(DaemonCodeAnalyzer::class.java)).thenReturn(codeAnalyzer)
-        whenever(provider.getConfigs()).thenReturn(mapOf("en" to config))
+        whenever(provider.getConfigs()).thenReturn(hashMapOf("en" to config))
 
         widget.registerActions()
         widget.actionGroup.childActionsOrStubs[0].actionPerformed(event)

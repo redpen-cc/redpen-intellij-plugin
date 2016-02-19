@@ -98,7 +98,7 @@ open class RedPenProvider : SettingsSavingComponent {
         return initialConfigs[key]
     }
 
-    open fun getConfigs(): Map<String, Configuration> {
+    open fun getConfigs(): MutableMap<String, Configuration> {
         return configs
     }
 
