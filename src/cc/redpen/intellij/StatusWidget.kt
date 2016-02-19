@@ -50,7 +50,7 @@ open class StatusWidget constructor(project: Project, var provider: RedPenProvid
 
     open fun registerActions() {
         val actionManager = ActionManager.getInstance() ?: return
-        provider.getConfigs().forEach {
+        provider.configs.forEach {
             actionGroup.add(object : AnAction() {
                 init {
                     templatePresentation.text = it.key

@@ -33,7 +33,7 @@ open class SettingsManager : SearchableConfigurable {
 
     override fun isModified(): Boolean {
         settingsPane.applyChanges()
-        return provider.getConfigs() != settingsPane.configs
+        return provider.configs != settingsPane.configs
     }
 
     override fun apply() {

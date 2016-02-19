@@ -68,7 +68,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open internal fun cloneConfigs() {
-        provider.getConfigs().forEach { e -> configs[e.key] = e.value.clone() }
+        provider.configs.forEach { e -> configs[e.key] = e.value.clone() }
     }
 
     val pane: JPanel
@@ -107,7 +107,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open internal fun initLanguages() {
-        provider.getConfigs().keys.forEach { k -> language.addItem(k) }
+        provider.configs.keys.forEach { k -> language.addItem(k) }
         language.selectedItem = provider.activeConfig.key
         language.addPopupMenuListener(object : PopupMenuListenerAdapter() {
             override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
@@ -213,7 +213,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     open fun save() {
         applyChanges()
-        provider.getConfigs().putAll(configs)
+        provider.configs.putAll(configs)
         cloneConfigs()
     }
 
@@ -223,7 +223,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     fun resetToDefaults() {
-        provider.getInitialConfigs().forEach { e -> configs[e.key] = e.value.clone() }
+        provider.initialConfigs.forEach { e -> configs[e.key] = e.value.clone() }
         initTabs()
     }
 

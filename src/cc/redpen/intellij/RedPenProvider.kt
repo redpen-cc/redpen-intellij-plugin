@@ -18,8 +18,8 @@ import java.util.*
 open class RedPenProvider : SettingsSavingComponent {
     var configDir = File(PathManager.getConfigPath(), "redpen")
 
-    private var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
-    private var configs : MutableMap<String, Configuration> = LinkedHashMap()
+    open var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
+    open var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
     internal var configKeysByFile = Properties()
 
@@ -90,16 +90,8 @@ open class RedPenProvider : SettingsSavingComponent {
         return parsers[file.fileType.name]
     }
 
-    fun getInitialConfigs(): Map<String, Configuration> {
-        return initialConfigs
-    }
-
     fun getInitialConfig(key: String): Configuration? {
         return initialConfigs[key]
-    }
-
-    open fun getConfigs(): MutableMap<String, Configuration> {
-        return configs
     }
 
     fun getConfig(key: String): Configuration? {
