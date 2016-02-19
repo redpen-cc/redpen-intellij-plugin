@@ -15,7 +15,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
-import org.mockito.Mockito.doReturn
 import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
@@ -40,21 +39,21 @@ class RedPenInspectionTest : BaseTest() {
 
     @Test
     fun plainTextIsSupported() {
-        whenever<List<ValidationError>>(redPen.validate(any<Document>())).thenReturn(emptyList())
+        whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
         inspection.checkFile(mockTextFile("Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.PLAIN, "Hello")
     }
 
     @Test
     fun markdownIsSupported() {
-        whenever<List<ValidationError>>(redPen.validate(any<Document>())).thenReturn(emptyList())
+        whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
         inspection.checkFile(mockFileOfType("Markdown", "Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.MARKDOWN, "Hello")
     }
 
     @Test
     fun asciiDocIsSupported() {
-        whenever<List<ValidationError>>(redPen.validate(any<Document>())).thenReturn(emptyList())
+        whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
         inspection.checkFile(mockFileOfType("AsciiDoc", "Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.ASCIIDOC, "Hello")
     }
