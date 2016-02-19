@@ -267,7 +267,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
             configs[config.key] = config
             language.selectedItem = config.key
             if (config.key != language.selectedItem) {
-                provider.addConfig(config)
+                provider += config
                 language.addItem(config.key)
                 language.selectedItem = config.key
             }

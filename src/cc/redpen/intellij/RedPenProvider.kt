@@ -72,7 +72,7 @@ open class RedPenProvider : SettingsSavingComponent {
         FileOutputStream(File(configDir, "files.xml")).use { out -> configKeysByFile.storeToXML(out, null) }
     }
 
-    fun addConfig(config: Configuration) {
+    infix operator fun plusAssign(config: Configuration) {
         initialConfigs[config.key] = config.clone()
         configs[config.key] = config.clone()
     }
