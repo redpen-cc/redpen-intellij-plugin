@@ -1,6 +1,5 @@
 package cc.redpen.intellij
 
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.spy
@@ -20,8 +19,7 @@ class SettingsManagerTest : BaseTest() {
     init {
         val projectManager = mock<ProjectManager>(RETURNS_DEEP_STUBS)
         whenever(application.getComponent(ProjectManager::class.java)).thenReturn(projectManager)
-        whenever(projectManager.openProjects).thenReturn(arrayOf<Project>(project))
-        manager = spy(SettingsManager())
+        manager = spy(SettingsManager(project))
     }
 
     @Before

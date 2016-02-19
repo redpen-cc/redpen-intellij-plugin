@@ -2,12 +2,12 @@ package cc.redpen.intellij
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.options.SearchableConfigurable
-import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.Nls
 import javax.swing.JComponent
 
-open class SettingsManager : SearchableConfigurable {
-    internal var provider = RedPenProvider.forProject(ProjectManager.getInstance().openProjects[0])
+open class SettingsManager(val project: Project) : SearchableConfigurable {
+    internal var provider = RedPenProvider.forProject(project)
     internal var settingsPane = SettingsPane(provider)
 
     override fun getId(): String {
@@ -49,6 +49,6 @@ open class SettingsManager : SearchableConfigurable {
     }
 
     open fun restartInspections() {
-        DaemonCodeAnalyzer.getInstance(provider.project).restart()
+        DaemonCodeAnalyzer.getInstance(project).restart()
     }
 }
