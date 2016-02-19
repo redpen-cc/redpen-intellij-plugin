@@ -54,15 +54,18 @@ class StatusWidgetTest : BaseTest() {
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
         val config = config("en")
         val codeAnalyzer = mock<DaemonCodeAnalyzer>()
-        whenever(ApplicationManager.getApplication().getComponent(ActionManager::class.java)).thenReturn(mock())
+        val actionManager = mock<ActionManager>()
+        whenever(ApplicationManager.getApplication().getComponent(ActionManager::class.java)).thenReturn(actionManager)
         whenever(event.getData(LangDataKeys.PSI_FILE)).thenReturn(file)
         whenever(event.project!!.getComponent(DaemonCodeAnalyzer::class.java)).thenReturn(codeAnalyzer)
         whenever(provider.configs).thenReturn(hashMapOf("en" to config))
+        whenever(project.basePath).thenReturn("/foo/bar")
 
         widget.registerActions()
         widget.actionGroup.childActionsOrStubs[0].actionPerformed(event)
 
         verify(provider).setConfig(file, config)
         verify(codeAnalyzer).restart()
+        verify(actionManager).registerAction("RedPen /foo/bar", widget.actionGroup)
     }
 }

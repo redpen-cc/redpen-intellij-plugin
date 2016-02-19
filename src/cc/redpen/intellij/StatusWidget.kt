@@ -80,7 +80,7 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
                 }
             })
         }
-        actionManager.registerAction("RedPen", actionGroup)
+        actionManager.registerAction("RedPen " + project?.basePath, actionGroup)
     }
 
     override fun ID(): String {
