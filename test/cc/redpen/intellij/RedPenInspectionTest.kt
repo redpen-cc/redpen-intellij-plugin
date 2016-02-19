@@ -14,7 +14,6 @@ import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
-import org.mockito.ArgumentCaptor
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import org.mockito.Mockito.doReturn
 import java.util.*
@@ -106,9 +105,8 @@ class RedPenInspectionTest : BaseTest() {
 
         inspection.checkFile(mockTextFile("Hello\nworld"), mock(), true)
 
-        val captor = ArgumentCaptor.forClass(List::class.java)
-        @Suppress("UNCHECKED_CAST")
-        verify(inspection).toRange(eq(error), captor.capture() as List<String>? ?: emptyList())
+        val captor = argumentCaptor<List<String>>()
+        verify(inspection).toRange(eq(error), capture(captor))
 
         assertEquals(listOf("Hello\n", "world"), captor.value)
     }
@@ -147,12 +145,12 @@ class RedPenInspectionTest : BaseTest() {
         doCallRealMethod().whenever(inspection).updateStatus(any(), any())
         val project = mock<Project>(RETURNS_DEEP_STUBS)
         doNothing().whenever(inspection).addWidgetToStatusBar(any(), any())
-        val captor = ArgumentCaptor.forClass(StatusWidget::class.java)
+        val captor = argumentCaptor<StatusWidget>()
         doReturn(mapOf<String, Configuration>()).whenever(inspection.provider).getConfigs()
 
         inspection.createStatusWidget(project)
 
-        verify(inspection).addWidgetToStatusBar(eq(project), captor.capture() ?: createInstance())
+        verify(inspection).addWidgetToStatusBar(eq(project), capture(captor))
         assertNotNull(captor.value.component)
     }
 
