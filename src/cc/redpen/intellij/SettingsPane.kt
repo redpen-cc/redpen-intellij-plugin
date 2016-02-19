@@ -68,7 +68,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open internal fun cloneConfigs() {
-        provider.getConfigs().forEach { e -> configs.put(e.key, e.value.clone()) }
+        provider.getConfigs().forEach { e -> configs[e.key] = e.value.clone() }
     }
 
     val pane: JPanel
@@ -223,7 +223,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     fun resetToDefaults() {
-        provider.getInitialConfigs().forEach { e -> configs.put(e.key, e.value.clone()) }
+        provider.getInitialConfigs().forEach { e -> configs[e.key] = e.value.clone() }
         initTabs()
     }
 
@@ -264,7 +264,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     open var config: Configuration
         get() = getConfig(language.selectedItem as String)
         set(config) {
-            configs.put(config.key, config)
+            configs[config.key] = config
             language.selectedItem = config.key
             if (config.key != language.selectedItem) {
                 provider.addConfig(config)

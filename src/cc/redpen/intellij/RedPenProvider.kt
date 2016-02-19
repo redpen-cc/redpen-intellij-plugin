@@ -73,8 +73,8 @@ open class RedPenProvider : SettingsSavingComponent {
     }
 
     fun addConfig(config: Configuration) {
-        initialConfigs.put(config.key, config.clone())
-        configs.put(config.key, config.clone())
+        initialConfigs[config.key] = config.clone()
+        configs[config.key] = config.clone()
     }
 
     open fun getRedPen(): RedPen = RedPen(configs[configKey])
