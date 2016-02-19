@@ -34,20 +34,6 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun autodetectCheckboxIsInitializedToFalse() {
-        provider.autodetect = false
-        settingsPane.initLanguages()
-        assertFalse(settingsPane.autodetectLanguage.isSelected)
-    }
-
-    @Test
-    fun autodetectCheckboxIsInitializedToTrue() {
-        provider.autodetect = true
-        settingsPane.initLanguages()
-        assertTrue(settingsPane.autodetectLanguage.isSelected)
-    }
-
-    @Test
     fun languagesAndVariantsArePrepopulated() {
         provider.activeConfig = provider.getConfig("ja")!!
 

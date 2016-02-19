@@ -33,8 +33,9 @@ class StatusWidgetTest : BaseTest() {
 
     @Test
     fun selectionChanged() {
-        whenever(psiManager.findFile(newFile)!!.text).thenReturn("Hello")
-        whenever(provider.getConfigKeyFor("Hello")).thenReturn("ja")
+        val psiFile = mock<PsiFile>()
+        whenever(psiManager.findFile(newFile)).thenReturn(psiFile)
+        whenever(provider.getConfigKeyFor(psiFile)).thenReturn("ja")
 
         widget.selectionChanged(FileEditorManagerEvent(mock(), mock(), mock(), newFile, mock()))
         assertEquals("RedPen: ja", widget.component.text)

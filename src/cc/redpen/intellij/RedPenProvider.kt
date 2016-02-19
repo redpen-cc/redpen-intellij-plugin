@@ -22,7 +22,6 @@ open class RedPenProvider : SettingsSavingComponent {
     private var configs : MutableMap<String, Configuration> = LinkedHashMap()
     private var configKey = "en"
     internal var configKeysByFile = Properties()
-    open var autodetect = true
 
     internal var parsers: Map<String, DocumentParser> = mapOf(
             "PLAIN_TEXT" to DocumentParser.PLAIN,
@@ -81,11 +80,11 @@ open class RedPenProvider : SettingsSavingComponent {
     open fun getRedPen(): RedPen = RedPen(configs[configKey])
 
     fun getRedPenFor(file: PsiFile): RedPen {
-        configKey = configKeysByFile.getProperty(file.virtualFile.path) ?: getConfigKeyFor(file.text)
+        configKey = getConfigKeyFor(file)
         return getRedPen()
     }
 
-    open fun getConfigKeyFor(text: String) = if (autodetect) LanguageDetector().detectLanguage(text) else configKey
+    open fun getConfigKeyFor(file: PsiFile) = configKeysByFile.getProperty(file.virtualFile.path) ?: LanguageDetector().detectLanguage(file.text)
 
     open fun getParser(file: PsiFile): DocumentParser? {
         return parsers[file.fileType.name]

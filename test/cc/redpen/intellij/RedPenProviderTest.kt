@@ -25,8 +25,6 @@ class RedPenProviderTest : BaseTest() {
 
     @Test
     fun getRedPenFor_autodetectsLanguage() {
-        provider.autodetect = true
-
         whenever(file.text).thenReturn("Hello")
         var redPen = provider.getRedPenFor(file)
         assertEquals("en", redPen.configuration.key)
@@ -37,12 +35,13 @@ class RedPenProviderTest : BaseTest() {
     }
 
     @Test
-    fun languageAutodetectionCanBeDisabled() {
-        provider.autodetect = false
-        whenever(file.text).thenReturn("")
+    fun getRedPenFor_autodetectsLanguageOnlyIfLanguageWasNotAlreadySetManually() {
+        val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
+        provider.configKeysByFile["/path/to/foo"] = "ja"
+        whenever(file.virtualFile.path).thenReturn("/path/to/foo")
 
-        val redPen = provider.getRedPenFor(file)
-        assertEquals("en", redPen.configuration.key)
+        var redPen = provider.getRedPenFor(file)
+        assertEquals("ja", redPen.configuration.key)
     }
 
     @Test

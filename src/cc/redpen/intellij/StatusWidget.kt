@@ -58,7 +58,6 @@ open class StatusWidget constructor(project: Project, var provider: RedPenProvid
 
                 override fun actionPerformed(e: AnActionEvent) {
                     provider.setConfig(e.getData(PSI_FILE)!!, it.value)
-                    provider.autodetect = false
                     DaemonCodeAnalyzer.getInstance(e.project).restart()
                 }
             })
@@ -83,7 +82,7 @@ open class StatusWidget constructor(project: Project, var provider: RedPenProvid
 
         val file = PsiManager.getInstance(project!!).findFile(event.newFile!!)
         if (file == null || provider.getParser(file) == null) return
-        update(provider.getConfigKeyFor(file.text))
+        update(provider.getConfigKeyFor(file))
     }
 
     override fun getComponent(): TextPanel {

@@ -20,7 +20,6 @@ class SettingsManagerTest : BaseTest() {
         doNothing().whenever(manager).restartInspections()
         manager.provider = mock(RETURNS_DEEP_STUBS)
         manager.settingsPane = mock()
-        manager.settingsPane.autodetectLanguage = mock()
         whenever(manager.settingsPane.config).thenReturn(config);
     }
 
@@ -28,20 +27,6 @@ class SettingsManagerTest : BaseTest() {
     fun applyConfigSwitch() {
         manager.apply()
         verify(manager.provider).activeConfig = config;
-    }
-
-    @Test
-    fun applyAutodetectIfNeeded() {
-        whenever(manager.settingsPane.autodetectLanguage.isSelected).thenReturn(false)
-        manager.apply()
-        verify(manager.provider).autodetect = false;
-    }
-
-    @Test
-    fun doNotApplyAutodetectIfNotNeeded() {
-        whenever(manager.settingsPane.autodetectLanguage.isSelected).thenReturn(true)
-        manager.apply()
-        verify(manager.provider).autodetect = true;
     }
 
     @Test

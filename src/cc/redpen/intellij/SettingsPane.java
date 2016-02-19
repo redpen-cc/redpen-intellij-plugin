@@ -27,7 +27,6 @@ public class SettingsPane {
   JTable validators;
   JTable symbols;
   JComboBox<String> language;
-  JCheckBox autodetectLanguage;
   JButton exportButton;
   JButton importButton;
   JButton resetButton;
@@ -82,7 +81,6 @@ public class SettingsPane {
 
   void initLanguages() {
     provider.getConfigs().keySet().forEach(k -> language.addItem(k));
-    autodetectLanguage.setSelected(provider.getAutodetect());
     language.setSelectedItem(provider.getActiveConfig().getKey());
     language.addPopupMenuListener(new PopupMenuListenerAdapter() {
       @Override public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
