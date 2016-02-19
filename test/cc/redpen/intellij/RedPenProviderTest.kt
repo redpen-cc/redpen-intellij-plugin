@@ -56,8 +56,8 @@ class RedPenProviderTest : BaseTest() {
 
         provider.loadConfig("ja.xml")
         assertEquals('*', provider.getConfig("ja")!!.symbolTable.getSymbol(AMPERSAND).value)
-        assertFalse(provider.getInitialConfig("ja")!!.equals(provider.getConfig("ja")))
-        assertTrue(provider.getInitialConfig("en")!!.equals(provider.getConfig("en")))
+        assertFalse(provider.getInitialConfig("ja") == provider.getConfig("ja"))
+        assertTrue(provider.getInitialConfig("en") == provider.getConfig("en"))
 
         provider.configKeysByFile.remove("hello.txt")
         provider.loadConfigKeysByFile()
