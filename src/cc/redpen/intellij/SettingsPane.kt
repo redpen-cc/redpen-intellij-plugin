@@ -9,7 +9,6 @@ import com.intellij.uiDesigner.core.GridConstraints.*
 import com.intellij.uiDesigner.core.GridLayoutManager
 import com.intellij.uiDesigner.core.Spacer
 import java.awt.Dimension
-import java.awt.Insets
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
@@ -37,7 +36,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         cloneConfigs()
         fileChooser.fileFilter = FileNameExtensionFilter("RedPen Configuration", "xml")
 
-        root.layout = GridLayoutManager(2, 7, Insets(0, 0, 0, 0), -1, -1)
+        root.layout = GridLayoutManager(2, 7)
         root.add(language, GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, FILL_HORIZONTAL, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null, 0, false))
         root.add(JLabel("Language"), GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null, 0, false))
         root.add(tabbedPane, GridConstraints(1, 0, 1, 7, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, null, Dimension(200, 200), null, 0, false))
@@ -46,17 +45,19 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         root.add(importButton, GridConstraints(0, 4, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null, 0, false))
         root.add(resetButton, GridConstraints(0, 6, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null, 0, false))
 
-        val validatorsTab = JPanel(GridLayoutManager(1, 1, Insets(0, 0, 0, 0), -1, -1))
+        val validatorsTab = JPanel(GridLayoutManager(1, 1))
         tabbedPane.addTab("Validators", validatorsTab)
         val validatorsScroll = JScrollPane()
         validatorsTab.add(validatorsScroll, GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null, 0, false))
         validatorsScroll.setViewportView(validators)
+        validators.rowHeight = (validators.font.size * 1.5).toInt()
 
-        val symbolsTab = JPanel(GridLayoutManager(1, 1, Insets(0, 0, 0, 0), -1, -1))
+        val symbolsTab = JPanel(GridLayoutManager(1, 1))
         tabbedPane.addTab("Symbols", symbolsTab)
         val symbolsScroll = JScrollPane()
         symbolsTab.add(symbolsScroll, GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null, 0, false))
         symbolsScroll.setViewportView(symbols)
+        symbols.rowHeight = (validators.font.size * 1.5).toInt()
     }
 
     open internal fun cloneConfigs() {
@@ -117,7 +118,6 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     open internal fun initSymbols() {
         symbols.model = createSymbolsModel()
-        symbols.rowHeight = (validators.font.size * 1.5).toInt()
         symbols.columnModel.getColumn(0).minWidth = 250
         symbols.setDefaultEditor(Char::class.javaObjectType, SingleCharEditor())
 
@@ -132,8 +132,6 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     open internal fun initValidators() {
         validators.model = createValidatorsModel()
-        validators.rowHeight = (validators.font.size * 1.5).toInt()
-
         validators.columnModel.getColumn(0).maxWidth = 20
 
         for (initialValidator in provider.initialConfigs[config.key]!!.validatorConfigs) {
