@@ -45,14 +45,10 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         root.add(importButton, GridConstraints(0, 4, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null))
         root.add(resetButton, GridConstraints(0, 6, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null))
 
-        val validatorsTab = JPanel(GridLayoutManager(1, 1))
-        tabbedPane.addTab("Validators", validatorsTab)
-        validatorsTab.add(JScrollPane(validators), GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null))
+        tabbedPane.addTab("Validators", JScrollPane(validators))
         validators.rowHeight = (validators.font.size * 1.5).toInt()
 
-        val symbolsTab = JPanel(GridLayoutManager(1, 1))
-        tabbedPane.addTab("Symbols", symbolsTab)
-        symbolsTab.add(JScrollPane(symbols), GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null))
+        tabbedPane.addTab("Symbols", JScrollPane(symbols))
         symbols.rowHeight = (validators.font.size * 1.5).toInt()
     }
 
