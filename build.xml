@@ -38,6 +38,19 @@
     <delete file="idea.tar.gz"/>
   </target>
 
+  <property environment="env"/>
+
+  <target name="publish">
+    <exec dir="." executable="curl" failonerror="true">
+      <arg line="-vL"/>
+      <arg line="-F file=@redpen-intellij-plugin.zip"/>
+      <arg line="-F pluginId=8210"/>
+      <arg line="-F userName=antonkeks"/>
+      <arg line="-F password=${env.JETBRAINS_PWD}"/>
+      <arg line="http://plugins.jetbrains.com/plugin/uploadPlugin"/>
+    </exec>
+  </target>
+
   <import file="redpen-intellij-plugin.xml"/>
   <target name="all.with.deps" depends="deps,all"/>
 
