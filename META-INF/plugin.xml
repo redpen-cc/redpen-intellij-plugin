@@ -1,15 +1,26 @@
 <idea-plugin version="2">
   <id>cc.redpen.intellij</id>
   <name>RedPen Plugin</name>
-  <version>0.1</version>
-  <vendor email="anton@codeborne.com" url="http://redpen.cc">RedPen</vendor>
+  <version>0.9</version>
+  <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
-      Validates text files with RedPen
+      <p>Validates text files with <a href="http://redpen.cc/">RedPen</a> by adding a 'RedPen' inspection, which is enabled by default after installation.</p>
+      <p>Language and variant are autodetected per file, however you can manually override them in IDEA status bar.</p>
+      <p>RedPen settings can be configured and imported/exported using native RedPen config format. All settings are stored per project.</p>
+
+      <p>The following file types are supported (provided you have necessary plugins installed):
+      <ul>
+        <li>Plain text</li>
+        <li>Markdown</li>
+        <li>ASCIIdoc</li>
+      </ul>
+
+      <p>Please report any issues on <a href="https://github.com/redpen-cc/redpen-intellij-plugin/issues">GitHub</a>.</p>
     ]]></description>
 
   <change-notes><![CDATA[
-      Draft version
+      0.9 - initial release
     ]]>
   </change-notes>
 
