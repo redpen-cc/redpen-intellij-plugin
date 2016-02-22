@@ -73,9 +73,16 @@ open class RedPenProvider : SettingsSavingComponent {
     override fun save() {
         configDir.mkdirs()
         configs.values.forEach { c ->
-            FileOutputStream(File(configDir, c.key + ".xml")).use { out -> ConfigurationExporter().export(c, out) }
+            val file = File(configDir, c.key + ".xml")
+            if (c == initialConfigs[c.key]) file.delete()
+            else FileOutputStream(file).use { out -> ConfigurationExporter().export(c, out) }
         }
-        FileOutputStream(File(configDir, "files.xml")).use { out -> configKeysByFile.storeToXML(out, null) }
+
+        val file = File(configDir, "files.xml")
+        if (configKeysByFile.isEmpty) file.delete()
+        else FileOutputStream(file).use { out -> configKeysByFile.storeToXML(out, null) }
+
+        if (configDir.list().isEmpty()) configDir.delete()
     }
 
     infix operator fun plusAssign(config: Configuration) {

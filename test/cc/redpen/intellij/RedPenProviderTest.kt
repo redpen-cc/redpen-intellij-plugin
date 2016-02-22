@@ -11,6 +11,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.io.File
+import java.io.FileOutputStream
 
 class RedPenProviderTest : BaseTest() {
     val file = mockTextFile("hello")
@@ -56,7 +57,7 @@ class RedPenProviderTest : BaseTest() {
         provider.configKeysByFile["hello.txt"] = "ja"
         provider.save()
 
-        assertEquals(provider.getConfig("en"), ConfigurationLoader().load(File(provider.configDir, "en.xml")))
+        assertFalse(File(provider.configDir, "en.xml").exists())
         assertEquals(provider.getConfig("ja"), ConfigurationLoader().load(File(provider.configDir, "ja.xml")))
 
         provider.loadConfig("ja.xml")
@@ -69,6 +70,18 @@ class RedPenProviderTest : BaseTest() {
         assertEquals("ja", provider.configKeysByFile["hello.txt"])
 
         provider.configDir.deleteRecursively()
+    }
+
+    @Test
+    fun removeSavedConfigIfSameAsInitial() {
+        provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
+        provider.configDir.mkdirs()
+        val enConf = File(provider.configDir, "en.xml")
+        FileOutputStream(enConf).use { it.write("<redpen-conf/>".toByteArray()) }
+
+        provider.save()
+        assertFalse(enConf.exists())
+        assertFalse(provider.configDir.exists())
     }
 
     @Test
