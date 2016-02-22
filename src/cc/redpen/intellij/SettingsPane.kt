@@ -14,7 +14,6 @@ import java.io.IOException
 import java.util.*
 import java.util.stream.Collectors.toList
 import java.util.stream.IntStream.range
-import java.util.stream.Stream
 import javax.swing.*
 import javax.swing.JFileChooser.APPROVE_OPTION
 import javax.swing.event.PopupMenuEvent
@@ -161,8 +160,8 @@ open class SettingsPane(internal var provider: RedPenProvider) {
                     val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
                     validator.attributes.clear()
                     val attributes = model.getValueAt(i, 2) as String
-                    Stream.of(*attributes.trim { it <= ' ' }.split("\\s*,\\s*".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()).filter { s -> !s.isEmpty() }.forEach { s ->
-                        val attr = s.split("=".toRegex(), 2).toTypedArray()
+                    attributes.trim().split("\\s*,\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
+                        val attr = s.split("=".toRegex(), 2)
                         if (attr.size < 2 || attr[0].isEmpty())
                             showPropertyError(validator, s)
                         else
