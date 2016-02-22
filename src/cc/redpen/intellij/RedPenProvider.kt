@@ -47,7 +47,7 @@ open class RedPenProvider : SettingsSavingComponent {
         this.project = project
         this.configDir = File(System.getProperty("java.io.tmpdir"))
         this.configs = configs
-        this.initialConfigs = LinkedHashMap(configs)
+        this.initialConfigs = configs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
     }
 
     internal fun loadConfig(fileName: String) {

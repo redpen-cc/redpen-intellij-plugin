@@ -1,5 +1,6 @@
 package cc.redpen.intellij
 
+import cc.redpen.config.Configuration
 import cc.redpen.config.ConfigurationLoader
 import cc.redpen.config.Symbol
 import cc.redpen.config.SymbolType.AMPERSAND
@@ -16,9 +17,18 @@ import java.io.FileOutputStream
 class RedPenProviderTest : BaseTest() {
     val file = mockTextFile("hello")
 
+    companion object {
+        var cachedConfigs: MutableMap<String, Configuration>? = null
+    }
+
     @Before
     fun setUp() {
-        provider = RedPenProvider(project)
+        if (cachedConfigs == null) {
+            provider = RedPenProvider(project)
+            cachedConfigs = provider.initialConfigs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
+        }
+        else
+            provider = RedPenProvider(project, cachedConfigs!!)
     }
 
     @Test
