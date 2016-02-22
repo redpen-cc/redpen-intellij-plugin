@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>cc.redpen.intellij</id>
   <name>RedPen Plugin</name>
-  <version>0.9</version>
+  <version>0.9.1</version>
   <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
@@ -21,7 +21,10 @@
     ]]></description>
 
   <change-notes><![CDATA[
-      0.9 - initial release
+    <dl>
+      <dt>0.9.1</dt><dd>A few bugfixes with Settings</dd>
+      <dt>0.9</dt><dd>Initial release</dd>
+    </dl>
     ]]>
   </change-notes>
 
