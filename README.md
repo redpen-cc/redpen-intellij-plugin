@@ -23,3 +23,13 @@ Before project will compile you need to fetch dependencies into *lib* directory:
   ```ant deps```
   
 Then open the provided project files with IntelliJ IDEA, setup *Intellij Platform SDK* for the project and run **Plugin** configuration.
+
+For command-line builds you can also download the latest IDEA into *idea* subdirectory automatically:
+
+  ```ant download-idea```
+
+Publishing to JetBrains Plugin Repository is done using (make sure JETBRAINS_PWD environment variable is set):
+
+  ```ant publish```
+  
+Publishing is done by [Travis](https://travis-ci.org/redpen-cc/redpen-intellij-plugin) on every successful build.

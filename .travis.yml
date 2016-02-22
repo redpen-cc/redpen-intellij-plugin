@@ -5,4 +5,4 @@ jdk:
 
 install: ant deps download-idea
 script: ant all
-after_script: ant publish
+after_success: ant publish
