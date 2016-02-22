@@ -42,12 +42,12 @@
 
   <target name="publish">
     <exec dir="." executable="curl" failonerror="true">
-      <arg line="-vL"/>
+      <arg line="-v"/>
       <arg line="-F file=@redpen-intellij-plugin.zip"/>
       <arg line="-F pluginId=8210"/>
       <arg line="-F userName=antonkeks"/>
       <arg line="-F password=${env.JETBRAINS_PWD}"/>
-      <arg line="http://plugins.jetbrains.com/plugin/uploadPlugin"/>
+      <arg line="https://plugins.jetbrains.com/plugin/uploadPlugin"/>
     </exec>
   </target>
 
