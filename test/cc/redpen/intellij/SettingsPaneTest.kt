@@ -150,17 +150,17 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun getActiveValidators_appliesActiveCellEditorChanges() {
+    fun getActiveValidators_doesNotapplyActiveCellEditorChanges() {
         whenever(settingsPane.validators.isEditing).thenReturn(true)
         settingsPane.activeValidators
-        verify(settingsPane.validators.cellEditor).stopCellEditing()
+        verify(settingsPane.validators.cellEditor, never()).stopCellEditing()
     }
 
     @Test
-    fun getSymbols_appliesActiveCellEditorChanges() {
+    fun getSymbols_doesNotApplyActiveCellEditorChanges() {
         whenever(settingsPane.symbols.isEditing).thenReturn(true)
         settingsPane.getSymbols()
-        verify(settingsPane.symbols.cellEditor).stopCellEditing()
+        verify(settingsPane.symbols.cellEditor, never()).stopCellEditing()
     }
 
     @Test
@@ -326,12 +326,24 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun applyClonesLocalConfigs() {
+    fun saveClonesLocalConfigs() {
         doNothing().whenever(settingsPane).applyChanges()
         doNothing().whenever(settingsPane).cloneConfigs()
         settingsPane.save()
         verify(settingsPane).applyChanges()
         verify(settingsPane).cloneConfigs()
+    }
+
+    @Test
+    fun save_appliesActiveCellEditorChanges() {
+        whenever(settingsPane.validators.isEditing).thenReturn(true)
+        whenever(settingsPane.symbols.isEditing).thenReturn(true)
+        doNothing().whenever(settingsPane).applyChanges()
+
+        settingsPane.save()
+
+        verify(settingsPane.validators.cellEditor).stopCellEditing()
+        verify(settingsPane.symbols.cellEditor).stopCellEditing()
     }
 
     @Test

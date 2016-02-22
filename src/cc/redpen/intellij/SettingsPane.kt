@@ -111,6 +111,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         language.selectedItem = provider.activeConfig.key
         language.addPopupMenuListener(object : PopupMenuListenerAdapter() {
             override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
+                ensureTableEditorsStopped()
                 applyChanges()
             }
         })
@@ -154,7 +155,6 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     open val activeValidators: List<ValidatorConfiguration>
         get() {
             val result = ArrayList<ValidatorConfiguration>()
-            if (validators.isEditing) validators.cellEditor.stopCellEditing()
             val model = validators.model
             for (i in 0..(model.rowCount - 1)) {
                 if (model.getValueAt(i, 0) as Boolean) {
@@ -179,8 +179,6 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open fun getSymbols(): List<Symbol> {
-        if (symbols.isEditing) symbols.cellEditor.stopCellEditing()
-
         val model = symbols.model
         return range(0, model.rowCount).mapToObj { i ->
             Symbol(
@@ -206,12 +204,18 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         getSymbols().forEach { symbolTable.overrideSymbol(it) }
     }
 
+    open internal fun ensureTableEditorsStopped() {
+        if (validators.isEditing) validators.cellEditor.stopCellEditing()
+        if (symbols.isEditing) symbols.cellEditor.stopCellEditing()
+    }
+
     open internal fun applyChanges() {
         applyValidatorsChanges()
         applySymbolsChanges()
     }
 
     open fun save() {
+        ensureTableEditorsStopped()
         applyChanges()
         provider.configs.putAll(configs)
         cloneConfigs()
