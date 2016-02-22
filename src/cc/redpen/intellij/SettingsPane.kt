@@ -20,7 +20,6 @@ import javax.swing.table.DefaultTableModel
 open class SettingsPane(internal var provider: RedPenProvider) {
     open val configs: MutableMap<String, Configuration> = LinkedHashMap()
     internal var root = JPanel()
-    private val tabbedPane = JTabbedPane()
     internal var validators = JTable(createValidatorsModel())
     internal var symbols = JTable(createSymbolsModel())
     internal var language = JComboBox<String>()
@@ -38,11 +37,13 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         root.layout = GridLayoutManager(2, 7)
         root.add(language, GridConstraints(0, 1, 1, 1, ANCHOR_WEST, FILL_HORIZONTAL, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
         root.add(JLabel("Language"), GridConstraints(0, 0, 1, 1, ANCHOR_WEST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null))
-        root.add(tabbedPane, GridConstraints(1, 0, 1, 7, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, null, null, null))
         root.add(exportButton, GridConstraints(0, 5, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null))
         root.add(Spacer(), GridConstraints(0, 3, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK, null, null, null))
         root.add(importButton, GridConstraints(0, 4, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null))
         root.add(resetButton, GridConstraints(0, 6, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null))
+
+        val tabbedPane = JTabbedPane()
+        root.add(tabbedPane, GridConstraints(1, 0, 1, 7, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, null, null, null))
 
         tabbedPane.addTab("Validators", JScrollPane(validators))
         validators.rowHeight = (validators.font.size * 1.5).toInt()
