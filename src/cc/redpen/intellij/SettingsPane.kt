@@ -245,7 +245,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open var config: Configuration
-        get() = getConfig(language.selectedItem as String)
+        get() = configs[language.selectedItem as String]!!
         set(config) {
             configs[config.key] = config
             language.selectedItem = config.key
@@ -255,8 +255,4 @@ open class SettingsPane(internal var provider: RedPenProvider) {
                 language.selectedItem = config.key
             }
         }
-
-    fun getConfig(key: String): Configuration {
-        return configs[key]!!
-    }
 }

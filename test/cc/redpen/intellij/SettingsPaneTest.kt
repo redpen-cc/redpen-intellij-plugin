@@ -28,8 +28,8 @@ class SettingsPaneTest : BaseTest() {
 
     @Test
     fun allConfigsAreClonedOnCreation() {
-        assertSame(settingsPane.provider.initialConfigs["en"]!!.clone(), settingsPane.getConfig("en"))
-        assertSame(settingsPane.provider.initialConfigs["ja"]!!.clone(), settingsPane.getConfig("ja"))
+        assertSame(settingsPane.provider.initialConfigs["en"]!!.clone(), settingsPane.configs["en"])
+        assertSame(settingsPane.provider.initialConfigs["ja"]!!.clone(), settingsPane.configs["ja"])
     }
 
     @Test
@@ -353,8 +353,8 @@ class SettingsPaneTest : BaseTest() {
 
         settingsPane.resetButton.doClick()
 
-        assertEquals(settingsPane.provider.initialConfigs["en"]!!.clone(), settingsPane.getConfig("en"))
-        assertEquals(settingsPane.provider.initialConfigs["ja"]!!.clone(), settingsPane.getConfig("ja"))
+        assertEquals(settingsPane.provider.initialConfigs["en"]!!.clone(), settingsPane.configs["en"])
+        assertEquals(settingsPane.provider.initialConfigs["ja"]!!.clone(), settingsPane.configs["ja"])
         verify(settingsPane).initTabs()
     }
 
