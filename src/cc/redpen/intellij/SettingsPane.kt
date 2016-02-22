@@ -12,8 +12,6 @@ import java.awt.Insets
 import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
-import java.util.stream.Collectors.toList
-import java.util.stream.IntStream.range
 import javax.swing.*
 import javax.swing.JFileChooser.APPROVE_OPTION
 import javax.swing.event.PopupMenuEvent
@@ -154,7 +152,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     open fun getEditedValidators(): List<ValidatorConfiguration> {
         val result = ArrayList<ValidatorConfiguration>()
         val model = validators.model
-        for (i in 0..(model.rowCount - 1)) {
+        for (i in 0..model.rowCount-1) {
             if (model.getValueAt(i, 0) as Boolean) {
                 val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
                 validator.attributes.clear()
@@ -178,11 +176,10 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     open fun getEditedSymbols(): List<Symbol> {
         val model = symbols.model
-        return range(0, model.rowCount).mapToObj { i ->
-            Symbol(
-                    SymbolType.valueOf(model.getValueAt(i, 0) as String), model.getValueAt(i, 1).toString()[0], model.getValueAt(i, 2) as String,
-                    model.getValueAt(i, 3) as Boolean, model.getValueAt(i, 4) as Boolean)
-        }.collect(toList<Symbol>())
+        return (0..model.rowCount-1).map { i ->
+            Symbol(SymbolType.valueOf(model.getValueAt(i, 0) as String), model.getValueAt(i, 1).toString()[0], model.getValueAt(i, 2) as String,
+                   model.getValueAt(i, 3) as Boolean, model.getValueAt(i, 4) as Boolean)
+        }
     }
 
     private fun attributes(validatorConfig: ValidatorConfiguration): String {
