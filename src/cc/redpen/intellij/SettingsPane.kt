@@ -38,31 +38,25 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         fileChooser.fileFilter = FileNameExtensionFilter("RedPen Configuration", "xml")
 
         root.layout = GridLayoutManager(2, 7, Insets(0, 0, 0, 0), -1, -1)
-        root.add(tabbedPane, GridConstraints(1, 0, 1, 7, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, null, Dimension(200, 200), null, 0, false))
-        val panel1 = JPanel()
-        panel1.layout = GridLayoutManager(1, 1, Insets(0, 0, 0, 0), -1, -1)
-        tabbedPane.addTab("Validators", panel1)
-        val scrollPane1 = JScrollPane()
-        panel1.add(scrollPane1, GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null, 0, false))
-        validators.autoCreateRowSorter = true
-        validators.showHorizontalLines = true
-        validators.showVerticalLines = true
-        scrollPane1.setViewportView(validators)
-        val panel2 = JPanel()
-        panel2.layout = GridLayoutManager(1, 1, Insets(0, 0, 0, 0), -1, -1)
-        tabbedPane.addTab("Symbols", panel2)
-        val scrollPane2 = JScrollPane()
-        panel2.add(scrollPane2, GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null, 0, false))
-        scrollPane2.setViewportView(symbols)
         root.add(language, GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, FILL_HORIZONTAL, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null, 0, false))
-        val label1 = JLabel("Language")
-        root.add(label1, GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null, 0, false))
-        exportButton.isEnabled = true
+        root.add(JLabel("Language"), GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, FILL_NONE, SIZEPOLICY_FIXED, SIZEPOLICY_FIXED, null, null, null, 0, false))
+        root.add(tabbedPane, GridConstraints(1, 0, 1, 7, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, null, Dimension(200, 200), null, 0, false))
         root.add(exportButton, GridConstraints(0, 5, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null, 0, false))
-        val spacer1 = Spacer()
-        root.add(spacer1, GridConstraints(0, 3, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false))
+        root.add(Spacer(), GridConstraints(0, 3, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false))
         root.add(importButton, GridConstraints(0, 4, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null, 0, false))
         root.add(resetButton, GridConstraints(0, 6, 1, 1, ANCHOR_CENTER, FILL_HORIZONTAL, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_CAN_GROW, SIZEPOLICY_FIXED, null, null, null, 0, false))
+
+        val validatorsTab = JPanel(GridLayoutManager(1, 1, Insets(0, 0, 0, 0), -1, -1))
+        tabbedPane.addTab("Validators", validatorsTab)
+        val validatorsScroll = JScrollPane()
+        validatorsTab.add(validatorsScroll, GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null, 0, false))
+        validatorsScroll.setViewportView(validators)
+
+        val symbolsTab = JPanel(GridLayoutManager(1, 1, Insets(0, 0, 0, 0), -1, -1))
+        tabbedPane.addTab("Symbols", symbolsTab)
+        val symbolsScroll = JScrollPane()
+        symbolsTab.add(symbolsScroll, GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, SIZEPOLICY_CAN_SHRINK or SIZEPOLICY_WANT_GROW, null, null, null, 0, false))
+        symbolsScroll.setViewportView(symbols)
     }
 
     open internal fun cloneConfigs() {
