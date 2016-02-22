@@ -8,7 +8,9 @@
   </configurations>
 
   <dependencies defaultconf="default->default">
-    <dependency org="cc.redpen" name="redpen-core" rev="1.4+"/>
+    <dependency org="cc.redpen" name="redpen-core" rev="1.4+">
+      <exclude org="commons-cli"/>
+    </dependency>
     <dependency org="org.mockito" name="mockito-core" rev="1.+" conf="test->default"/>
   </dependencies>
 </ivy-module>
