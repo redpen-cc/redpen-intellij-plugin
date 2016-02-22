@@ -41,19 +41,6 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
         }
     }
 
-    init {
-        object : ClickListener() {
-            override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
-                showPopup(e)
-                return true
-            }
-        }.installOn(component)
-        component.border = StatusBarWidget.WidgetBorder.WIDE
-        component.toolTipText = "RedPen language"
-
-        registerActions()
-    }
-
     override fun projectOpened() {
         WindowManager.getInstance().getStatusBar(project).addWidget(this, "before Encoding")
     }
@@ -62,9 +49,22 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
 
     override fun getComponentName(): String = "StatusWidget"
 
-    override fun initComponent() {}
+    override fun initComponent() {
+        object : ClickListener() {
+            override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
+                showPopup(e)
+                return true
+            }
+        }.installOn(component)
+        component.border = StatusBarWidget.WidgetBorder.WIDE
+        component.toolTipText = "RedPen language"
+        registerActions()
+    }
 
-    override fun disposeComponent() {}
+    override fun disposeComponent() {
+        val actionManager = ActionManager.getInstance() ?: return
+        actionManager.unregisterAction("RedPen " + project?.basePath)
+    }
 
     open fun registerActions() {
         val actionManager = ActionManager.getInstance() ?: return

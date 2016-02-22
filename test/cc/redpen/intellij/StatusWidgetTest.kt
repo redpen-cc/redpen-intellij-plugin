@@ -68,4 +68,15 @@ class StatusWidgetTest : BaseTest() {
         verify(codeAnalyzer).restart()
         verify(actionManager).registerAction("RedPen /foo/bar", widget.actionGroup)
     }
+
+    @Test
+    fun actionIsUnregisteredOnProjectClose() {
+        val actionManager = mock<ActionManager>()
+        whenever(ApplicationManager.getApplication().getComponent(ActionManager::class.java)).thenReturn(actionManager)
+        whenever(project.basePath).thenReturn("/foo/bar")
+
+        widget.disposeComponent()
+
+        verify(actionManager).unregisterAction("RedPen /foo/bar")
+    }
 }
