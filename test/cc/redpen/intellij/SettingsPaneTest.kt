@@ -97,7 +97,7 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun getActiveValidators_returnsOnlySelectedValidators() {
+    fun getEditedValidators_returnsOnlySelectedValidators() {
         settingsPane.initLanguages()
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(asList(
                 ValidatorConfiguration("first"),
@@ -108,13 +108,13 @@ class SettingsPaneTest : BaseTest() {
         whenever(settingsPane.validators.model.getValueAt(1, 0)).thenReturn(true)
         whenever(settingsPane.validators.model.getValueAt(1, 2)).thenReturn("")
 
-        val activeValidators = settingsPane.activeValidators
+        val activeValidators = settingsPane.getEditedValidators()
         assertEquals(1, activeValidators.size.toLong())
         assertEquals("second one", activeValidators[0].configurationName)
     }
 
     @Test
-    fun getActiveValidators_modifiesAttributes() {
+    fun getEditedValidators_modifiesAttributes() {
         settingsPane.initLanguages()
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(
                 listOf(validatorConfig("Hello", mapOf("width" to "100", "height" to "300", "depth" to "1"))))
@@ -123,14 +123,14 @@ class SettingsPaneTest : BaseTest() {
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
         whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn(" width=200 ,   height=300 ")
 
-        val activeValidators = settingsPane.activeValidators
+        val activeValidators = settingsPane.getEditedValidators()
         assertEquals(1, activeValidators.size.toLong())
         assertEquals(mapOf("width" to "200", "height" to "300"), activeValidators[0].attributes)
         assertNotSame(provider.initialConfigs["en"]!!.validatorConfigs[0], activeValidators[0])
     }
 
     @Test
-    fun getActiveValidators_reportsInvalidAttributes() {
+    fun getEditedValidators_reportsInvalidAttributes() {
         settingsPane.initLanguages()
         val validator = validatorConfig("Hello", mapOf("width" to "100"))
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(listOf(validator))
@@ -141,25 +141,25 @@ class SettingsPaneTest : BaseTest() {
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
 
         whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("width")
-        settingsPane.activeValidators
+        settingsPane.getEditedValidators()
         verify(settingsPane).showPropertyError(validator, "width")
 
         whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("=")
-        settingsPane.activeValidators
+        settingsPane.getEditedValidators()
         verify(settingsPane).showPropertyError(validator, "=")
     }
 
     @Test
-    fun getActiveValidators_doesNotapplyActiveCellEditorChanges() {
+    fun getEditedValidators_doesNotapplyActiveCellEditorChanges() {
         whenever(settingsPane.validators.isEditing).thenReturn(true)
-        settingsPane.activeValidators
+        settingsPane.getEditedValidators()
         verify(settingsPane.validators.cellEditor, never()).stopCellEditing()
     }
 
     @Test
-    fun getSymbols_doesNotApplyActiveCellEditorChanges() {
+    fun getEditedSymbols_doesNotApplyActiveCellEditorChanges() {
         whenever(settingsPane.symbols.isEditing).thenReturn(true)
-        settingsPane.getSymbols()
+        settingsPane.getEditedSymbols()
         verify(settingsPane.symbols.cellEditor, never()).stopCellEditing()
     }
 
@@ -177,7 +177,7 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun getSymbols() {
+    fun getEditedSymbols() {
         val model = settingsPane.symbols.model
         whenever(model.rowCount).thenReturn(2)
 
@@ -193,7 +193,7 @@ class SettingsPaneTest : BaseTest() {
         whenever(model.getValueAt(1, 3)).thenReturn(false)
         whenever(model.getValueAt(1, 4)).thenReturn(true)
 
-        val symbols = settingsPane.getSymbols()
+        val symbols = settingsPane.getEditedSymbols()
         assertEquals(asList(Symbol(AMPERSAND, '&', "$%", true, false), Symbol(ASTERISK, '*', "", false, true)), symbols)
     }
 
@@ -302,12 +302,12 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun applyValidators() {
+    fun applyValidatorChanges() {
         val allValidators = asList(ValidatorConfiguration("1"), ValidatorConfiguration("2"))
         settingsPane.config = configWithValidators(allValidators)
 
         val activeValidators = ArrayList(allValidators.subList(0, 1))
-        doReturn(activeValidators).whenever(settingsPane).activeValidators
+        doReturn(activeValidators).whenever(settingsPane).getEditedValidators()
 
         settingsPane.applyValidatorsChanges()
 
@@ -315,9 +315,9 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun applySymbols() {
+    fun applySymbolsChanges() {
         val symbol = Symbol(BACKSLASH, '\\')
-        doReturn(listOf(symbol)).whenever(settingsPane).getSymbols()
+        doReturn(listOf(symbol)).whenever(settingsPane).getEditedSymbols()
         doReturn(mock<Configuration>(RETURNS_DEEP_STUBS)).whenever(settingsPane).config
 
         settingsPane.applySymbolsChanges()

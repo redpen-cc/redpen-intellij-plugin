@@ -151,33 +151,32 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         validators.doLayout()
     }
 
-    open val activeValidators: List<ValidatorConfiguration>
-        get() {
-            val result = ArrayList<ValidatorConfiguration>()
-            val model = validators.model
-            for (i in 0..(model.rowCount - 1)) {
-                if (model.getValueAt(i, 0) as Boolean) {
-                    val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
-                    validator.attributes.clear()
-                    val attributes = model.getValueAt(i, 2) as String
-                    attributes.trim().split("\\s*,\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
-                        val attr = s.split("=".toRegex(), 2)
-                        if (attr.size < 2 || attr[0].isEmpty())
-                            showPropertyError(validator, s)
-                        else
-                            validator.addAttribute(attr[0], attr[1])
-                    }
-                    result.add(validator)
+    open fun getEditedValidators(): List<ValidatorConfiguration> {
+        val result = ArrayList<ValidatorConfiguration>()
+        val model = validators.model
+        for (i in 0..(model.rowCount - 1)) {
+            if (model.getValueAt(i, 0) as Boolean) {
+                val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
+                validator.attributes.clear()
+                val attributes = model.getValueAt(i, 2) as String
+                attributes.trim().split("\\s*,\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
+                    val attr = s.split("=".toRegex(), 2)
+                    if (attr.size < 2 || attr[0].isEmpty())
+                        showPropertyError(validator, s)
+                    else
+                        validator.addAttribute(attr[0], attr[1])
                 }
+                result.add(validator)
             }
-            return result
         }
+        return result
+    }
 
     open internal fun showPropertyError(validator: ValidatorConfiguration, s: String) {
         Messages.showMessageDialog("Validator property must be in key=value format: " + s, validator.configurationName, Messages.getErrorIcon())
     }
 
-    open fun getSymbols(): List<Symbol> {
+    open fun getEditedSymbols(): List<Symbol> {
         val model = symbols.model
         return range(0, model.rowCount).mapToObj { i ->
             Symbol(
@@ -193,14 +192,13 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     open internal fun applyValidatorsChanges() {
         val validators = config.validatorConfigs
-        val remainingValidators = activeValidators
         validators.clear()
-        validators.addAll(remainingValidators)
+        validators.addAll(getEditedValidators())
     }
 
     open internal fun applySymbolsChanges() {
         val symbolTable = config.symbolTable
-        getSymbols().forEach { symbolTable.overrideSymbol(it) }
+        getEditedSymbols().forEach { symbolTable.overrideSymbol(it) }
     }
 
     open internal fun ensureTableEditorsStopped() {
