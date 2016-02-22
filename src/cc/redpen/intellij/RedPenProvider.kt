@@ -9,6 +9,7 @@ import cc.redpen.util.LanguageDetector
 import com.intellij.openapi.components.SettingsSavingComponent
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.Project.DIRECTORY_STORE_FOLDER
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
 import java.io.File
 import java.io.FileInputStream
@@ -97,7 +98,7 @@ open class RedPenProvider : SettingsSavingComponent {
         return getRedPen()
     }
 
-    open fun getConfigKeyFor(file: PsiFile) = configKeysByFile.getProperty(file.virtualFile.path) ?: LanguageDetector().detectLanguage(file.text)
+    open fun getConfigKeyFor(file: PsiFile) = configKeysByFile.getProperty(relativePath(file)) ?: LanguageDetector().detectLanguage(file.text)
 
     open fun getParser(file: PsiFile): DocumentParser? {
         return parsers[file.fileType.name]
@@ -111,6 +112,8 @@ open class RedPenProvider : SettingsSavingComponent {
 
     open fun setConfig(file: PsiFile, config: Configuration) {
         activeConfig = config
-        configKeysByFile[file.virtualFile.path] = config.key
+        configKeysByFile[relativePath(file)] = config.key
     }
+
+    internal fun relativePath(file: PsiFile) = FileUtil.getRelativePath(project.basePath!!, file.virtualFile.path, File.separatorChar)
 }

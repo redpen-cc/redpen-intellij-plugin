@@ -29,6 +29,8 @@ class RedPenProviderTest : BaseTest() {
         }
         else
             provider = RedPenProvider(project, cachedConfigs!!)
+
+        whenever(project.basePath).thenReturn("/foo")
     }
 
     @Test
@@ -53,8 +55,8 @@ class RedPenProviderTest : BaseTest() {
     @Test
     fun getRedPenFor_autodetectsLanguageOnlyIfLanguageWasNotAlreadySetManually() {
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
-        provider.configKeysByFile["/path/to/foo"] = "ja"
-        whenever(file.virtualFile.path).thenReturn("/path/to/foo")
+        provider.configKeysByFile["path/to/foo"] = "ja"
+        whenever(file.virtualFile.path).thenReturn("/foo/path/to/foo")
 
         var redPen = provider.getRedPenFor(file)
         assertEquals("ja", redPen.configuration.key)
@@ -98,10 +100,10 @@ class RedPenProviderTest : BaseTest() {
     fun setConfig() {
         val config = config("en")
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
-        whenever(file.virtualFile.path).thenReturn("/path/to/foo")
+        whenever(file.virtualFile.path).thenReturn("/foo/path/to/foo")
 
         provider.setConfig(file, config)
 
-        assertEquals("en", provider.configKeysByFile["/path/to/foo"])
+        assertEquals("en", provider.configKeysByFile["path/to/foo"])
     }
 }
