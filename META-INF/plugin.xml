@@ -25,7 +25,7 @@
     ]]>
   </change-notes>
 
-  <idea-version since-build="131"/>
+  <idea-version since-build="143"/> <!-- IDEA 15 -->
 
   <project-components>
     <component><implementation-class>cc.redpen.intellij.RedPenProvider</implementation-class></component>
