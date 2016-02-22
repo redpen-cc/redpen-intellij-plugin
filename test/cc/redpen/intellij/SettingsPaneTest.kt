@@ -28,13 +28,13 @@ class SettingsPaneTest : BaseTest() {
 
     @Test
     fun allConfigsAreClonedOnCreation() {
-        assertSame(settingsPane.provider.getInitialConfig("en")!!.clone(), settingsPane.getConfig("en"))
-        assertSame(settingsPane.provider.getInitialConfig("ja")!!.clone(), settingsPane.getConfig("ja"))
+        assertSame(settingsPane.provider.initialConfigs["en"]!!.clone(), settingsPane.getConfig("en"))
+        assertSame(settingsPane.provider.initialConfigs["ja"]!!.clone(), settingsPane.getConfig("ja"))
     }
 
     @Test
     fun languagesAndVariantsArePrepopulated() {
-        provider.activeConfig = provider.getConfig("ja")!!
+        provider.activeConfig = provider.configs["ja"]!!
 
         settingsPane.initLanguages()
 
@@ -72,7 +72,7 @@ class SettingsPaneTest : BaseTest() {
         verify(settingsPane).applyChanges()
 
         settingsPane.language.selectedItem = "ja"
-        assertSame(provider.getConfig("ja")!!.clone(), settingsPane.config)
+        assertSame(provider.configs["ja"]!!.clone(), settingsPane.config)
         verify(settingsPane, times(2)).initTabs()
     }
 
@@ -83,7 +83,7 @@ class SettingsPaneTest : BaseTest() {
                 validatorConfig("InitialAttributes", mapOf("attr1" to "val1", "attr2" to "val2")),
                 validatorConfig("NoAttributes", emptyMap()))
 
-        whenever(provider.getInitialConfig("en")!!.validatorConfigs).thenReturn(allValidators)
+        whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(allValidators)
         doReturn(configWithValidators(listOf(validatorConfig("ModifiedAttributes", mapOf("foo" to "bar"))))).whenever(settingsPane).config
 
         val model = mock<DefaultTableModel>()
@@ -99,7 +99,7 @@ class SettingsPaneTest : BaseTest() {
     @Test
     fun getActiveValidators_returnsOnlySelectedValidators() {
         settingsPane.initLanguages()
-        whenever(provider.getInitialConfig("en")!!.validatorConfigs).thenReturn(asList(
+        whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(asList(
                 ValidatorConfiguration("first"),
                 ValidatorConfiguration("second one")))
 
@@ -116,7 +116,7 @@ class SettingsPaneTest : BaseTest() {
     @Test
     fun getActiveValidators_modifiesAttributes() {
         settingsPane.initLanguages()
-        whenever(provider.getInitialConfig("en")!!.validatorConfigs).thenReturn(
+        whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(
                 listOf(validatorConfig("Hello", mapOf("width" to "100", "height" to "300", "depth" to "1"))))
 
         whenever(settingsPane.validators.model.rowCount).thenReturn(1)
@@ -126,14 +126,14 @@ class SettingsPaneTest : BaseTest() {
         val activeValidators = settingsPane.activeValidators
         assertEquals(1, activeValidators.size.toLong())
         assertEquals(mapOf("width" to "200", "height" to "300"), activeValidators[0].attributes)
-        assertNotSame(provider.getInitialConfig("en")!!.validatorConfigs[0], activeValidators[0])
+        assertNotSame(provider.initialConfigs["en"]!!.validatorConfigs[0], activeValidators[0])
     }
 
     @Test
     fun getActiveValidators_reportsInvalidAttributes() {
         settingsPane.initLanguages()
         val validator = validatorConfig("Hello", mapOf("width" to "100"))
-        whenever(provider.getInitialConfig("en")!!.validatorConfigs).thenReturn(listOf(validator))
+        whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(listOf(validator))
 
         doNothing().whenever(settingsPane).showPropertyError(any(), any())
 
@@ -286,8 +286,8 @@ class SettingsPaneTest : BaseTest() {
 
         settingsPane.importConfig()
 
-        assertSame(clone1, settingsPane.provider.getInitialConfig("za"))
-        assertSame(clone2, settingsPane.provider.getConfig("za"))
+        assertSame(clone1, settingsPane.provider.initialConfigs["za"])
+        assertSame(clone2, settingsPane.provider.configs["za"])
         verify(settingsPane.language).addItem("za")
         verify(settingsPane.language, times(2)).selectedItem = "za"
     }
@@ -341,8 +341,8 @@ class SettingsPaneTest : BaseTest() {
 
         settingsPane.resetButton.doClick()
 
-        assertEquals(settingsPane.provider.getInitialConfig("en")!!.clone(), settingsPane.getConfig("en"))
-        assertEquals(settingsPane.provider.getInitialConfig("ja")!!.clone(), settingsPane.getConfig("ja"))
+        assertEquals(settingsPane.provider.initialConfigs["en"]!!.clone(), settingsPane.getConfig("en"))
+        assertEquals(settingsPane.provider.initialConfigs["ja"]!!.clone(), settingsPane.getConfig("ja"))
         verify(settingsPane).initTabs()
     }
 
@@ -370,7 +370,7 @@ class SettingsPaneTest : BaseTest() {
 
     private fun validatorConfig(name: String, attributes: Map<String, String>): ValidatorConfiguration {
         val config = ValidatorConfiguration(name)
-        attributes.forEach({ e -> config.addAttribute(e.key, e.value) })
+        attributes.forEach{ e -> config.addAttribute(e.key, e.value) }
         return config
     }
 }

@@ -53,6 +53,7 @@ abstract class BaseTest {
         val config = config(key)
         val configClone = config(key)
         whenever(config.clone()).thenReturn(configClone)
+        whenever(configClone.clone()).thenReturn(configClone)
         return config
     }
 

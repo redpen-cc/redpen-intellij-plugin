@@ -33,10 +33,10 @@ class RedPenProviderTest : BaseTest() {
 
     @Test
     fun allConfigFilesAreLoaded() {
-        assertEquals("en", provider.getConfig("en")!!.key)
-        assertEquals("ja", provider.getConfig("ja")!!.key)
-        assertEquals("ja.hankaku", provider.getConfig("ja.hankaku")!!.key)
-        assertEquals("ja.zenkaku2", provider.getConfig("ja.zenkaku2")!!.key)
+        assertEquals("en", provider.configs["en"]!!.key)
+        assertEquals("ja", provider.configs["ja"]!!.key)
+        assertEquals("ja.hankaku", provider.configs["ja.hankaku"]!!.key)
+        assertEquals("ja.zenkaku2", provider.configs["ja.zenkaku2"]!!.key)
     }
 
     @Test
@@ -63,17 +63,17 @@ class RedPenProviderTest : BaseTest() {
     @Test
     fun saveAndLoad() {
         provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
-        provider.getConfig("ja")!!.symbolTable.overrideSymbol(Symbol(AMPERSAND, '*'))
+        provider.configs["ja"]!!.symbolTable.overrideSymbol(Symbol(AMPERSAND, '*'))
         provider.configKeysByFile["hello.txt"] = "ja"
         provider.save()
 
         assertFalse(File(provider.configDir, "en.xml").exists())
-        assertEquals(provider.getConfig("ja"), ConfigurationLoader().load(File(provider.configDir, "ja.xml")))
+        assertEquals(provider.configs["ja"], ConfigurationLoader().load(File(provider.configDir, "ja.xml")))
 
         provider.loadConfig("ja.xml")
-        assertEquals('*', provider.getConfig("ja")!!.symbolTable.getSymbol(AMPERSAND).value)
-        assertFalse(provider.getInitialConfig("ja") == provider.getConfig("ja"))
-        assertTrue(provider.getInitialConfig("en") == provider.getConfig("en"))
+        assertEquals('*', provider.configs["ja"]!!.symbolTable.getSymbol(AMPERSAND).value)
+        assertFalse(provider.initialConfigs["ja"] == provider.configs["ja"])
+        assertTrue(provider.initialConfigs["en"] == provider.configs["en"])
 
         provider.configKeysByFile.remove("hello.txt")
         provider.loadConfigKeysByFile()

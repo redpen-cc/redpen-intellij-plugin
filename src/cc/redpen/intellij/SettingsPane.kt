@@ -143,7 +143,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
         validators.columnModel.getColumn(0).maxWidth = 20
 
-        for (initialValidator in provider.getInitialConfig(config.key)!!.validatorConfigs) {
+        for (initialValidator in provider.initialConfigs[config.key]!!.validatorConfigs) {
             val validator = config.validatorConfigs.find { v -> v == initialValidator }
             (validators.model as DefaultTableModel).addRow(arrayOf<Any>(validator != null, initialValidator.configurationName, attributes(validator ?: initialValidator)))
         }
@@ -158,7 +158,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
             val model = validators.model
             for (i in 0..(model.rowCount - 1)) {
                 if (model.getValueAt(i, 0) as Boolean) {
-                    val validator = provider.getInitialConfig(config.key)!!.validatorConfigs[i].clone()
+                    val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
                     validator.attributes.clear()
                     val attributes = model.getValueAt(i, 2) as String
                     Stream.of(*attributes.trim { it <= ' ' }.split("\\s*,\\s*".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()).filter { s -> !s.isEmpty() }.forEach { s ->

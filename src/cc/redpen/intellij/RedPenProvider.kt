@@ -103,14 +103,6 @@ open class RedPenProvider : SettingsSavingComponent {
         return parsers[file.fileType.name]
     }
 
-    fun getInitialConfig(key: String): Configuration? {
-        return initialConfigs[key]
-    }
-
-    fun getConfig(key: String): Configuration? {
-        return configs[key]
-    }
-
     open var activeConfig: Configuration
         get() = configs[configKey]!!
         set(config) {
