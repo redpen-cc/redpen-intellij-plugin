@@ -5,7 +5,8 @@
   <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
-      <p>Validates text files with <a href="http://redpen.cc/">RedPen</a> by adding a 'RedPen' inspection, which is enabled by default after installation.</p>
+      <p><a href="http://redpen.cc/">RedPen</a> is a proofreading tool to help writers or programmers who write technical documents or manuals that need to adhere to a writing standard.</p>
+      <p>The plugin validates text files with RedPen by adding a 'RedPen' inspection, which is enabled by default after installation.</p>
       <p>Language and variant are autodetected per file, however you can manually override them in IDEA status bar.</p>
       <p>RedPen settings can be configured and imported/exported using native RedPen config format. All settings are stored per project.</p>
 
@@ -13,7 +14,7 @@
       <ul>
         <li>Plain text</li>
         <li>Markdown</li>
-        <li>ASCIIdoc</li>
+        <li>AsciiDoc</li>
       </ul>
 
       <p>Please report any issues on <a href="https://github.com/redpen-cc/redpen-intellij-plugin/issues">GitHub</a>.</p>
