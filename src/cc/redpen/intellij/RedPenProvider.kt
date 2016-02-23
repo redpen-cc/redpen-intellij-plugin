@@ -30,6 +30,7 @@ open class RedPenProvider : SettingsSavingComponent {
         val parsers: Map<String, DocumentParser> = mapOf(
                 "PLAIN_TEXT" to DocumentParser.PLAIN,
                 "Markdown" to DocumentParser.MARKDOWN,
+                "MultiMarkdown" to DocumentParser.MARKDOWN,
                 "AsciiDoc" to DocumentParser.ASCIIDOC)
 
         @JvmStatic
