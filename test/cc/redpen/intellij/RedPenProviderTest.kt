@@ -91,11 +91,11 @@ class RedPenProviderTest : BaseTest() {
     @Test
     fun removeSavedConfigIfSameAsInitial() {
         provider.configDir.mkdirs()
-        val enConf = File(provider.configDir, "en.xml")
-        FileOutputStream(enConf).use { it.write("<redpen-conf/>".toByteArray()) }
+        val enFile = File(provider.configDir, "en.xml")
+        FileOutputStream(enFile).use { it.write("<redpen-conf/>".toByteArray()) }
 
         provider.save()
-        assertFalse(enConf.exists())
+        assertFalse(enFile.exists())
         assertFalse(provider.configDir.exists())
     }
 
@@ -106,6 +106,30 @@ class RedPenProviderTest : BaseTest() {
         provider.save()
 
         assertTrue(File(provider.configDir, "za.xml").exists())
+    }
+
+    @Test
+    fun availableConfigKeys() {
+        provider.configDir.mkdirs()
+        val zaFile = File(provider.configDir, "za.xml")
+        FileOutputStream(zaFile).use { it.write("<redpen-conf/>".toByteArray()) }
+        val filesFile = File(provider.configDir, "files.xml")
+        FileOutputStream(filesFile).use { it.write("<properties/>".toByteArray()) }
+
+        assertTrue(provider.availableConfigKeys().containsAll(RedPenProvider.defaultConfigKeys))
+        assertTrue("za" in provider.availableConfigKeys())
+        assertFalse("files" in provider.availableConfigKeys())
+    }
+
+    @Test
+    fun loadConfigForNonDefault() {
+        provider.configDir.mkdirs()
+        val zaFile = File(provider.configDir, "za.xml")
+        FileOutputStream(zaFile).use { it.write("<redpen-conf lang=\"za\"/>".toByteArray()) }
+
+        provider.loadConfig("za")
+        assertTrue("za" in provider.configs)
+        assertTrue("za" in provider.initialConfigs)
     }
 
     @Test

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.Project.DIRECTORY_STORE_FOLDER
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiFile
+import org.slf4j.LoggerFactory
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -40,7 +41,7 @@ open class RedPenProvider : SettingsSavingComponent {
     internal constructor(project: Project) {
         this.project = project
         this.configDir = File(project.basePath + '/' + DIRECTORY_STORE_FOLDER, "redpen")
-        defaultConfigKeys.forEach { loadConfig(it) }
+        availableConfigKeys().forEach { loadConfig(it) }
         loadConfigKeysByFile()
     }
 
@@ -48,23 +49,28 @@ open class RedPenProvider : SettingsSavingComponent {
     internal constructor(project: Project, configs: MutableMap<String, Configuration>) {
         this.project = project
         this.configDir = File(System.getProperty("java.io.tmpdir"))
-        this.configs = configs
+        this.configs = configs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
         this.initialConfigs = configs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
     }
 
     internal fun loadConfig(key: String) {
         val fileName = key + ".xml"
         val loader = ConfigurationLoader()
+        try {
+            val file = File(configDir, fileName)
 
-        val initialConfig = loader.loadFromResource("/" + fileName)
-        initialConfigs[initialConfig.key] = initialConfig
+            val initialConfig = if (key in defaultConfigKeys) loader.loadFromResource("/" + fileName) else loader.load(file)
+            initialConfigs[key] = initialConfig
 
-        val file = File(configDir, fileName)
-        if (file.exists()) {
-            val config = loader.load(file)
-            configs[config.key] = config
-        } else {
-            configs[initialConfig.key] = initialConfig.clone()
+            if (key in defaultConfigKeys && file.exists()) {
+                val config = loader.load(file)
+                configs[key] = config
+            } else {
+                configs[key] = initialConfig.clone()
+            }
+        }
+        catch (e: Exception) {
+            LoggerFactory.getLogger(javaClass).warn("Failed to load " + fileName, e)
         }
     }
 
@@ -87,6 +93,9 @@ open class RedPenProvider : SettingsSavingComponent {
 
         if (configDir.list().isEmpty()) configDir.delete()
     }
+
+    internal fun availableConfigKeys() = if (!configDir.exists()) defaultConfigKeys
+                                         else defaultConfigKeys + configDir.list().filter { it != "files.xml" }.map { it.replace(".xml", "") }
 
     infix operator fun plusAssign(config: Configuration) {
         initialConfigs[config.key] = config.clone()
