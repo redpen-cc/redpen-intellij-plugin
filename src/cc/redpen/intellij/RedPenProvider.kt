@@ -26,21 +26,21 @@ open class RedPenProvider : SettingsSavingComponent {
     internal var configKeysByFile = Properties()
 
     companion object {
-        @JvmStatic
         val parsers: Map<String, DocumentParser> = mapOf(
                 "PLAIN_TEXT" to DocumentParser.PLAIN,
                 "Markdown" to DocumentParser.MARKDOWN,
                 "MultiMarkdown" to DocumentParser.MARKDOWN,
                 "AsciiDoc" to DocumentParser.ASCIIDOC)
 
-        @JvmStatic
+        val defaultConfigKeys = linkedSetOf("en", "ja", "ja.hankaku", "ja.zenkaku2")
+
         fun forProject(project: Project) = project.getComponent(RedPenProvider::class.java)!!
     }
 
     internal constructor(project: Project) {
         this.project = project
         this.configDir = File(project.basePath + '/' + DIRECTORY_STORE_FOLDER, "redpen")
-        listOf("en.xml", "ja.xml", "ja.hankaku.xml", "ja.zenkaku2.xml").forEach { loadConfig(it) }
+        defaultConfigKeys.forEach { loadConfig(it) }
         loadConfigKeysByFile()
     }
 
@@ -52,7 +52,8 @@ open class RedPenProvider : SettingsSavingComponent {
         this.initialConfigs = configs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
     }
 
-    internal fun loadConfig(fileName: String) {
+    internal fun loadConfig(key: String) {
+        val fileName = key + ".xml"
         val loader = ConfigurationLoader()
 
         val initialConfig = loader.loadFromResource("/" + fileName)
@@ -76,7 +77,7 @@ open class RedPenProvider : SettingsSavingComponent {
         configDir.mkdirs()
         configs.values.forEach { c ->
             val file = File(configDir, c.key + ".xml")
-            if (c == initialConfigs[c.key]) file.delete()
+            if (c.key in defaultConfigKeys && c == initialConfigs[c.key]) file.delete()
             else FileOutputStream(file).use { out -> ConfigurationExporter().export(c, out) }
         }
 

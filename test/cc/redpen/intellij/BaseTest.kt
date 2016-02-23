@@ -38,13 +38,13 @@ abstract class BaseTest {
     }
 
     protected fun configWithValidators(validatorConfigs: List<ValidatorConfiguration>): Configuration {
-        val builder = Configuration.ConfigurationBuilder()
+        val builder = Configuration.builder()
         validatorConfigs.forEach { builder.addValidatorConfig(it) }
         return builder.build()
     }
 
     protected fun configWithSymbols(symbols: List<Symbol>): Configuration {
-        val builder = Configuration.ConfigurationBuilder()
+        val builder = Configuration.builder()
         symbols.forEach { builder.addSymbol(it) }
         return builder.build()
     }

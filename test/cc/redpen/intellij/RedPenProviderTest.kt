@@ -7,6 +7,7 @@ import cc.redpen.config.SymbolType.AMPERSAND
 import com.intellij.psi.PsiFile
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -31,6 +32,12 @@ class RedPenProviderTest : BaseTest() {
             provider = RedPenProvider(project, cachedConfigs!!)
 
         whenever(project.basePath).thenReturn("/foo")
+        provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
+    }
+
+    @After
+    fun tearDown() {
+        provider.configDir.deleteRecursively()
     }
 
     @Test
@@ -64,7 +71,6 @@ class RedPenProviderTest : BaseTest() {
 
     @Test
     fun saveAndLoad() {
-        provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
         provider.configs["ja"]!!.symbolTable.overrideSymbol(Symbol(AMPERSAND, '*'))
         provider.configKeysByFile["hello.txt"] = "ja"
         provider.save()
@@ -72,7 +78,7 @@ class RedPenProviderTest : BaseTest() {
         assertFalse(File(provider.configDir, "en.xml").exists())
         assertEquals(provider.configs["ja"], ConfigurationLoader().load(File(provider.configDir, "ja.xml")))
 
-        provider.loadConfig("ja.xml")
+        provider.loadConfig("ja")
         assertEquals('*', provider.configs["ja"]!!.symbolTable.getSymbol(AMPERSAND).value)
         assertFalse(provider.initialConfigs["ja"] == provider.configs["ja"])
         assertTrue(provider.initialConfigs["en"] == provider.configs["en"])
@@ -80,13 +86,10 @@ class RedPenProviderTest : BaseTest() {
         provider.configKeysByFile.remove("hello.txt")
         provider.loadConfigKeysByFile()
         assertEquals("ja", provider.configKeysByFile["hello.txt"])
-
-        provider.configDir.deleteRecursively()
     }
 
     @Test
     fun removeSavedConfigIfSameAsInitial() {
-        provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
         provider.configDir.mkdirs()
         val enConf = File(provider.configDir, "en.xml")
         FileOutputStream(enConf).use { it.write("<redpen-conf/>".toByteArray()) }
@@ -94,6 +97,15 @@ class RedPenProviderTest : BaseTest() {
         provider.save()
         assertFalse(enConf.exists())
         assertFalse(provider.configDir.exists())
+    }
+
+    @Test
+    fun alwaysSaveNonDefaultConfigs() {
+        provider.initialConfigs["za"] = Configuration.builder("za").build()
+        provider.configs["za"] = Configuration.builder("za").build()
+        provider.save()
+
+        assertTrue(File(provider.configDir, "za.xml").exists())
     }
 
     @Test
