@@ -64,11 +64,11 @@ class StatusWidgetTest : BaseTest() {
         whenever(project.basePath).thenReturn("/foo/bar")
 
         widget.registerActions()
-        widget.actionGroup.childActionsOrStubs[0].actionPerformed(event)
+        widget.actionGroup!!.childActionsOrStubs[0].actionPerformed(event)
 
         verify(provider).setConfig(file, config)
         verify(codeAnalyzer).restart()
-        verify(actionManager).registerAction("RedPen /foo/bar", widget.actionGroup)
+        verify(actionManager).registerAction("RedPen /foo/bar", widget.actionGroup!!)
     }
 
     @Test

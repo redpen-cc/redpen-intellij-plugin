@@ -58,7 +58,7 @@ open class RedPenInspection : LocalInspectionTool() {
     }
 
     open fun updateStatus(file: PsiFile, redPen: RedPen) {
-        file.project.getComponent(StatusWidget::class.java)?.update(redPen.configuration.key)
+        StatusWidget.forProject(file.project).update(redPen.configuration.key)
     }
 
     internal open fun toRange(e: ValidationError, lines: List<String>): TextRange {

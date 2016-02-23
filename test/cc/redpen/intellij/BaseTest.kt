@@ -18,6 +18,7 @@ abstract class BaseTest {
     val project = mock<Project>(RETURNS_DEEP_STUBS)
     val redPen: RedPen = mock(RETURNS_DEEP_STUBS)
     var provider: RedPenProvider = mock(RETURNS_DEEP_STUBS)
+    var statusWidget: StatusWidget = mock(RETURNS_DEEP_STUBS)
 
     companion object {
         val application = mock<Application>()
@@ -30,7 +31,7 @@ abstract class BaseTest {
 
     init {
         whenever(project.getComponent(RedPenProvider::class.java)).thenReturn(provider)
-        whenever(project.getComponent(StatusWidget::class.java)).thenReturn(mock(RETURNS_DEEP_STUBS))
+        whenever(project.getComponent(StatusWidget::class.java)).thenReturn(statusWidget)
         whenever(provider.getRedPen()).thenReturn(redPen)
         whenever(provider.getRedPenFor(any())).thenReturn(redPen)
         whenever(provider.getParser(any())).thenCallRealMethod()

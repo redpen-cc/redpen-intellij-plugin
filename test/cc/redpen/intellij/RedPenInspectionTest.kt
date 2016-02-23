@@ -102,11 +102,9 @@ class RedPenInspectionTest : BaseTest() {
         doCallRealMethod().whenever(inspection).updateStatus(any(), any())
         val file = mockTextFile("Hello")
         val config = config("ja")
-        val statusWidget = mock<StatusWidget>()
         whenever(redPen.configuration).thenReturn(config)
-        doNothing().whenever(statusWidget).update(any())
         inspection.checkFile(file, mock(), true)
-        verify(project.getComponent(StatusWidget::class.java))!!.update("ja")
+        verify(statusWidget).update("ja")
     }
 
     @Test

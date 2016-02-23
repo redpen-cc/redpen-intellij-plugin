@@ -5,6 +5,7 @@ import cc.redpen.config.ConfigurationLoader
 import cc.redpen.config.Symbol
 import cc.redpen.config.SymbolType.AMPERSAND
 import com.intellij.psi.PsiFile
+import com.nhaarman.mockito_kotlin.inOrder
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.After
@@ -141,5 +142,14 @@ class RedPenProviderTest : BaseTest() {
         provider.setConfig(file, config)
 
         assertEquals("en", provider.configKeysByFile["path/to/foo"])
+    }
+
+    @Test
+    fun addingOfNewConfigRebuildsStatusWidget() {
+        provider += cloneableConfig("za")
+
+        val order = inOrder(statusWidget)
+        order.verify(statusWidget).disposeComponent()
+        order.verify(statusWidget).initComponent()
     }
 }

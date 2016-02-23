@@ -100,6 +100,7 @@ open class RedPenProvider : SettingsSavingComponent {
     infix operator fun plusAssign(config: Configuration) {
         initialConfigs[config.key] = config.clone()
         configs[config.key] = config.clone()
+        StatusWidget.forProject(project).rebuild()
     }
 
     open fun getRedPen(): RedPen = RedPen(configs[configKey])

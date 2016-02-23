@@ -30,7 +30,11 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
     val provider = RedPenProvider.forProject(project)
     var enabled: Boolean = false
 
-    var actionGroup = DefaultActionGroup()
+    companion object {
+        fun forProject(project: Project) = project.getComponent(StatusWidget::class.java)!!
+    }
+
+    var actionGroup: DefaultActionGroup? = null
     private val component = object: TextPanel.ExtraSize() {
         protected override fun paintComponent(g: Graphics) {
             super.paintComponent(g)
@@ -69,8 +73,9 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
 
     open fun registerActions() {
         val actionManager = ActionManager.getInstance() ?: return
+        actionGroup = DefaultActionGroup()
         provider.configs.forEach {
-            actionGroup.add(object : AnAction() {
+            actionGroup!!.add(object : AnAction() {
                 init {
                     templatePresentation.text = it.key
                 }
@@ -81,7 +86,7 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
                 }
             })
         }
-        actionManager.registerAction("RedPen " + project?.basePath, actionGroup)
+        actionManager.registerAction("RedPen " + project?.basePath, actionGroup!!)
     }
 
     override fun ID(): String {
@@ -118,7 +123,7 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
     internal fun showPopup(e: MouseEvent) {
         if (!enabled) return
         val popup = JBPopupFactory.getInstance().createActionGroupPopup(
-                "RedPen", actionGroup, getContext(), JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false)
+                "RedPen", actionGroup!!, getContext(), JBPopupFactory.ActionSelectionAid.SPEEDSEARCH, false)
         val dimension = popup.content.preferredSize
         val at = Point(0, -dimension.height)
         popup.show(RelativePoint(e.component, at))
@@ -135,5 +140,10 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
                         project,
                         SimpleDataContext.getSimpleContext(PlatformDataKeys.CONTEXT_COMPONENT.name,
                                 editor?.component, parent)))
+    }
+
+    fun rebuild() {
+        disposeComponent()
+        initComponent()
     }
 }
