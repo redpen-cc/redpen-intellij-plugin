@@ -142,11 +142,11 @@ class SettingsPaneTest : BaseTest() {
 
         whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("width")
         settingsPane.getEditedValidators()
-        verify(settingsPane).showPropertyError(validator, "width")
+        verify(settingsPane).showPropertyError("Hello", "width")
 
         whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("=")
         settingsPane.getEditedValidators()
-        verify(settingsPane).showPropertyError(validator, "=")
+        verify(settingsPane).showPropertyError("Hello", "=")
     }
 
     @Test

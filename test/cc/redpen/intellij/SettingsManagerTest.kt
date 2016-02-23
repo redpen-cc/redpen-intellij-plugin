@@ -1,5 +1,6 @@
 package cc.redpen.intellij
 
+import cc.redpen.config.ValidatorConfiguration
 import com.intellij.openapi.project.ProjectManager
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.spy
@@ -60,6 +61,17 @@ class SettingsManagerTest : BaseTest() {
     @Test
     fun isModified() {
         whenever(manager.settingsPane.configs).thenReturn(hashMapOf())
+        assertTrue(manager.isModified)
+        verify(manager.settingsPane).applyChanges()
+    }
+
+    @Test
+    fun isModified_validatorProperty() {
+        val config = configWithValidators(listOf(ValidatorConfiguration("blah")))
+        val configs = hashMapOf("en" to config.clone())
+        configs["en"]!!.validatorConfigs[0].attributes["blah"] = "blah";
+        whenever(manager.settingsPane.configs).thenReturn(configs)
+        whenever(manager.provider.configs).thenReturn(hashMapOf("en" to config))
         assertTrue(manager.isModified)
         verify(manager.settingsPane).applyChanges()
     }

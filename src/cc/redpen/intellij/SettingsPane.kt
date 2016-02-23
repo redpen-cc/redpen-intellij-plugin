@@ -127,7 +127,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         validators.columnModel.getColumn(0).maxWidth = 20
 
         for (initialValidator in provider.initialConfigs[config.key]!!.validatorConfigs) {
-            val validator = config.validatorConfigs.find { v -> v == initialValidator }
+            val validator = config.validatorConfigs.find { v -> v.configurationName == initialValidator.configurationName }
             (validators.model as DefaultTableModel).addRow(arrayOf<Any>(validator != null, initialValidator.configurationName, attributes(validator ?: initialValidator)))
         }
 
@@ -145,7 +145,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
                 attributes.trim().split("\\s*,\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
                     val attr = s.split("=".toRegex(), 2)
                     if (attr.size < 2 || attr[0].isEmpty())
-                        showPropertyError(validator, s)
+                        showPropertyError(validator.configurationName, s)
                     else
                         validator.addAttribute(attr[0], attr[1])
                 }
@@ -155,8 +155,8 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         return result
     }
 
-    open internal fun showPropertyError(validator: ValidatorConfiguration, s: String) {
-        Messages.showMessageDialog("Validator property must be in key=value format: " + s, validator.configurationName, Messages.getErrorIcon())
+    open internal fun showPropertyError(validatorName: String, s: String) {
+        Messages.showMessageDialog("Validator property must be in key=value format: " + s, validatorName, Messages.getErrorIcon())
     }
 
     open fun getEditedSymbols(): List<Symbol> {

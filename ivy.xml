@@ -8,9 +8,7 @@
   </configurations>
 
   <dependencies defaultconf="default->default">
-    <dependency org="cc.redpen" name="redpen-core" rev="1.4+">
-      <exclude org="commons-cli"/> <!-- TODO: remove after redpen 1.4.7 release -->
-      <exclude org="ch.qos.logback"/> <!-- TODO: remove after redpen 1.4.7 release -->
+    <dependency org="cc.redpen" name="redpen-core" rev="1.4.7">
       <exclude org="org.slf4j"/>
       <exclude org="org.json"/>
     </dependency>
