@@ -10,7 +10,9 @@ This plugin integrates [RedPen](http://redpen.cc) text validation into the Intel
 * Supports Plain Text, Markdown and AsciiDoc file formats (make sure the relevant plugins are also installed)
 * Validation error messages can be listed by pressing *Ctrl+Alt+Shift+R* or via menu *Analyze -> RedPen: List Errors*.
 * RedPen configuration can be modified in Settings -> Editor -> RedPen
-* Currently, only English is supported
+* Supports all default RedPen languages and variants (English, Japanese)
+* Language and variant are autodetected for each file and can be manually overridden per file via status bar widget
+* Settings are stored per project under *.idea/redpen* directory, so can be shared with fellow developers
 
 ## Installation
 
