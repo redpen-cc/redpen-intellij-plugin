@@ -6,6 +6,7 @@ import com.intellij.ide.DataManager
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.actionSystem.LangDataKeys.PSI_FILE
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.project.Project
@@ -92,8 +93,10 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
     }
 
     open fun update(configKey: String) {
-        component.text = configKey
-        component.foreground = if (enabled) UIUtil.getActiveTextColor() else UIUtil.getInactiveTextColor()
+        ApplicationManager.getApplication().invokeLater {
+            component.text = configKey
+            component.foreground = if (enabled) UIUtil.getActiveTextColor() else UIUtil.getInactiveTextColor()
+        }
     }
 
     override fun selectionChanged(event: FileEditorManagerEvent) {

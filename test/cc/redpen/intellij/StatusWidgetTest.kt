@@ -9,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
@@ -23,6 +24,7 @@ class StatusWidgetTest : BaseTest() {
 
     init {
         whenever(project.getComponent(PsiManager::class.java)).thenReturn(psiManager)
+        whenever(application.invokeLater(any())).thenAnswer { (it.arguments[0] as Runnable).run() }
     }
 
     @Test
