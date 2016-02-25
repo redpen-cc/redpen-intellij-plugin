@@ -7,6 +7,7 @@ import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import cc.redpen.validator.section.WordFrequencyValidator
 import com.intellij.openapi.util.TextRange
+import com.intellij.testFramework.LightVirtualFile
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Test
@@ -105,6 +106,15 @@ class RedPenInspectionTest : BaseTest() {
         whenever(redPen.configuration).thenReturn(config)
         inspection.checkFile(file, mock(), true)
         verify(statusWidget).update("ja")
+    }
+
+    @Test
+    fun checkFile_ignoresEditFieldsInDialogs() {
+        val file = mockTextFile("Hello")
+        val notReallyAFile = LightVirtualFile()
+        whenever(file.virtualFile).thenReturn(notReallyAFile)
+
+        assertNull(inspection.checkFile(file, mock(), false))
     }
 
     @Test

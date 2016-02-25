@@ -11,6 +11,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
+import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.xmlb.SerializationFilter
 
 open class RedPenInspection : LocalInspectionTool() {
@@ -31,6 +32,8 @@ open class RedPenInspection : LocalInspectionTool() {
     }
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
+        if (file.virtualFile is LightVirtualFile) return null
+
         val provider = RedPenProvider.forProject(file.project)
         val parser = provider.getParser(file) ?: return null
 

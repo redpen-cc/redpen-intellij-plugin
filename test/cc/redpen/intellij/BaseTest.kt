@@ -21,7 +21,7 @@ abstract class BaseTest {
     var statusWidget: StatusWidget = mock(RETURNS_DEEP_STUBS)
 
     companion object {
-        val application = mock<Application>()
+        val application = mock<Application>(RETURNS_DEEP_STUBS)
 
         @BeforeClass @JvmStatic
         fun initStatics() {
