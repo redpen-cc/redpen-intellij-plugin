@@ -59,7 +59,7 @@ open class RedPenProvider : SettingsSavingComponent {
         try {
             val file = File(configDir, fileName)
 
-            val initialConfig = if (key in defaultConfigKeys) loader.loadFromResource("/" + fileName) else loader.load(file)
+            val initialConfig = if (key in defaultConfigKeys) loader.loadFromResource("/" + fileName, configDir) else loader.load(file)
             initialConfigs[key] = initialConfig
 
             if (key in defaultConfigKeys && file.exists()) {
@@ -103,10 +103,7 @@ open class RedPenProvider : SettingsSavingComponent {
         StatusWidget.forProject(project).rebuild()
     }
 
-    open fun getRedPen(): RedPen {
-        System.setProperty("REDPEN_HOME", configDir.absolutePath)
-        return RedPen(configs[configKey])
-    }
+    open fun getRedPen(): RedPen = RedPen(configs[configKey])
 
     open fun getRedPenFor(file: PsiFile): RedPen {
         configKey = getConfigKeyFor(file)
