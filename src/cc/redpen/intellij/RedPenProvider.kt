@@ -5,6 +5,7 @@ import cc.redpen.config.Configuration
 import cc.redpen.config.ConfigurationExporter
 import cc.redpen.config.ConfigurationLoader
 import cc.redpen.parser.DocumentParser
+import cc.redpen.parser.DocumentParser.*
 import cc.redpen.util.LanguageDetector
 import com.intellij.openapi.components.SettingsSavingComponent
 import com.intellij.openapi.project.Project
@@ -28,10 +29,10 @@ open class RedPenProvider : SettingsSavingComponent {
 
     companion object {
         val parsers: Map<String, DocumentParser> = mapOf(
-                "PLAIN_TEXT" to DocumentParser.PLAIN,
-                "Markdown" to DocumentParser.MARKDOWN,
-                "MultiMarkdown" to DocumentParser.MARKDOWN,
-                "AsciiDoc" to DocumentParser.ASCIIDOC)
+                "PLAIN_TEXT" to PLAIN,
+                "Markdown" to MARKDOWN,
+                "MultiMarkdown" to MARKDOWN,
+                "AsciiDoc" to ASCIIDOC)
 
         val defaultConfigKeys = linkedSetOf("en", "ja", "ja.hankaku", "ja.zenkaku2")
 
