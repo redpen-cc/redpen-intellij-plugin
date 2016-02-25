@@ -103,7 +103,10 @@ open class RedPenProvider : SettingsSavingComponent {
         StatusWidget.forProject(project).rebuild()
     }
 
-    open fun getRedPen(): RedPen = RedPen(configs[configKey])
+    open fun getRedPen(): RedPen {
+        System.setProperty("REDPEN_HOME", configDir.absolutePath)
+        return RedPen(configs[configKey])
+    }
 
     open fun getRedPenFor(file: PsiFile): RedPen {
         configKey = getConfigKeyFor(file)
