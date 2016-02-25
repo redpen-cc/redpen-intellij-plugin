@@ -13,6 +13,7 @@ This plugin integrates [RedPen](http://redpen.cc) text validation into the Intel
 * Supports all default RedPen languages and variants (English, Japanese)
 * Language and variant are autodetected for each file and can be manually overridden per file via status bar widget
 * Settings are stored per project under *.idea/redpen* directory, so can be shared with fellow developers
+* Custom dictionaries can be put to *.idea/redpen* directory and JavaScriptValidator scripts can be put to *.idea/redpen/js*. 
 
 ## Installation
 

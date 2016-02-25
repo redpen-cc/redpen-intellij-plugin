@@ -9,6 +9,7 @@
       <p>The plugin validates text files with RedPen by adding a 'RedPen' inspection, which is enabled by default after installation.</p>
       <p>Language and variant are autodetected per file, however you can manually override them in IDEA status bar.</p>
       <p>RedPen settings can be configured and imported/exported using native RedPen config format. All settings are stored per project.</p>
+      <p>Custom RedPen dictionaries can be put to <i>.idea/redpen</i> directory and JavaScriptValidator scripts can be put to <i>.idea/redpen/js</i>.</p>
 
       <p>The following file types are supported (provided you have necessary plugins installed):
       <ul>
