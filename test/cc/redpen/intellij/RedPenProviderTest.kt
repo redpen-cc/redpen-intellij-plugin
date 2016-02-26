@@ -15,6 +15,7 @@ import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.io.File
 import java.io.FileOutputStream
+import java.util.*
 
 class RedPenProviderTest : BaseTest() {
     val file = mockTextFile("hello")
@@ -27,7 +28,7 @@ class RedPenProviderTest : BaseTest() {
     fun setUp() {
         if (cachedConfigs == null) {
             provider = RedPenProvider(project)
-            cachedConfigs = provider.initialConfigs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
+            cachedConfigs = provider.initialConfigs.map { it.key to it.value.clone() }.toMap(LinkedHashMap())
         }
         else
             provider = RedPenProvider(project, cachedConfigs!!)

@@ -106,7 +106,7 @@ private fun <T : Any> KClass<T>.toArrayInstance(): T {
 
 private fun <T : Any> KFunction<T>.newInstance(): T {
     isAccessible = true
-    return callBy(parameters.toMap {
+    return callBy(parameters.associate {
         it to it.type.createNullableInstance<T>()
     })
 }
@@ -130,7 +130,7 @@ private fun <T : Any> KType.createNullableInstance(): T? {
  */
 @Suppress("UNCHECKED_CAST")
 private fun <T> Class<T>.uncheckedMock(): T {
-    val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS.get()) as MockSettingsImpl<*>
+    val impl = MockSettingsImpl<T>().defaultAnswer(Answers.RETURNS_DEFAULTS.get()) as MockSettingsImpl<T>
     val creationSettings = impl.confirm(this)
-    return MockUtil().createMock(creationSettings) as T
+    return MockUtil().createMock(creationSettings)
 }

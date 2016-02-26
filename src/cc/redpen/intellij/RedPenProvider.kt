@@ -50,8 +50,8 @@ open class RedPenProvider : SettingsSavingComponent {
     internal constructor(project: Project, configs: MutableMap<String, Configuration>) {
         this.project = project
         this.configDir = File(System.getProperty("java.io.tmpdir"))
-        this.configs = configs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
-        this.initialConfigs = configs.map { it.key to it.value.clone() }.toMap().toLinkedMap()
+        this.configs = configs.map { it.key to it.value.clone() }.toMap(LinkedHashMap())
+        this.initialConfigs = configs.map { it.key to it.value.clone() }.toMap(LinkedHashMap())
     }
 
     internal fun loadConfig(key: String) {
