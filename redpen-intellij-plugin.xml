@@ -143,7 +143,7 @@
   
   <!-- Build archive for plugin 'redpen-intellij-plugin' -->
   <target name="plugin.build.jar.redpen-intellij-plugin" depends="compile.module.redpen-intellij-plugin" description="Build plugin archive for module &#39;redpen-intellij-plugin&#39;">
-    <property name="tmp.dir.redpen-intellij-plugin" value="${module.redpen-intellij-plugin.basedir}/../temp"/>
+    <property name="tmp.dir.redpen-intellij-plugin" value="${module.redpen-intellij-plugin.basedir}/../temp/redpen-intellij-plugin"/>
     <mkdir dir="${tmp.dir.redpen-intellij-plugin}"/>
     <mkdir dir="${tmp.dir.redpen-intellij-plugin}/lib"/>
     <jar destfile="${tmp.dir.redpen-intellij-plugin}/lib/redpen-intellij-plugin.jar" duplicate="preserve">
