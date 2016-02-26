@@ -7,24 +7,24 @@ import com.intellij.openapi.actionSystem.LangDataKeys
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.wm.StatusBar
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import com.nhaarman.mockito_kotlin.any
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.verify
-import com.nhaarman.mockito_kotlin.whenever
+import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 
 class StatusWidgetTest : BaseTest() {
     val psiManager = mock<PsiManager>(RETURNS_DEEP_STUBS)
-    val widget = StatusWidget(project)
+    val widget: StatusWidget
     val newFile = mock<VirtualFile>()
 
     init {
+        whenever(project.basePath).thenReturn("/foo/bar")
         whenever(project.getComponent(PsiManager::class.java)).thenReturn(psiManager)
         whenever(application.invokeLater(any())).thenAnswer { (it.arguments[0] as Runnable).run() }
+        widget = StatusWidget(project)
     }
 
     @Test
@@ -75,10 +75,14 @@ class StatusWidgetTest : BaseTest() {
     fun actionIsUnregisteredOnProjectClose() {
         val actionManager = mock<ActionManager>()
         whenever(ApplicationManager.getApplication().getComponent(ActionManager::class.java)).thenReturn(actionManager)
-        whenever(project.basePath).thenReturn("/foo/bar")
 
-        widget.disposeComponent()
+        val statusBar = mock<StatusBar>()
+        widget.install(statusBar)
 
-        verify(actionManager).unregisterAction("RedPen /foo/bar")
+        widget.projectClosed()
+
+        val order = inOrder(statusBar, actionManager)
+        order.verify(statusBar).removeWidget(widget.ID())
+        order.verify(actionManager).unregisterAction("RedPen /foo/bar")
     }
 }

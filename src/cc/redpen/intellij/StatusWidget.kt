@@ -14,6 +14,7 @@ import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.wm.CustomStatusBarWidget
 import com.intellij.openapi.wm.StatusBarWidget
+import com.intellij.openapi.wm.StatusBarWidget.WidgetBorder.WIDE
 import com.intellij.openapi.wm.WindowManager
 import com.intellij.openapi.wm.impl.status.EditorBasedWidget
 import com.intellij.openapi.wm.impl.status.TextPanel
@@ -29,6 +30,7 @@ import java.awt.event.MouseEvent
 open class StatusWidget constructor(project: Project) : EditorBasedWidget(project), CustomStatusBarWidget, ProjectComponent {
     val provider = RedPenProvider.forProject(project)
     var enabled: Boolean = false
+    val actionGroupId = "RedPen " + project.basePath
 
     companion object {
         fun forProject(project: Project) = project.getComponent(StatusWidget::class.java)!!
@@ -47,29 +49,30 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
     }
 
     override fun projectOpened() {
-        WindowManager.getInstance().getStatusBar(project).addWidget(this, "before Encoding")
-    }
+        install(WindowManager.getInstance().getStatusBar(project))
+        myStatusBar.addWidget(this, "before Encoding")
 
-    override fun projectClosed() {}
-
-    override fun getComponentName(): String = "StatusWidget"
-
-    override fun initComponent() {
         object : ClickListener() {
             override fun onClick(e: MouseEvent, clickCount: Int): Boolean {
                 showPopup(e)
                 return true
             }
         }.installOn(component)
-        component.border = StatusBarWidget.WidgetBorder.WIDE
+        component.border = WIDE
         component.toolTipText = "RedPen language"
         registerActions()
     }
 
-    override fun disposeComponent() {
-        val actionManager = ActionManager.getInstance() ?: return
-        actionManager.unregisterAction("RedPen " + project?.basePath)
+    override fun projectClosed() {
+        myStatusBar.removeWidget(ID())
+        unregisterActions()
     }
+
+    override fun getComponentName(): String = "StatusWidget"
+
+    override fun initComponent() {}
+
+    override fun disposeComponent() {}
 
     open fun registerActions() {
         val actionManager = ActionManager.getInstance() ?: return
@@ -86,7 +89,11 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
                 }
             })
         }
-        actionManager.registerAction("RedPen " + project?.basePath, actionGroup!!)
+        actionManager.registerAction(actionGroupId, actionGroup!!)
+    }
+
+    open internal fun unregisterActions() {
+        ActionManager.getInstance()?.unregisterAction(actionGroupId)
     }
 
     override fun ID(): String {
@@ -98,6 +105,7 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
     }
 
     open fun update(configKey: String) {
+        if (isDisposed) return
         ApplicationManager.getApplication().invokeLater {
             component.text = configKey
             component.foreground = if (enabled) UIUtil.getActiveTextColor() else UIUtil.getInactiveTextColor()
@@ -143,7 +151,7 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
     }
 
     fun rebuild() {
-        disposeComponent()
-        initComponent()
+        unregisterActions()
+        registerActions()
     }
 }
