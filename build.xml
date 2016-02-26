@@ -40,7 +40,14 @@
 
   <property environment="env"/>
 
-  <target name="publish">
+  <target name="check-publish">
+    <exec command="git rev-parse --abbrev-ref HEAD" outputproperty="branch"/>
+    <condition property="should-publish">
+      <equals arg1="${branch}" arg2="master"/>
+    </condition>
+  </target>
+
+  <target name="publish" if="should-publish" depends="check-publish">
     <exec dir="." executable="curl" failonerror="true">
       <arg line="-v"/>
       <arg line="-F file=@redpen-intellij-plugin.zip"/>
