@@ -41,9 +41,15 @@
   <property environment="env"/>
 
   <target name="check-publish">
-    <exec command="git rev-parse --abbrev-ref HEAD" outputproperty="branch"/>
+    <exec command="git rev-parse --abbrev-ref HEAD" outputproperty="git.branch"/>
     <condition property="should-publish">
-      <equals arg1="${branch}" arg2="master"/>
+      <and>
+        <not><equals arg1="${env.TRAVIS_PULL_REQUEST}" arg2="true"/></not>
+        <or>
+          <equals arg1="${env.TRAVIS_BRANCH}" arg2="master"/>
+          <equals arg1="${git.branch}" arg2="master"/>
+        </or>
+      </and>
     </condition>
   </target>
 
