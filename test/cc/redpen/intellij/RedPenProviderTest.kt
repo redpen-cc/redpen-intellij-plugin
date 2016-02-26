@@ -116,10 +116,13 @@ class RedPenProviderTest : BaseTest() {
         FileOutputStream(zaFile).use { it.write("<redpen-conf/>".toByteArray()) }
         val filesFile = File(provider.configDir, "files.xml")
         FileOutputStream(filesFile).use { it.write("<properties/>".toByteArray()) }
+        val nonXmlFile = File(provider.configDir, "blah.txt")
+        FileOutputStream(nonXmlFile).use { it.write("blah".toByteArray()) }
 
-        assertTrue(provider.availableConfigKeys().containsAll(RedPenProvider.defaultConfigKeys))
-        assertTrue("za" in provider.availableConfigKeys())
-        assertFalse("files" in provider.availableConfigKeys())
+        val configKeys = provider.availableConfigKeys()
+        assertTrue(configKeys.containsAll(RedPenProvider.defaultConfigKeys))
+        assertTrue("za" in configKeys)
+        assertEquals(RedPenProvider.defaultConfigKeys.size + 1, configKeys.size)
     }
 
     @Test
@@ -149,7 +152,7 @@ class RedPenProviderTest : BaseTest() {
         provider += cloneableConfig("za")
 
         val order = inOrder(statusWidget)
-        order.verify(statusWidget).disposeComponent()
-        order.verify(statusWidget).initComponent()
+        order.verify(statusWidget).unregisterActions()
+        order.verify(statusWidget).registerActions()
     }
 }

@@ -96,7 +96,7 @@ open class RedPenProvider : SettingsSavingComponent {
     }
 
     internal fun availableConfigKeys() = if (!configDir.exists()) defaultConfigKeys
-                                         else defaultConfigKeys + configDir.list().filter { it != "files.xml" }.map { it.replace(".xml", "") }
+                                         else defaultConfigKeys + configDir.list().filter { it != "files.xml" && it.endsWith(".xml") }.map { it.replace(".xml", "") }
 
     infix operator fun plusAssign(config: Configuration) {
         initialConfigs[config.key] = config.clone()
