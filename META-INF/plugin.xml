@@ -44,6 +44,7 @@
   </change-notes>
 
   <idea-version since-build="143"/> <!-- IDEA 15 -->
+  <depends>com.intellij.modules.lang</depends> <!-- support other products as well -->
 
   <project-components>
     <component><implementation-class>cc.redpen.intellij.RedPenProvider</implementation-class></component>
