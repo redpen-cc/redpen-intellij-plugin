@@ -142,12 +142,12 @@ open class SettingsPane(internal var provider: RedPenProvider) {
                 val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
                 validator.attributes.clear()
                 val attributes = model.getValueAt(i, 2) as String
-                attributes.trim().split("\\s*;\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
-                    val attr = s.split("\\s*=\\s*".toRegex(), 2)
+                attributes.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
+                    val attr = s.split("=".toRegex(), 2)
                     if (attr.size < 2 || attr[0].isEmpty())
                         showPropertyError(validator.configurationName, s)
                     else
-                        validator.addAttribute(attr[0], attr[1])
+                        validator.addAttribute(attr[0].trim(), attr[1])
                 }
                 result.add(validator)
             }
