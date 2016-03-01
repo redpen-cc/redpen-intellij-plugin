@@ -80,7 +80,7 @@ class SettingsPaneTest : BaseTest() {
     fun validatorsAreListedInSettings() {
         val allValidators = asList(
                 validatorConfig("ModifiedAttributes", mapOf("attr1" to "val1", "attr2" to "val2")),
-                validatorConfig("InitialAttributes", mapOf("attr1" to "val1", "attr2" to "val2")),
+                validatorConfig("InitialAttributes", mapOf("attr1" to "val1", "attr2" to "val2", "space" to " ")),
                 validatorConfig("NoAttributes", emptyMap()))
 
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(allValidators)
@@ -92,7 +92,7 @@ class SettingsPaneTest : BaseTest() {
         settingsPane.initValidators()
 
         verify(model).addRow(arrayOf(true, "ModifiedAttributes", "foo=bar"))
-        verify(model).addRow(arrayOf(false, "InitialAttributes", "attr2=val2; attr1=val1"))
+        verify(model).addRow(arrayOf(false, "InitialAttributes", "attr2=val2; attr1=val1; space= "))
         verify(model).addRow(arrayOf(false, "NoAttributes", ""))
     }
 
@@ -121,11 +121,11 @@ class SettingsPaneTest : BaseTest() {
 
         whenever(settingsPane.validators.model.rowCount).thenReturn(1)
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
-        whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn(" width = 200;   height=300 ")
+        whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn(" width=200;   height=300; space= ")
 
         val activeValidators = settingsPane.getEditedValidators()
         assertEquals(1, activeValidators.size.toLong())
-        assertEquals(mapOf("width" to "200", "height" to "300"), activeValidators[0].attributes)
+        assertEquals(mapOf("width" to "200", "height" to "300", "space" to " "), activeValidators[0].attributes)
         assertNotSame(provider.initialConfigs["en"]!!.validatorConfigs[0], activeValidators[0])
     }
 
