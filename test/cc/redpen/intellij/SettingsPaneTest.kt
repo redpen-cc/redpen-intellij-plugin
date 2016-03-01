@@ -92,7 +92,7 @@ class SettingsPaneTest : BaseTest() {
         settingsPane.initValidators()
 
         verify(model).addRow(arrayOf(true, "ModifiedAttributes", "foo=bar"))
-        verify(model).addRow(arrayOf(false, "InitialAttributes", "attr2=val2, attr1=val1"))
+        verify(model).addRow(arrayOf(false, "InitialAttributes", "attr2=val2; attr1=val1"))
         verify(model).addRow(arrayOf(false, "NoAttributes", ""))
     }
 
@@ -121,7 +121,7 @@ class SettingsPaneTest : BaseTest() {
 
         whenever(settingsPane.validators.model.rowCount).thenReturn(1)
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
-        whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn(" width=200 ,   height=300 ")
+        whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn(" width = 200;   height=300 ")
 
         val activeValidators = settingsPane.getEditedValidators()
         assertEquals(1, activeValidators.size.toLong())
