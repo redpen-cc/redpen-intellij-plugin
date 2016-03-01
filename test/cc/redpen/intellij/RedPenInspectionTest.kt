@@ -6,6 +6,8 @@ import cc.redpen.parser.DocumentParser
 import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import cc.redpen.validator.section.WordFrequencyValidator
+import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.openapi.util.TextRange
 import com.intellij.testFramework.LightVirtualFile
 import com.nhaarman.mockito_kotlin.*
@@ -79,9 +81,15 @@ class RedPenInspectionTest : BaseTest() {
         val doc = redPen.parse(DocumentParser.PLAIN, "Hello")
         whenever(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3), errorGenerator.at(3, 5)))
 
-        val problems = inspection.checkFile(mockTextFile("Hello"), mock(), true)
+        val manager = mock<InspectionManager>()
+        val file = mockTextFile("Hello")
+        val problems = inspection.checkFile(file, manager, true)
         assertNotNull(problems)
         assertEquals(2, problems?.size)
+
+        verify(manager).createProblemDescriptor(file.children[0], TextRange(0, 3), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true)
+        verify(manager).createProblemDescriptor(file.children[0], TextRange(3, 5), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true)
+        verifyNoMoreInteractions(manager);
     }
 
     @Test

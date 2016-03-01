@@ -8,7 +8,7 @@ import com.intellij.codeInsight.daemon.GroupNames
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType
+import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightVirtualFile
@@ -45,12 +45,12 @@ open class RedPenInspection : LocalInspectionTool() {
         val redPenDoc = redPen.parse(parser, text)
         val errors = redPen.validate(redPenDoc)
 
-        val theElement = file.children[0]
+        val element = file.children[0]
         val lines = text.split("(?<=\n)".toRegex())
 
         val problems = errors.map({ e ->
-            manager.createProblemDescriptor(theElement, toRange(e, lines),
-                    e.getMessage(), ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly)
+            manager.createProblemDescriptor(element, toRange(e, lines),
+                    e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly)
         })
 
         return problems.toTypedArray()
