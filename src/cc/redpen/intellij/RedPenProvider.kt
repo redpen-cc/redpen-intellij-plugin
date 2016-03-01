@@ -32,8 +32,7 @@ open class RedPenProvider : SettingsSavingComponent {
                 "PLAIN_TEXT" to PLAIN,
                 "Markdown" to MARKDOWN,
                 "MultiMarkdown" to MARKDOWN,
-                "AsciiDoc" to ASCIIDOC,
-                "Properties" to PROPERTIES)
+                "AsciiDoc" to ASCIIDOC)
 
         val defaultConfigKeys = linkedSetOf("en", "ja", "ja.hankaku", "ja.zenkaku2")
 
