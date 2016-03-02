@@ -34,7 +34,7 @@ open class RedPenProvider : SettingsSavingComponent {
                 "MultiMarkdown" to MARKDOWN,
                 "AsciiDoc" to ASCIIDOC)
 
-        val defaultConfigKeys = linkedSetOf("en", "ja", "ja.hankaku", "ja.zenkaku2")
+        val defaultConfigKeys = LinkedHashSet(Configuration.getDefaultConfigKeys())
 
         fun forProject(project: Project) = project.getComponent(RedPenProvider::class.java)!!
     }

@@ -140,7 +140,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         for (i in 0..model.rowCount-1) {
             if (model.getValueAt(i, 0) as Boolean) {
                 val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
-                validator.attributes.clear()
+                validator.properties.clear()
                 val attributes = model.getValueAt(i, 2) as String
                 attributes.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
                     val attr = s.split("=".toRegex(), 2)
@@ -168,7 +168,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     private fun attributes(validatorConfig: ValidatorConfiguration): String {
-        return validatorConfig.attributes.entries.joinToString("; ")
+        return validatorConfig.properties.entries.joinToString("; ")
     }
 
     open internal fun applyValidatorsChanges() {

@@ -69,7 +69,7 @@ class SettingsManagerTest : BaseTest() {
     fun isModified_validatorProperty() {
         val config = configWithValidators(listOf(ValidatorConfiguration("blah")))
         val configs = hashMapOf("en" to config.clone())
-        configs["en"]!!.validatorConfigs[0].attributes["blah"] = "blah";
+        configs["en"]!!.validatorConfigs[0].properties["blah"] = "blah";
         whenever(manager.settingsPane.configs).thenReturn(configs)
         whenever(manager.provider.configs).thenReturn(hashMapOf("en" to config))
         assertTrue(manager.isModified)
