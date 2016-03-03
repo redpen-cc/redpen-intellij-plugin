@@ -54,14 +54,17 @@
   </target>
 
   <target name="publish" if="should-publish" depends="check-publish">
+    <echo message="Publishing plugin to JetBrains repository using username from $JETBRAINS_USER (${env.JETBRAINS_USER}) and password from $JETBRAINS_PWD"/>
     <exec dir="." executable="curl" failonerror="true">
-      <arg line="-v"/>
+      <arg line="-s"/>
+      <arg line="-o publish-result.html"/>
       <arg line="-F file=@redpen-intellij-plugin.zip"/>
       <arg line="-F pluginId=8210"/>
-      <arg line="-F userName=antonkeks"/>
+      <arg line="-F userName=${env.JETBRAINS_USER}"/>
       <arg line="-F password=${env.JETBRAINS_PWD}"/>
       <arg line="https://plugins.jetbrains.com/plugin/uploadPlugin"/>
     </exec>
+    <echo message="Please examine publish-result.html for details if it was successful. Publish normally succeeds only if version number has changed."/>
   </target>
 
   <import file="redpen-intellij-plugin.xml"/>
