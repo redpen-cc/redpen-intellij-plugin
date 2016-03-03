@@ -84,7 +84,9 @@ class SettingsPaneTest : BaseTest() {
                 validatorConfig("NoAttributes", emptyMap()))
 
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(allValidators)
-        doReturn(configWithValidators(listOf(validatorConfig("ModifiedAttributes", mapOf("foo" to "bar"))))).whenever(settingsPane).config
+        doReturn(configWithValidators(listOf(
+                validatorConfig("ModifiedAttributes", mapOf("foo" to "bar")),
+                validatorConfig("NewValidator", mapOf("key" to "value"))))).whenever(settingsPane).config
 
         val model = mock<DefaultTableModel>()
         whenever(settingsPane.validators.model).thenReturn(model)
@@ -94,10 +96,13 @@ class SettingsPaneTest : BaseTest() {
         verify(model).addRow(arrayOf(true, "ModifiedAttributes", "foo=bar"))
         verify(model).addRow(arrayOf(false, "InitialAttributes", "attr2=val2; attr1=val1; space= "))
         verify(model).addRow(arrayOf(false, "NoAttributes", ""))
+        verify(model).addRow(arrayOf(true, "NewValidator", "key=value"))
     }
 
     @Test
     fun getEditedValidators_returnsOnlySelectedValidators() {
+        settingsPane.config = cloneableConfig("en")
+
         settingsPane.initLanguages()
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(asList(
                 ValidatorConfiguration("first"),
@@ -105,7 +110,9 @@ class SettingsPaneTest : BaseTest() {
 
         whenever(settingsPane.validators.model.rowCount).thenReturn(2)
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(false)
+        whenever(settingsPane.validators.model.getValueAt(0, 1)).thenReturn("first")
         whenever(settingsPane.validators.model.getValueAt(1, 0)).thenReturn(true)
+        whenever(settingsPane.validators.model.getValueAt(1, 1)).thenReturn("second one")
         whenever(settingsPane.validators.model.getValueAt(1, 2)).thenReturn("")
 
         val activeValidators = settingsPane.getEditedValidators()
@@ -115,12 +122,14 @@ class SettingsPaneTest : BaseTest() {
 
     @Test
     fun getEditedValidators_modifiesAttributes() {
+        settingsPane.config = cloneableConfig("en")
         settingsPane.initLanguages()
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(
                 listOf(validatorConfig("Hello", mapOf("width" to "100", "height" to "300", "depth" to "1"))))
 
         whenever(settingsPane.validators.model.rowCount).thenReturn(1)
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
+        whenever(settingsPane.validators.model.getValueAt(0, 1)).thenReturn("Hello")
         whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn(" width=200;   height=300; space= ")
 
         val activeValidators = settingsPane.getEditedValidators()
@@ -131,6 +140,7 @@ class SettingsPaneTest : BaseTest() {
 
     @Test
     fun getEditedValidators_reportsInvalidAttributes() {
+        settingsPane.config = cloneableConfig("en")
         settingsPane.initLanguages()
         val validator = validatorConfig("Hello", mapOf("width" to "100"))
         whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(listOf(validator))
@@ -139,7 +149,7 @@ class SettingsPaneTest : BaseTest() {
 
         whenever(settingsPane.validators.model.rowCount).thenReturn(1)
         whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
-
+        whenever(settingsPane.validators.model.getValueAt(0, 1)).thenReturn("Hello")
         whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("width")
         settingsPane.getEditedValidators()
         verify(settingsPane).showPropertyError("Hello", "width")
@@ -151,6 +161,7 @@ class SettingsPaneTest : BaseTest() {
 
     @Test
     fun getEditedValidators_doesNotapplyActiveCellEditorChanges() {
+        settingsPane.config = cloneableConfig("en")
         whenever(settingsPane.validators.isEditing).thenReturn(true)
         settingsPane.getEditedValidators()
         verify(settingsPane.validators.cellEditor, never()).stopCellEditing()
@@ -312,6 +323,36 @@ class SettingsPaneTest : BaseTest() {
         settingsPane.applyValidatorsChanges()
 
         assertEquals(activeValidators, settingsPane.config.validatorConfigs)
+    }
+
+    @Test
+    fun applyValidatorChanges_addsNewValidatorsIfNeeded() {
+        whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(asList(
+                ValidatorConfiguration("1"),
+                ValidatorConfiguration("2")))
+        val validators = asList(
+                ValidatorConfiguration("2"),
+                ValidatorConfiguration("active new"),
+                ValidatorConfiguration("inactive new"))
+
+        doReturn(configWithValidators(validators)).whenever(settingsPane).config
+
+        whenever(settingsPane.validators.model.rowCount).thenReturn(2)
+        whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
+        whenever(settingsPane.validators.model.getValueAt(0, 1)).thenReturn("2")
+        whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("")
+
+        whenever(settingsPane.validators.model.getValueAt(1, 0)).thenReturn(true)
+        whenever(settingsPane.validators.model.getValueAt(1, 1)).thenReturn("active new")
+        whenever(settingsPane.validators.model.getValueAt(1, 2)).thenReturn("")
+
+        whenever(settingsPane.validators.model.getValueAt(2, 0)).thenReturn(false)
+        whenever(settingsPane.validators.model.getValueAt(2, 1)).thenReturn("inactive new")
+        whenever(settingsPane.validators.model.getValueAt(2, 2)).thenReturn("")
+
+        settingsPane.applyValidatorsChanges()
+
+        assertEquals(validators.subList(0, 2), settingsPane.config.validatorConfigs)
     }
 
     @Test

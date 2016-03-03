@@ -126,20 +126,27 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         validators.model = createValidatorsModel()
         validators.columnModel.getColumn(0).maxWidth = 20
 
-        for (initialValidator in provider.initialConfigs[config.key]!!.validatorConfigs) {
-            val validator = config.validatorConfigs.find { v -> v.configurationName == initialValidator.configurationName }
-            (validators.model as DefaultTableModel).addRow(arrayOf<Any>(validator != null, initialValidator.configurationName, attributes(validator ?: initialValidator)))
+        val validatorConfigs = config.validatorConfigs.groupByName()
+        for (config in combinedValidatorConfigs()) {
+            (validators.model as DefaultTableModel).addRow(arrayOf(validatorConfigs.containsKey(config.key), config.key, attributes(config.value)))
         }
 
         validators.doLayout()
     }
 
+    fun List<ValidatorConfiguration>.groupByName(): Map<String, ValidatorConfiguration> {
+        return associateBy({ it.configurationName }, { it })
+    }
+
+    fun combinedValidatorConfigs() = provider.initialConfigs[config.key]!!.validatorConfigs.groupByName() + config.validatorConfigs.groupByName()
+
     open fun getEditedValidators(): List<ValidatorConfiguration> {
         val result = ArrayList<ValidatorConfiguration>()
         val model = validators.model
+        val allConfigs = combinedValidatorConfigs()
         for (i in 0..model.rowCount-1) {
             if (model.getValueAt(i, 0) as Boolean) {
-                val validator = provider.initialConfigs[config.key]!!.validatorConfigs[i].clone()
+                val validator = allConfigs[model.getValueAt(i, 1)]!!.clone()
                 validator.attributes.clear()
                 val attributes = model.getValueAt(i, 2) as String
                 attributes.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
@@ -173,8 +180,9 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     open internal fun applyValidatorsChanges() {
         val validators = config.validatorConfigs
+        val editedValidators = getEditedValidators()
         validators.clear()
-        validators.addAll(getEditedValidators())
+        validators.addAll(editedValidators)
     }
 
     open internal fun applySymbolsChanges() {
