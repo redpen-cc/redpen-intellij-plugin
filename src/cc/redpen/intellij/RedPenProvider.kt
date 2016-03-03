@@ -24,6 +24,8 @@ open class RedPenProvider : SettingsSavingComponent {
 
     open var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     open var configs : MutableMap<String, Configuration> = LinkedHashMap()
+    internal val configLastModifiedTimes: MutableMap<String, Long> = LinkedHashMap()
+
     private var configKey = "en"
     internal var configKeysByFile = Properties()
 
@@ -69,6 +71,8 @@ open class RedPenProvider : SettingsSavingComponent {
             } else {
                 configs[key] = initialConfig.clone()
             }
+
+            configLastModifiedTimes[key] = file.lastModified()
         }
         catch (e: Exception) {
             LoggerFactory.getLogger(javaClass).warn("Failed to load " + fileName, e)
@@ -84,8 +88,13 @@ open class RedPenProvider : SettingsSavingComponent {
         configDir.mkdirs()
         configs.values.forEach { c ->
             val file = File(configDir, c.key + ".xml")
-            if (c.key in defaultConfigKeys && c == initialConfigs[c.key]) file.delete()
-            else FileOutputStream(file).use { out -> ConfigurationExporter().export(c, out) }
+
+            if (file.lastModified() > configLastModifiedTimes[c.key] as Long) loadConfig(c.key)
+            else if (c.key in defaultConfigKeys && c == initialConfigs[c.key]) file.delete()
+            else {
+                FileOutputStream(file).use { out -> ConfigurationExporter().export(c, out) }
+                configLastModifiedTimes[c.key] = file.lastModified()
+            }
         }
 
         val file = File(configDir, "files.xml")

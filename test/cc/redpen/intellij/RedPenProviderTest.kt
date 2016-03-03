@@ -35,6 +35,7 @@ class RedPenProviderTest : BaseTest() {
 
         whenever(project.basePath).thenReturn("/foo")
         provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
+        cachedConfigs?.forEach { provider.configLastModifiedTimes[it.key] = 0 }
     }
 
     @After
@@ -80,7 +81,9 @@ class RedPenProviderTest : BaseTest() {
         assertFalse(File(provider.configDir, "en.xml").exists())
         assertEquals(provider.configs["ja"], ConfigurationLoader().load(File(provider.configDir, "ja.xml")))
 
+        provider.configLastModifiedTimes["ja"] = 0
         provider.loadConfig("ja")
+        assertNotEquals(0, provider.configLastModifiedTimes["ja"])
         assertEquals('*', provider.configs["ja"]!!.symbolTable.getSymbol(AMPERSAND).value)
         assertFalse(provider.initialConfigs["ja"] == provider.configs["ja"])
         assertTrue(provider.initialConfigs["en"] == provider.configs["en"])
@@ -95,6 +98,7 @@ class RedPenProviderTest : BaseTest() {
         provider.configDir.mkdirs()
         val enFile = File(provider.configDir, "en.xml")
         FileOutputStream(enFile).use { it.write("<redpen-conf/>".toByteArray()) }
+        provider.configLastModifiedTimes["en"] = enFile.lastModified()
 
         provider.save()
         assertFalse(enFile.exists())
@@ -105,9 +109,23 @@ class RedPenProviderTest : BaseTest() {
     fun alwaysSaveNonDefaultConfigs() {
         provider.initialConfigs["za"] = Configuration.builder("za").build()
         provider.configs["za"] = Configuration.builder("za").build()
+        provider.configLastModifiedTimes["za"] = 0
+
         provider.save()
 
         assertTrue(File(provider.configDir, "za.xml").exists())
+    }
+
+    @Test
+    fun loadConfigIfItWasModifiedManuallySinceLastSave() {
+        provider.configDir.mkdirs()
+        provider.configs["za"] = config("za")
+        provider.configLastModifiedTimes["za"] = 0
+        val za = File(provider.configDir, "za.xml")
+        FileOutputStream(za).use { it.write("<redpen-conf lang=\"za\">".toByteArray()) }
+
+        provider.save()
+        assertNotNull(provider.configs["za"])
     }
 
     @Test
