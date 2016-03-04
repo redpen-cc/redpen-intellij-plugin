@@ -4,6 +4,8 @@
 
 This plugin integrates [RedPen](http://redpen.cc) text validation into IDEA and other Intellij products by adding a new RedPen inspection.
 
+![editor](screenshots/editor.png "Intellij IDEA Editor with RedPen inspection")
+
 ### Features
 
 * Validates text with RedPen as you type
