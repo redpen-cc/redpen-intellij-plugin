@@ -13,6 +13,8 @@ import java.io.IOException
 import java.util.*
 import javax.swing.*
 import javax.swing.JFileChooser.APPROVE_OPTION
+import javax.swing.event.CellEditorListener
+import javax.swing.event.ChangeEvent
 import javax.swing.event.PopupMenuEvent
 import javax.swing.filechooser.FileNameExtensionFilter
 import javax.swing.table.DefaultTableModel
@@ -47,9 +49,26 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
         tabbedPane.addTab("Validators", JScrollPane(validators))
         validators.rowHeight = (validators.font.size * 1.5).toInt()
+        validators.getDefaultEditor(String::class.java).addCellEditorListener(object: CellEditorListener {
+            override fun editingCanceled(e: ChangeEvent?) {}
+            override fun editingStopped(e: ChangeEvent?) = showValidatorPropertyErrorIfNeeded(e)
+        })
 
         tabbedPane.addTab("Symbols", JScrollPane(symbols))
         symbols.rowHeight = (validators.font.size * 1.5).toInt()
+    }
+
+    internal fun showValidatorPropertyErrorIfNeeded(e: ChangeEvent?) {
+        val text = (e?.source as CellEditor).cellEditorValue.toString()
+        if (!isCorrectValidatorPropertiesFormat(text)) showValidatorPropertyError(text)
+    }
+
+    open internal fun showValidatorPropertyError(s: String) {
+        Messages.showMessageDialog("Validator property must be in key=value format: " + s, "Invalid validator property format", Messages.getErrorIcon())
+    }
+
+    internal fun isCorrectValidatorPropertiesFormat(text: String): Boolean {
+        return parseAttributes(text) != null
     }
 
     open internal fun cloneConfigs() {
@@ -149,21 +168,21 @@ open class SettingsPane(internal var provider: RedPenProvider) {
                 val validator = allConfigs[model.getValueAt(i, 1)]!!.clone()
                 validator.attributes.clear()
                 val attributes = model.getValueAt(i, 2) as String
-                attributes.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
-                    val attr = s.split("=".toRegex(), 2)
-                    if (attr.size < 2 || attr[0].isEmpty())
-                        showPropertyError(validator.configurationName, s)
-                    else
-                        validator.addAttribute(attr[0].trim(), attr[1])
-                }
+                parseAttributes(attributes)?.forEach { validator.addAttribute(it.key, it.value) }
                 result.add(validator)
             }
         }
         return result
     }
 
-    open internal fun showPropertyError(validatorName: String, s: String) {
-        Messages.showMessageDialog("Validator property must be in key=value format: " + s, validatorName, Messages.getErrorIcon())
+    fun parseAttributes(text: String): MutableMap<String, String>? {
+        val attributes: MutableMap<String, String> = HashMap()
+        text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
+            val attr = s.split("=".toRegex(), 2)
+            if (attr.size < 2 || attr[0].isEmpty()) return null
+            attributes[attr[0].trim()] = attr[1]
+        }
+        return attributes
     }
 
     open fun getEditedSymbols(): List<Symbol> {

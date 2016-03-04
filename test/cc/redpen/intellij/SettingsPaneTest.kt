@@ -12,8 +12,10 @@ import java.io.File
 import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyMap
+import javax.swing.CellEditor
 import javax.swing.JFileChooser.APPROVE_OPTION
 import javax.swing.JFileChooser.CANCEL_OPTION
+import javax.swing.event.ChangeEvent
 import javax.swing.table.DefaultTableModel
 
 class SettingsPaneTest : BaseTest() {
@@ -136,27 +138,6 @@ class SettingsPaneTest : BaseTest() {
         assertEquals(1, activeValidators.size.toLong())
         assertEquals(mapOf("width" to "200", "height" to "300", "space" to " "), activeValidators[0].attributes)
         assertNotSame(provider.initialConfigs["en"]!!.validatorConfigs[0], activeValidators[0])
-    }
-
-    @Test
-    fun getEditedValidators_reportsInvalidAttributes() {
-        settingsPane.config = cloneableConfig("en")
-        settingsPane.initLanguages()
-        val validator = validatorConfig("Hello", mapOf("width" to "100"))
-        whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(listOf(validator))
-
-        doNothing().whenever(settingsPane).showPropertyError(any(), any())
-
-        whenever(settingsPane.validators.model.rowCount).thenReturn(1)
-        whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
-        whenever(settingsPane.validators.model.getValueAt(0, 1)).thenReturn("Hello")
-        whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("width")
-        settingsPane.getEditedValidators()
-        verify(settingsPane).showPropertyError("Hello", "width")
-
-        whenever(settingsPane.validators.model.getValueAt(0, 2)).thenReturn("=")
-        settingsPane.getEditedValidators()
-        verify(settingsPane).showPropertyError("Hello", "=")
     }
 
     @Test
@@ -419,6 +400,43 @@ class SettingsPaneTest : BaseTest() {
 
         verify(settingsPane).applySymbolsChanges()
         verify(settingsPane).applyValidatorsChanges()
+    }
+
+    @Test
+    fun isCorrectPropertiesFormat() {
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat(""))
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat("foo="))
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar"))
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar;"))
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar;foo2="))
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar;foo2=bar2"))
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar;foo2=bar2;"))
+        assertTrue(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar;foo2=bar2;foo3=bar3"))
+        assertFalse(settingsPane.isCorrectValidatorPropertiesFormat("foo"))
+        assertFalse(settingsPane.isCorrectValidatorPropertiesFormat("=bar"))
+        assertFalse(settingsPane.isCorrectValidatorPropertiesFormat("=bar;"))
+        assertFalse(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar;="))
+        assertFalse(settingsPane.isCorrectValidatorPropertiesFormat("foo=bar;foo2"))
+    }
+
+    @Test
+    fun reportInvalidValidatorAttributesFormatWhenEditorIsStopped() {
+        doNothing().whenever(settingsPane).showValidatorPropertyError(any())
+        val event = mock<ChangeEvent>()
+        val source = mock<CellEditor>()
+        whenever(event.source).thenReturn(source)
+
+        whenever(source.cellEditorValue).thenReturn("width")
+        settingsPane.showValidatorPropertyErrorIfNeeded(event)
+        verify(settingsPane).showValidatorPropertyError("width")
+
+        whenever(source.cellEditorValue).thenReturn("=")
+        settingsPane.showValidatorPropertyErrorIfNeeded(event)
+        verify(settingsPane).showValidatorPropertyError("=")
+
+        whenever(source.cellEditorValue).thenReturn("width=120")
+        settingsPane.showValidatorPropertyErrorIfNeeded(event)
+        verifyNoMoreInteractions(settingsPane)
     }
 
     private fun validatorConfig(name: String, attributes: Map<String, String>): ValidatorConfiguration {
