@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>cc.redpen.intellij</id>
   <name>RedPen Plugin</name>
-  <version>1.1</version>
+  <version>1.1.1</version>
   <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
@@ -22,6 +22,11 @@
     ]]></description>
 
   <change-notes><![CDATA[
+    <b>1.1.1</b>
+    <ul>
+      <li>Do not support plugin for Intellij Platform builds with Kotlin version below 1.0</li>
+    </ul>
+
     <b>1.1</b>
     <ul>
       <li>Bug fixes for Settings</li>
@@ -48,7 +53,7 @@
     ]]>
   </change-notes>
 
-  <idea-version since-build="143"/> <!-- IDEA 15 -->
+  <idea-version since-build="143.2281"/> <!-- IDEA 15.0.4 with Kotlin 1.0 -->
   <depends>com.intellij.modules.lang</depends> <!-- support other products as well -->
 
   <project-components>
