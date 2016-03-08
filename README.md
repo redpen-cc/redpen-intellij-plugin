@@ -33,9 +33,9 @@ The steps you need to perform to run/debug the project:
 2. **Setup Intellij Platform SDK.** Open this directory as a project in IntelliJ IDEA and setup *Intellij Platform SDK* for the project via
 *Project Structure -> Project Settings -> Project -> Project SDK*. If valid Intellij IDEA SDK is missing from the list,
 then press *New... -> Intellij Platform Plugin SDK*, choose IDEA installation path and Java version 1.8.
+Please name the SDK as **IntelliJ IDEA SDK** to keep project files unmodified.
 
-  ![invalid SDK](screenshots/invalid_sdk.png "No valid Intellij IDEA SDK")
-  ![valid SDK](screenshots/valid_sdk.png "Valid Intellij IDEA SDK is selected")
+  ![invalid SDK](screenshots/invalid_sdk.png "Invalid Intellij IDEA SDK")
 
 3. **Run configuration "Plugin".**
 New instance of IDEA will start in a sandbox with the plugin activated, where you can create a dummy project for testing
