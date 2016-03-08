@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 
-open class RedPenQuickFix(val validatorName: String) : LocalQuickFix {
+open class RemoveQuickFix(val text: String) : LocalQuickFix {
 
     override fun applyFix(project: Project, problem: ProblemDescriptor) {
         val document = containingDocument(problem.psiElement)
@@ -22,7 +22,7 @@ open class RedPenQuickFix(val validatorName: String) : LocalQuickFix {
 
     override fun getFamilyName() = "RedPen"
 
-    override fun getName() = "Fix " + validatorName
+    override fun getName() = "Remove " + text
 
     open fun containingDocument(psiElement: PsiElement) = PsiDocumentManager.getInstance(psiElement.project).getDocument(psiElement.containingFile)
 
@@ -32,6 +32,6 @@ open class RedPenQuickFix(val validatorName: String) : LocalQuickFix {
         }.execute()
     }
 
-    override fun equals(other: Any?) = other?.javaClass == javaClass && validatorName == (other as RedPenQuickFix).validatorName
-    override fun hashCode() = validatorName.hashCode()
+    override fun equals(other: Any?) = other?.javaClass == javaClass && text == (other as RemoveQuickFix).text
+    override fun hashCode() = text.hashCode()
 }

@@ -49,8 +49,10 @@ open class RedPenInspection : LocalInspectionTool() {
         val lines = text.split("(?<=\n)".toRegex())
 
         val problems = errors.map({ e ->
-            manager.createProblemDescriptor(element, toRange(e, lines),
-                    e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly, RedPenQuickFix(e.validatorName))
+            val range = toRange(e, lines)
+            manager.createProblemDescriptor(element, range,
+                    e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
+                    RemoveQuickFix(text.substring(range.startOffset, range.endOffset)))
         })
 
         return problems.toTypedArray()

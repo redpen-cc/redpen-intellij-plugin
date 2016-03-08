@@ -12,7 +12,7 @@ class RedPenQuickFixTest : BaseTest() {
     val problem = mock<ProblemDescriptor>(RETURNS_DEEP_STUBS)
     val document = mock<Document>()
     val psiElement = problem.psiElement
-    val quickFix = spy(RedPenQuickFix("DoubledWord"))
+    val quickFix = spy(RemoveQuickFix("DoubledWord"))
 
     @Before
     fun setUp() {
