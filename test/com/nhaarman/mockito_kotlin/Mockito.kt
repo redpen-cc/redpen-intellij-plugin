@@ -26,10 +26,10 @@ package com.nhaarman.mockito_kotlin
 
 import org.mockito.ArgumentCaptor
 import org.mockito.Mockito
-import org.mockito.internal.matchers.CapturingMatcher
 import org.mockito.stubbing.Answer
 import org.mockito.stubbing.Stubber
 import org.mockito.verification.VerificationMode
+import kotlin.reflect.KClass
 
 inline fun <reified T : Any> mock() = Mockito.mock(T::class.java)
 inline fun <reified T : Any> mock(defaultAnswer: Answer<Any>) = Mockito.mock(T::class.java, defaultAnswer)
@@ -57,15 +57,9 @@ fun <T> Stubber.whenever(mock: T) = `when`(mock)
 
 inline fun <reified T : Any> argumentCaptor() = ArgumentCaptor.forClass(T::class.java)
 inline fun <reified T : Any> capture(captor: ArgumentCaptor<T>): T = captor.capture() ?: createInstance<T>()
-inline fun <reified T : Any> capture(crossinline lambda: (T) -> Unit): T {
-    Mockito.argThat(object: CapturingMatcher<T>() {
-        var times = 0
-        override fun matches(argument: Any?): Boolean {
-            if (++times == 1) lambda.invoke(argument as T)
-            return true
-        }
-    })
-    return createInstance<T>()
+inline fun <reified T : Any> capture(noinline consumer: (T) -> Unit): T {
+    var times = 0
+    return argThat { if (++times == 1) consumer.invoke(this); true }
 }
 
 inline fun <reified T : Any> eq(value: T) = Mockito.eq(value) ?: createInstance<T>()
@@ -73,10 +67,8 @@ inline fun <reified T : Any> anyArray(): Array<T> = Mockito.any(Array<T>::class.
 inline fun <reified T : Any> any() = Mockito.any(T::class.java) ?: createInstance<T>()
 inline fun <reified T : Any> isNull(): T? = Mockito.isNull(T::class.java)
 
-/*
 inline fun <reified T : Any> argThat(noinline predicate: T.() -> Boolean) = argThat(T::class, predicate)
 
 @Suppress("UNCHECKED_CAST")
 fun <T : Any> argThat(kClass: KClass<T>, predicate: T.() -> Boolean)
         = Mockito.argThat<T> { it -> (it as T).predicate() } ?: createInstance(kClass)
-*/
