@@ -50,7 +50,7 @@ open class RedPenInspection : LocalInspectionTool() {
 
         val problems = errors.map({ e ->
             manager.createProblemDescriptor(element, toRange(e, lines),
-                    e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly)
+                    e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly, RedPenQuickFix(e.validatorName))
         })
 
         return problems.toTypedArray()
