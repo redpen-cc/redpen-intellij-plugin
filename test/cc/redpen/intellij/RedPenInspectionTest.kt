@@ -100,10 +100,9 @@ class RedPenInspectionTest : BaseTest() {
 
         inspection.checkFile(mockTextFile("Hello\nworld"), mock(), true)
 
-        val captor = argumentCaptor<List<String>>()
-        verify(inspection).toRange(eq(error), capture(captor))
-
-        assertEquals(listOf("Hello\n", "world"), captor.value)
+        verify(inspection).toRange(eq(error), capture {
+            assertEquals(listOf("Hello\n", "world"), it)
+        })
     }
 
     @Test
