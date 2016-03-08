@@ -1,27 +1,14 @@
 package cc.redpen.intellij.fixes
 
-import cc.redpen.intellij.BaseTest
-import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
-import com.nhaarman.mockito_kotlin.*
+import com.nhaarman.mockito_kotlin.capture
+import com.nhaarman.mockito_kotlin.eq
+import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.RETURNS_DEEP_STUBS
 
-class HyphenateQuickFixTest : BaseTest() {
-    val problem = mock<ProblemDescriptor>(RETURNS_DEEP_STUBS)
-    val document = mock<Document>()
-    val psiElement = problem.psiElement
-    val quickFix = spy(HyphenateQuickFix("can do"))
-
-    @Before
-    fun setUp() {
-        doReturn(document).whenever(quickFix).containingDocument(psiElement)
-        doNothing().whenever(quickFix).writeAction(any(), any())
-    }
-
+class HyphenateQuickFixTest : BaseQuickFixTest(HyphenateQuickFix("can do")) {
     @Test
     fun name() {
         assertEquals("Change to can-do", quickFix.name)
