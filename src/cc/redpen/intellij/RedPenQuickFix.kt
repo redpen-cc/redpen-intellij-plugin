@@ -31,4 +31,7 @@ open class RedPenQuickFix(val validatorName: String) : LocalQuickFix {
             override fun run(result: Result<Any>) = runnable.invoke()
         }.execute()
     }
+
+    override fun equals(other: Any?) = other?.javaClass == javaClass && validatorName == (other as RedPenQuickFix).validatorName
+    override fun hashCode() = validatorName.hashCode()
 }

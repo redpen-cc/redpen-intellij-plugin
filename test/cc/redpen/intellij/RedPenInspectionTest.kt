@@ -87,8 +87,8 @@ class RedPenInspectionTest : BaseTest() {
         assertNotNull(problems)
         assertEquals(2, problems?.size)
 
-        verify(manager).createProblemDescriptor(file.children[0], TextRange(0, 3), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true)
-        verify(manager).createProblemDescriptor(file.children[0], TextRange(3, 5), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true)
+        verify(manager).createProblemDescriptor(file.children[0], TextRange(0, 3), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RedPenQuickFix("ErrorGenerator"))
+        verify(manager).createProblemDescriptor(file.children[0], TextRange(3, 5), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RedPenQuickFix("ErrorGenerator"))
         verifyNoMoreInteractions(manager);
     }
 
