@@ -1,6 +1,7 @@
 package cc.redpen.intellij
 
 import cc.redpen.RedPen
+import cc.redpen.intellij.fixes.BaseQuickFix
 import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import com.intellij.codeHighlighting.HighlightDisplayLevel
@@ -52,7 +53,7 @@ open class RedPenInspection : LocalInspectionTool() {
             val range = toRange(e, lines)
             manager.createProblemDescriptor(element, range,
                     e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
-                    RemoveQuickFix(text.substring(range.startOffset, range.endOffset)))
+                    BaseQuickFix.forValidator(e.validatorName, text.substring(range.startOffset, range.endOffset)))
         })
 
         return problems.toTypedArray()

@@ -1,5 +1,6 @@
 package cc.redpen.intellij
 
+import cc.redpen.intellij.fixes.RemoveQuickFix
 import cc.redpen.model.Document
 import cc.redpen.model.Sentence
 import cc.redpen.parser.DocumentParser
@@ -87,8 +88,8 @@ class RedPenInspectionTest : BaseTest() {
         assertNotNull(problems)
         assertEquals(2, problems?.size)
 
-        verify(manager).createProblemDescriptor(file.children[0], TextRange(0, 3), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RemoveQuickFix("ErrorGenerator"))
-        verify(manager).createProblemDescriptor(file.children[0], TextRange(3, 5), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RemoveQuickFix("ErrorGenerator"))
+        verify(manager).createProblemDescriptor(file.children[0], TextRange(0, 3), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RemoveQuickFix("Hel"))
+        verify(manager).createProblemDescriptor(file.children[0], TextRange(3, 5), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RemoveQuickFix("lo"))
         verifyNoMoreInteractions(manager);
     }
 

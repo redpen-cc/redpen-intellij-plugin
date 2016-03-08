@@ -1,18 +1,20 @@
-package cc.redpen.intellij
+package cc.redpen.intellij.fixes
 
+import cc.redpen.intellij.BaseTest
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.util.TextRange
 import com.nhaarman.mockito_kotlin.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 
-class RedPenQuickFixTest : BaseTest() {
+class HyphenateQuickFixTest : BaseTest() {
     val problem = mock<ProblemDescriptor>(RETURNS_DEEP_STUBS)
     val document = mock<Document>()
     val psiElement = problem.psiElement
-    val quickFix = spy(RemoveQuickFix("DoubledWord"))
+    val quickFix = spy(HyphenateQuickFix("can do"))
 
     @Before
     fun setUp() {
@@ -21,13 +23,18 @@ class RedPenQuickFixTest : BaseTest() {
     }
 
     @Test
+    fun name() {
+        assertEquals("Change to can-do", quickFix.name)
+    }
+
+    @Test
     fun applyFix() {
-        whenever(document.text).thenReturn("foo  foo bar")
-        whenever(problem.textRangeInElement).thenReturn(TextRange(5, 8))
+        whenever(document.text).thenReturn("mega can do it")
+        whenever(problem.textRangeInElement).thenReturn(TextRange(5, 11))
 
         quickFix.applyFix(project, problem)
 
         verify(quickFix).writeAction(eq(project), capture { it.invoke() })
-        verify(document).replaceString(3, 8, "")
+        verify(document).replaceString(5, 11, "can-do")
     }
 }
