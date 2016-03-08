@@ -129,7 +129,7 @@
       </classpath>
       <formatter type="brief" usefile="no"/>
       <batchtest>
-        <fileset dir="${redpen-intellij-plugin.testoutput.dir}" includes="**/*Test.class" excludes="**/BaseTest.class"/>
+        <fileset dir="${redpen-intellij-plugin.testoutput.dir}" includes="**/*Test.class" excludes="**/Base*Test.class"/>
       </batchtest>
     </junit>
   </target>
