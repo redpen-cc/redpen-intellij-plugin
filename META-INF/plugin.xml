@@ -1,12 +1,13 @@
 <idea-plugin version="2">
   <id>cc.redpen.intellij</id>
   <name>RedPen Plugin</name>
-  <version>1.1.1</version>
+  <version>1.2</version>
   <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
       <p><a href="http://redpen.cc/">RedPen</a> is a proofreading tool to help writers or programmers who write technical documents or manuals that need to adhere to a writing standard.</p>
       <p>The plugin validates text files with RedPen by adding a 'RedPen' inspection, which is enabled by default after installation.</p>
+      <p>Some errors can be fixed via quick fixes (Alt + Enter)</p>
       <p>Language and variant are autodetected per file, however you can manually override them in IDEA status bar.</p>
       <p>RedPen settings can be configured and imported/exported using native RedPen config format. All settings are stored per project.</p>
       <p>Custom RedPen dictionaries can be put to <i>.idea/redpen</i> directory and JavaScriptValidator scripts can be put to <i>.idea/redpen/js</i>.</p>
@@ -23,6 +24,15 @@
     ]]></description>
 
   <change-notes><![CDATA[
+    <b>1.2</b>
+    <ul>
+      <li>Upgraded to RedPen 1.5.0</li>
+      <li>All available RedPen validators can now be used</li>
+      <li>All available validator properties are now shown in Settings dialog</li>
+      <li>Added Java Properties file format support</li>
+      <li>Added quick fixes for some validator errors</li>
+    </ul>
+
     <b>1.1.1</b>
     <ul>
       <li>Do not support plugin for Intellij Platform builds with Kotlin version below 1.0</li>
