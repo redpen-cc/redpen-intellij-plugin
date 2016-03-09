@@ -1,6 +1,7 @@
 package cc.redpen.intellij.fixes
 
 import cc.redpen.config.Configuration
+import cc.redpen.validator.ValidationError
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.application.Result
@@ -39,8 +40,8 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
     override fun toString() = javaClass.simpleName + "[" + text + "]"
 
     companion object {
-        fun forValidator(name: String, config: Configuration, text: String): BaseQuickFix {
-            return when (name) {
+        fun forValidator(error: ValidationError, config: Configuration, text: String): BaseQuickFix {
+            return when (error.validatorName) {
                 "Hyphenation" -> HyphenateQuickFix(text)
                 "InvalidSymbol" -> InvalidSymbolQuickFix(config, text)
                 "SymbolWithSpace" -> SymbolWithSpaceQuickFix(config, text)
@@ -48,6 +49,7 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
                 "NumberFormat" -> NumberFormatQuickFix(config, text)
                 "SpaceBeginningOfSentence" -> SpaceBeginningOfSentenceQuickFix(text)
                 "EndOfSentence" -> EndOfSentenceQuickFix(text)
+                "SuggestExpression" -> SuggestExpressionQuickFix(text, error.message)
                 else -> RemoveQuickFix(text)
             }
         }

@@ -54,7 +54,7 @@ open class RedPenInspection : LocalInspectionTool() {
             val range = toRange(e, lines)
             manager.createProblemDescriptor(element, range,
                     e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
-                    BaseQuickFix.forValidator(e.validatorName, redPen.configuration, text.substring(range.startOffset, range.endOffset)))
+                    BaseQuickFix.forValidator(e, redPen.configuration, text.substring(range.startOffset, range.endOffset)))
         })
 
         return problems.toTypedArray()
