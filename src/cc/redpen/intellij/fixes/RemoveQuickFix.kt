@@ -11,9 +11,11 @@ open class RemoveQuickFix(text: String) : BaseQuickFix(text) {
         var startOffset = problem.textRangeInElement.startOffset
         while (startOffset > 0 && text[startOffset - 1] == ' ') startOffset--
         writeAction(project) {
-            document.replaceString(startOffset, problem.textRangeInElement.endOffset, "")
+            document.replaceString(startOffset, problem.textRangeInElement.endOffset, fixedText())
         }
     }
 
     override fun getName() = "Remove " + text
+
+    override fun fixedText() = ""
 }

@@ -14,6 +14,10 @@ abstract class BaseQuickFix(val text: String) : LocalQuickFix {
 
     open fun containingDocument(psiElement: PsiElement) = PsiDocumentManager.getInstance(psiElement.project).getDocument(psiElement.containingFile)!!
 
+    override fun getName() = "Change to " + fixedText()
+
+    abstract fun fixedText(): String
+
     open fun writeAction(project: Project, runnable: () -> Unit) {
         object : WriteCommandAction<Any>(project) {
             override fun run(result: Result<Any>) = runnable.invoke()

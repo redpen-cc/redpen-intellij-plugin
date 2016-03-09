@@ -12,7 +12,5 @@ open class HyphenateQuickFix(text: String) : BaseQuickFix(text) {
         }
     }
 
-    override fun getName() = "Change to " + fixedText()
-
-    private fun fixedText() = text.replace(' ', '-')
+    override fun fixedText() = text.replace(' ', '-')
 }
