@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 
-abstract class BaseQuickFix(val text: String) : LocalQuickFix {
+abstract class BaseQuickFix(var text: String) : LocalQuickFix {
 
     override fun getFamilyName() = "RedPen"
 
@@ -45,6 +45,7 @@ abstract class BaseQuickFix(val text: String) : LocalQuickFix {
                 "InvalidSymbol" -> InvalidSymbolQuickFix(config, text)
                 "NumberFormat" -> NumberFormatQuickFix(config, text)
                 "SpaceBeginningOfSentence" -> SpaceBeginningOfSentenceQuickFix(text)
+                "EndOfSentence" -> EndOfSentenceQuickFix(text)
                 else -> RemoveQuickFix(text)
             }
         }
