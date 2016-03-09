@@ -45,7 +45,7 @@ class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createCon
     }
 
     @Test
-    fun applyFixForJapan() {
+    fun applyFixForJapaneseZenkaku() {
         (quickFix as NumberFormatQuickFix).config = createConfig("ja")
 
         whenever(document.text).thenReturn("7000000.50元")
@@ -54,7 +54,7 @@ class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createCon
         quickFix.applyFix(project, problem)
 
         verify(quickFix).writeAction(eq(project), capture { it.invoke() })
-        verify(document).replaceString(0, 10, "7、000、000・50")
+        verify(document).replaceString(0, 10, "7．000．000・50")
     }
 }
 

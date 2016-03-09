@@ -15,7 +15,8 @@ open class NumberFormatQuickFix(var config: Configuration, text: String) : BaseQ
             val number = BigDecimal(text.replace(',', '.'))
             format.minimumFractionDigits = number.scale()
             val result = format.format(number)
-            return if (config.lang == "ja") result.replace('.', '・').replace(',', '、') else result
+            if (config.key == "ja" && config.variant.startsWith("zenkaku")) return result.replace('.', '・').replace(',', '．')
+            else return result
         }
         catch (e: NumberFormatException) {
             return text
