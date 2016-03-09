@@ -97,10 +97,6 @@
         <patternset refid="compiler.resources"/>
         <type type="file"/>
       </fileset>
-      <fileset dir="${module.redpen-intellij-plugin.basedir}/conf">
-        <patternset refid="compiler.resources"/>
-        <type type="file"/>
-      </fileset>
     </copy>
   </target>
 
