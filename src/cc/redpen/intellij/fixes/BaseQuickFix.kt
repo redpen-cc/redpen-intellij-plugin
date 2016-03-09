@@ -44,6 +44,7 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
                 "Hyphenation" -> HyphenateQuickFix(text)
                 "InvalidSymbol" -> InvalidSymbolQuickFix(config, text)
                 "SymbolWithSpace" -> SymbolWithSpaceQuickFix(config, text)
+                "StartWithCapitalLetter" -> StartWithCapitalLetterQuickFix(text)
                 "NumberFormat" -> NumberFormatQuickFix(config, text)
                 "SpaceBeginningOfSentence" -> SpaceBeginningOfSentenceQuickFix(text)
                 "EndOfSentence" -> EndOfSentenceQuickFix(text)
