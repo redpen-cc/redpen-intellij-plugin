@@ -2,6 +2,7 @@ package cc.redpen.intellij.fixes
 
 import cc.redpen.config.Configuration
 import com.intellij.codeInspection.LocalQuickFix
+import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
@@ -17,6 +18,13 @@ abstract class BaseQuickFix(val text: String) : LocalQuickFix {
     override fun getName() = "Change to " + fixedText()
 
     abstract fun fixedText(): String
+
+    override fun applyFix(project: Project, problem: ProblemDescriptor) {
+        val document = containingDocument(problem.psiElement)
+        writeAction(project) {
+            document.replaceString(problem.textRangeInElement.startOffset, problem.textRangeInElement.endOffset, fixedText())
+        }
+    }
 
     open fun writeAction(project: Project, runnable: () -> Unit) {
         object : WriteCommandAction<Any>(project) {
