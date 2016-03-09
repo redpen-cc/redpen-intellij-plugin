@@ -44,6 +44,7 @@ abstract class BaseQuickFix(val text: String) : LocalQuickFix {
                 "Hyphenation" -> HyphenateQuickFix(text)
                 "InvalidSymbol" -> InvalidSymbolQuickFix(config, text)
                 "NumberFormat" -> NumberFormatQuickFix(config, text)
+                "SpaceBeginningOfSentence" -> SpaceBeginningOfSentenceQuickFix(text)
                 else -> RemoveQuickFix(text)
             }
         }
