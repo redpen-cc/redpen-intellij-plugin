@@ -10,7 +10,8 @@ This plugin integrates [RedPen](http://redpen.cc) text validation into IDEA and 
 
 * Validates text with RedPen as you type
 * Supports Plain Text, Properties, Markdown and AsciiDoc file formats (make sure the relevant plugins are also installed)
-* Validation error messages can be listed by pressing *Ctrl+Alt+Shift+R* or via menu *Analyze -> RedPen: List Errors*.
+* Some validation errors can be fixed via quick fix (*Alt+Enter*)
+* Validation error messages can also be listed by pressing *Ctrl+Alt+Shift+R* or via menu *Analyze -> RedPen: List Errors*.
 * RedPen configuration can be modified in Settings -> Editor -> RedPen
 * Supports all default RedPen languages and variants (English, Japanese)
 * Language and variant are autodetected for each file and can be manually overridden per file via status bar widget
