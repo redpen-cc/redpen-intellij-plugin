@@ -10,9 +10,9 @@ import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createConfig(), "7000000.50")) {
+class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createConfig("en"), "7000000.50")) {
     companion object {
-        fun createConfig() = Configuration.builder().addValidatorConfig(ValidatorConfiguration("NumberFormat")).build()
+        fun createConfig(lang: String) = Configuration.builder(lang).addValidatorConfig(ValidatorConfiguration("NumberFormat")).build()
     }
 
     @Test
@@ -42,6 +42,19 @@ class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createCon
 
         verify(quickFix).writeAction(eq(project), capture { it.invoke() })
         verify(document).replaceString(9, 19, "7.000.000,50")
+    }
+
+    @Test
+    fun applyFixForJapan() {
+        (quickFix as NumberFormatQuickFix).config = createConfig("ja")
+
+        whenever(document.text).thenReturn("7000000.50元")
+        whenever(problem.textRangeInElement).thenReturn(TextRange(0, 10))
+
+        quickFix.applyFix(project, problem)
+
+        verify(quickFix).writeAction(eq(project), capture { it.invoke() })
+        verify(document).replaceString(0, 10, "7、000、000・50")
     }
 }
 

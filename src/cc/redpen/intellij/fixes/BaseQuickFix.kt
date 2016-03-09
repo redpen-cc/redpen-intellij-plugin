@@ -43,6 +43,7 @@ abstract class BaseQuickFix(val text: String) : LocalQuickFix {
             return when (name) {
                 "Hyphenation" -> HyphenateQuickFix(text)
                 "InvalidSymbol" -> InvalidSymbolQuickFix(config, text)
+                "NumberFormat" -> NumberFormatQuickFix(config, text)
                 else -> RemoveQuickFix(text)
             }
         }
