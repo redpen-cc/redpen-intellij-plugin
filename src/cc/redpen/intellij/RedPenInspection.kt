@@ -46,17 +46,21 @@ open class RedPenInspection : LocalInspectionTool() {
         val redPenDoc = redPen.parse(parser, text)
         val errors = redPen.validate(redPenDoc)
 
-        val element = file.children[0]
-        val lines = text.split("(?<=\n)".toRegex())
+        if (file.children.size > 0) {
+            val element = file.children[0]
+            val lines = text.split("(?<=\n)".toRegex())
 
-        val problems = errors.map({ e ->
-            val range = toRange(e, lines)
-            manager.createProblemDescriptor(element, range,
-                    e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
-                    BaseQuickFix.forValidator(e.validatorName, text.substring(range.startOffset, range.endOffset)))
-        })
+            val problems = errors.map({ e ->
+                val range = toRange(e, lines)
+                manager.createProblemDescriptor(element, range,
+                        e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
+                        BaseQuickFix.forValidator(e.validatorName, text.substring(range.startOffset, range.endOffset)))
+            })
 
-        return problems.toTypedArray()
+            return problems.toTypedArray()
+        } else {
+            return arrayOf()
+        }
     }
 
     override fun getDefaultLevel(): HighlightDisplayLevel {

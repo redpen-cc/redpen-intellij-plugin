@@ -50,6 +50,13 @@ class RedPenInspectionTest : BaseTest() {
     }
 
     @Test
+    fun canParseEmptyDocument() {
+        whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
+        inspection.checkFile(mockTextFile(""), mock(), true)
+        verify(redPen).parse(DocumentParser.PLAIN, "")
+    }
+
+    @Test
     fun toGlobalOffset_noOffset() {
         assertEquals(0, inspection.toGlobalOffset(null, listOf("")))
     }
