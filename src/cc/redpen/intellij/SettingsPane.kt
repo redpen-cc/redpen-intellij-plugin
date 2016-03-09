@@ -68,7 +68,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     internal fun isCorrectValidatorPropertiesFormat(text: String): Boolean {
-        return parseAttributes(text) != null
+        return parseProperties(text) != null
     }
 
     open internal fun cloneConfigs() {
@@ -147,11 +147,13 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
         val validatorConfigs = config.validatorConfigs.groupByName()
         for (config in combinedValidatorConfigs()) {
-            (validators.model as DefaultTableModel).addRow(arrayOf(validatorConfigs.containsKey(config.key), config.key, attributes(config.value)))
+            (validators.model as DefaultTableModel).addRow(arrayOf(validatorConfigs.containsKey(config.key), config.key, config.value.asString()))
         }
 
         validators.doLayout()
     }
+
+    private fun ValidatorConfiguration.asString() = properties.entries.joinToString("; ")
 
     fun List<ValidatorConfiguration>.groupByName(): Map<String, ValidatorConfiguration> {
         return associateBy({ it.configurationName }, { it })
@@ -166,23 +168,23 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         for (i in 0..model.rowCount-1) {
             if (model.getValueAt(i, 0) as Boolean) {
                 val validator = allConfigs[model.getValueAt(i, 1)]!!.clone()
-                validator.attributes.clear()
-                val attributes = model.getValueAt(i, 2) as String
-                parseAttributes(attributes)?.forEach { validator.addAttribute(it.key, it.value) }
+                validator.properties.clear()
+                val properties = model.getValueAt(i, 2) as String
+                parseProperties(properties)?.forEach { validator.addProperty(it.key, it.value) }
                 result.add(validator)
             }
         }
         return result
     }
 
-    fun parseAttributes(text: String): MutableMap<String, String>? {
-        val attributes: MutableMap<String, String> = HashMap()
+    fun parseProperties(text: String): MutableMap<String, String>? {
+        val properties: MutableMap<String, String> = HashMap()
         text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
-            val attr = s.split("=".toRegex(), 2)
-            if (attr.size < 2 || attr[0].isEmpty()) return null
-            attributes[attr[0].trim()] = attr[1]
+            val prop = s.split("=".toRegex(), 2)
+            if (prop.size < 2 || prop[0].isEmpty()) return null
+            properties[prop[0].trim()] = prop[1]
         }
-        return attributes
+        return properties
     }
 
     open fun getEditedSymbols(): List<Symbol> {
@@ -191,10 +193,6 @@ open class SettingsPane(internal var provider: RedPenProvider) {
             Symbol(SymbolType.valueOf(model.getValueAt(i, 0) as String), model.getValueAt(i, 1).toString()[0], model.getValueAt(i, 2) as String,
                    model.getValueAt(i, 3) as Boolean, model.getValueAt(i, 4) as Boolean)
         }
-    }
-
-    private fun attributes(validatorConfig: ValidatorConfiguration): String {
-        return validatorConfig.attributes.entries.joinToString("; ")
     }
 
     open internal fun applyValidatorsChanges() {

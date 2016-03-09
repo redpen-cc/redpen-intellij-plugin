@@ -33,7 +33,7 @@ class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createCon
 
     @Test
     fun applyFixForUK() {
-        (quickFix as NumberFormatQuickFix).config.validatorConfigs[0].attributes["decimal_delimiter_is_comma"] = "true"
+        (quickFix as NumberFormatQuickFix).config.validatorConfigs[0].properties["decimal_delimiter_is_comma"] = "true"
 
         whenever(document.text).thenReturn("Amount: £7000000.50")
         whenever(problem.textRangeInElement).thenReturn(TextRange(9, 19))

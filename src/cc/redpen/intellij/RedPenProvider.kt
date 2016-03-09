@@ -36,7 +36,7 @@ open class RedPenProvider : SettingsSavingComponent {
                 "MultiMarkdown" to MARKDOWN,
                 "AsciiDoc" to ASCIIDOC)
 
-        val defaultConfigKeys = linkedSetOf("en", "ja", "ja.hankaku", "ja.zenkaku2")
+        val defaultConfigKeys = LinkedHashSet(Configuration.getDefaultConfigKeys())
 
         fun forProject(project: Project) = project.getComponent(RedPenProvider::class.java)!!
     }
@@ -62,7 +62,7 @@ open class RedPenProvider : SettingsSavingComponent {
         try {
             val file = File(configDir, fileName)
 
-            val initialConfig = if (key in defaultConfigKeys) loader.loadFromResource("/" + fileName, configDir) else loader.load(file)
+            val initialConfig = if (key in defaultConfigKeys) createInitialConfig(key) else loader.load(file)
             initialConfigs[key] = initialConfig
 
             if (key in defaultConfigKeys && file.exists()) {
@@ -78,6 +78,8 @@ open class RedPenProvider : SettingsSavingComponent {
             LoggerFactory.getLogger(javaClass).warn("Failed to load " + fileName, e)
         }
     }
+
+    private fun createInitialConfig(key: String) = Configuration.builder(key).addAvailableValidatorConfigs().build()
 
     internal fun loadConfigKeysByFile() {
         val file = File(configDir, "files.xml")

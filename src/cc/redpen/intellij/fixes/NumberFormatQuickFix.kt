@@ -9,7 +9,7 @@ open class NumberFormatQuickFix(var config: Configuration, text: String) : BaseQ
     override fun fixedText(): String {
         try {
             val validatorConfig = config.validatorConfigs.find { it.configurationName == "NumberFormat" }!!
-            val eu = validatorConfig.attributes["decimal_delimiter_is_comma"] == "true"
+            val eu = validatorConfig.properties["decimal_delimiter_is_comma"] == "true"
 
             val format = NumberFormat.getNumberInstance(if (eu) Locale.GERMANY else Locale.US)
             val number = BigDecimal(text.replace(',', '.'))

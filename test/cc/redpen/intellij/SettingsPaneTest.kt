@@ -136,7 +136,7 @@ class SettingsPaneTest : BaseTest() {
 
         val activeValidators = settingsPane.getEditedValidators()
         assertEquals(1, activeValidators.size.toLong())
-        assertEquals(mapOf("width" to "200", "height" to "300", "space" to " "), activeValidators[0].attributes)
+        assertEquals(mapOf("width" to "200", "height" to "300", "space" to " "), activeValidators[0].properties)
         assertNotSame(provider.initialConfigs["en"]!!.validatorConfigs[0], activeValidators[0])
     }
 
