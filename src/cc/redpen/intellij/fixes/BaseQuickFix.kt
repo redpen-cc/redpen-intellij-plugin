@@ -17,16 +17,18 @@ abstract class BaseQuickFix(val text: String) : LocalQuickFix {
 
     override fun getName() = "Change to " + fixedText()
 
-    abstract fun fixedText(): String
+    abstract protected fun fixedText(): String
+    open protected fun getEnd(problem: ProblemDescriptor) = problem.textRangeInElement.endOffset
+    open protected fun getStart(problem: ProblemDescriptor) = problem.textRangeInElement.startOffset
 
     override fun applyFix(project: Project, problem: ProblemDescriptor) {
         val document = containingDocument(problem.psiElement)
         writeAction(project) {
-            document.replaceString(problem.textRangeInElement.startOffset, problem.textRangeInElement.endOffset, fixedText())
+            document.replaceString(getStart(problem), getEnd(problem), fixedText())
         }
     }
 
-    open fun writeAction(project: Project, runnable: () -> Unit) {
+    open internal fun writeAction(project: Project, runnable: () -> Unit) {
         object : WriteCommandAction<Any>(project) {
             override fun run(result: Result<Any>) = runnable.invoke()
         }.execute()
