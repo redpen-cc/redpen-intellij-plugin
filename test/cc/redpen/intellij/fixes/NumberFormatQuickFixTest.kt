@@ -10,7 +10,7 @@ import com.nhaarman.mockito_kotlin.whenever
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createConfig("en"), "7000000.50")) {
+class NumberFormatQuickFixTest : BaseQuickFixTest(NumberFormatQuickFix(createConfig("en"), "7000000,50")) {
     companion object {
         fun createConfig(lang: String) = Configuration.builder(lang).addValidatorConfig(ValidatorConfiguration("NumberFormat")).build()
     }
