@@ -80,7 +80,7 @@ open class RedPenProvider : SettingsSavingComponent {
         }
     }
 
-    private fun createInitialConfig(key: String) = Configuration.builder(key).addAvailableValidatorConfigs().build()
+    private fun createInitialConfig(key: String) = Configuration.builder(key).setBaseDir(configDir).addAvailableValidatorConfigs().build()
 
     internal fun loadConfigKeysByFile() {
         val file = File(configDir, "files.xml")

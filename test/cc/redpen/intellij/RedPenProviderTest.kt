@@ -20,22 +20,11 @@ import java.util.*
 class RedPenProviderTest : BaseTest() {
     val file = mockTextFile("hello")
 
-    companion object {
-        var cachedConfigs: MutableMap<String, Configuration>? = null
-    }
-
     @Before
     fun setUp() {
-        if (cachedConfigs == null) {
-            provider = RedPenProvider(project)
-            cachedConfigs = provider.initialConfigs.map { it.key to it.value.clone() }.toMap(LinkedHashMap())
-        }
-        else
-            provider = RedPenProvider(project, cachedConfigs!!)
-
-        whenever(project.basePath).thenReturn("/foo")
-        provider.configDir = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
-        cachedConfigs?.forEach { provider.configLastModifiedTimes[it.key] = 0 }
+        val basePath = File(System.getProperty("java.io.tmpdir"), "redpen-tmp-config")
+        whenever(project.basePath).thenReturn(basePath.absolutePath)
+        provider = RedPenProvider(project)
     }
 
     @After
@@ -49,6 +38,7 @@ class RedPenProviderTest : BaseTest() {
         assertEquals("ja", provider.configs["ja"]!!.key)
         assertEquals("ja.hankaku", provider.configs["ja.hankaku"]!!.key)
         assertEquals("ja.zenkaku2", provider.configs["ja.zenkaku2"]!!.key)
+        provider.configs.values.forEach { assertEquals(provider.configDir, it.base) }
     }
 
     @Test
@@ -66,6 +56,7 @@ class RedPenProviderTest : BaseTest() {
     fun getRedPenFor_autodetectsLanguageOnlyIfLanguageWasNotAlreadySetManually() {
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
         provider.configKeysByFile["path/to/foo"] = "ja"
+        whenever(project.basePath).thenReturn("/foo")
         whenever(file.virtualFile.path).thenReturn("/foo/path/to/foo")
 
         var redPen = provider.getRedPenFor(file)
@@ -159,6 +150,7 @@ class RedPenProviderTest : BaseTest() {
     fun setConfig() {
         val config = config("en")
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
+        whenever(project.basePath).thenReturn("/foo")
         whenever(file.virtualFile.path).thenReturn("/foo/path/to/foo")
 
         provider.setConfig(file, config)
