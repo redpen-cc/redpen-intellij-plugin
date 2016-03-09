@@ -177,14 +177,11 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         return result
     }
 
-    fun parseProperties(text: String): MutableMap<String, String>? {
-        val properties: MutableMap<String, String> = HashMap()
-        text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.forEach { s ->
-            val prop = s.split("=".toRegex(), 2)
-            if (prop.size < 2 || prop[0].isEmpty()) return null
-            properties[prop[0].trim()] = prop[1]
+    fun parseProperties(text: String): Map<String, String>? {
+        return text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.map { it.split("=".toRegex(), 2) }.associate {
+            if (it.size < 2 || it[0].isEmpty()) return null
+            it[0].trim() to it[1]
         }
-        return properties
     }
 
     open fun getEditedSymbols(): List<Symbol> {
