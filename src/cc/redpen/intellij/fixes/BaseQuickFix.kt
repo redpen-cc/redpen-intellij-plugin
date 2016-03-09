@@ -1,5 +1,6 @@
 package cc.redpen.intellij.fixes
 
+import cc.redpen.config.Configuration
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.command.WriteCommandAction
@@ -24,9 +25,10 @@ abstract class BaseQuickFix(val text: String) : LocalQuickFix {
     override fun toString() = javaClass.simpleName + "[" + text + "]"
 
     companion object {
-        fun forValidator(name: String, text: String): BaseQuickFix {
+        fun forValidator(name: String, config: Configuration, text: String): BaseQuickFix {
             return when (name) {
                 "Hyphenation" -> HyphenateQuickFix(text)
+                "InvalidSymbol" -> InvalidSymbolQuickFix(config, text)
                 else -> RemoveQuickFix(text)
             }
         }
