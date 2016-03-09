@@ -34,6 +34,7 @@ open class RedPenInspection : LocalInspectionTool() {
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (file.virtualFile is LightVirtualFile) return null
+        if (file.children.size == 0) return emptyArray()
 
         val provider = RedPenProvider.forProject(file.project)
         val parser = provider.getParser(file) ?: return null
