@@ -135,9 +135,9 @@ open class RedPenProvider : SettingsSavingComponent {
             configKey = config.key
         }
 
-    open fun setConfig(file: PsiFile, config: Configuration) {
-        activeConfig = config
-        configKeysByFile[relativePath(file)] = config.key
+    open fun setConfigFor(file: PsiFile, key: String) {
+        configKey = key
+        configKeysByFile[relativePath(file)] = key
     }
 
     internal fun relativePath(file: PsiFile) = FileUtil.getRelativePath(project.basePath!!, file.virtualFile.path, File.separatorChar)

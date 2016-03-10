@@ -77,14 +77,12 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
     open fun registerActions() {
         val actionManager = ActionManager.getInstance() ?: return
         actionGroup = DefaultActionGroup()
-        provider.configs.forEach {
+        provider.configs.keys.forEach { key ->
             actionGroup!!.add(object : AnAction() {
-                init {
-                    templatePresentation.text = it.key
-                }
+                init { templatePresentation.text = key }
 
                 override fun actionPerformed(e: AnActionEvent) {
-                    provider.setConfig(e.getData(PSI_FILE)!!, it.value)
+                    provider.setConfigFor(e.getData(PSI_FILE)!!, key)
                     DaemonCodeAnalyzer.getInstance(e.project).restart()
                 }
             })
