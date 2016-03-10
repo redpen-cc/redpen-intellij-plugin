@@ -34,6 +34,10 @@ open class RedPenInspection : LocalInspectionTool() {
         return true
     }
 
+    override fun getStaticDescription(): String {
+        return "Validates text with RedPen, a proofreading tool.\nConfigure specific validators in Settings -> Editor -> RedPen."
+    }
+
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (file.virtualFile is LightVirtualFile) return null
         if (file.children.size == 0) return emptyArray()
