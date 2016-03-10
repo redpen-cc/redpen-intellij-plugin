@@ -8,8 +8,10 @@ import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import cc.redpen.validator.section.WordFrequencyValidator
 import com.intellij.codeInspection.InspectionManager
+import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightVirtualFile
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
@@ -98,6 +100,17 @@ class RedPenInspectionTest : BaseTest() {
         verify(manager).createProblemDescriptor(file.children[0], TextRange(0, 3), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RemoveQuickFix("Hel"))
         verify(manager).createProblemDescriptor(file.children[0], TextRange(3, 5), "Hello (ErrorGenerator)", GENERIC_ERROR_OR_WARNING, true, RemoveQuickFix("lo"))
         verifyNoMoreInteractions(manager);
+    }
+
+    @Test
+    fun checkFile_skipErrorsThatFailToConvertToProblems() {
+        val doc = redPen.parse(DocumentParser.PLAIN, "Hello")
+        whenever(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3)))
+        val manager = mock<InspectionManager>()
+        whenever(manager.createProblemDescriptor(any(), any<TextRange>(), any<String>(), any(), any<Boolean>(), any<LocalQuickFix>())).thenThrow(RuntimeException())
+
+        val file = mockTextFile("Hello")
+        assertEquals(0, inspection.checkFile(file, manager, true)?.size)
     }
 
     @Test

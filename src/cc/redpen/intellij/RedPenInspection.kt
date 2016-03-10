@@ -10,10 +10,12 @@ import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.xmlb.SerializationFilter
+import java.util.*
 
 open class RedPenInspection : LocalInspectionTool() {
     override fun getDisplayName(): String {
@@ -50,14 +52,17 @@ open class RedPenInspection : LocalInspectionTool() {
         val element = file.children[0]
         val lines = text.split("(?<=\n)".toRegex())
 
-        val problems = errors.map({ e ->
-            val range = toRange(e, lines)
-            manager.createProblemDescriptor(element, range,
-                    e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
-                    BaseQuickFix.forValidator(e, redPen.configuration, text.substring(range.startOffset, range.endOffset)))
-        })
-
-        return problems.toTypedArray()
+       return errors.map { e ->
+            try {
+                val range = toRange(e, lines)
+                manager.createProblemDescriptor(element, range,
+                        e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
+                        BaseQuickFix.forValidator(e, redPen.configuration, text.substring(range.startOffset, range.endOffset)))
+            } catch (ex: Exception) {
+                Logger.getInstance(javaClass.name).warn(e.message + ": " + ex.toString());
+                null
+            }
+        }.filterNotNull().toTypedArray()
     }
 
     override fun getDefaultLevel(): HighlightDisplayLevel {
