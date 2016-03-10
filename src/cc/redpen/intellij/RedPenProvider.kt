@@ -24,13 +24,13 @@ open class RedPenProvider : SettingsSavingComponent {
 
     open var initialConfigs : MutableMap<String, Configuration> = LinkedHashMap()
     open var configs : MutableMap<String, Configuration> = LinkedHashMap()
-    internal val configLastModifiedTimes: MutableMap<String, Long> = LinkedHashMap()
+    internal val configLastModifiedTimes: MutableMap<String, Long> = HashMap()
 
     private var configKey = "en"
     internal var configKeysByFile = Properties()
 
     companion object {
-        val parsers: Map<String, DocumentParser> = mapOf(
+        val parsers = mapOf(
                 "PLAIN_TEXT" to PLAIN,
                 "Markdown" to MARKDOWN,
                 "MultiMarkdown" to MARKDOWN,
