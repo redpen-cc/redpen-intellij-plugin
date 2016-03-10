@@ -1,6 +1,7 @@
 package cc.redpen.intellij
 
 import cc.redpen.RedPen
+import cc.redpen.model.Sentence
 import cc.redpen.parser.LineOffset
 import cc.redpen.validator.ValidationError
 import com.intellij.openapi.actionSystem.AnAction
@@ -28,18 +29,19 @@ class RedPenListErrors : AnAction() {
             val redPenDoc = redPen.parse(provider.getParser(file), text)
             val errors = redPen.validate(redPenDoc)
 
-            showMessageDialog(project, errors.map({ e -> getLineNumber(e) + ":" + getOffset(e.startPosition) + "-" + getOffset(e.endPosition) + " " + e.message })
-                    .joinToString("\n"), file.name, Messages.getInformationIcon())
+            showMessageDialog(project, errors.map { e ->
+                getLineNumber(e) + ":" + getOffset(e.startPosition, e.sentence) + "-" + getOffset(e.endPosition, e.sentence) + " " + e.message
+            }.joinToString("\n"), file.name, Messages.getInformationIcon())
         } catch (e: Exception) {
             showMessageDialog(project, e.toString(), title, Messages.getInformationIcon())
         }
     }
 
     private fun getLineNumber(e: ValidationError): String {
-        return if (e.startPosition.isPresent) e.startPosition.get().lineNum.toString() else "?"
+        return e.startPosition.orElse(e.sentence.getOffset(0).orElse(null))?.lineNum?.toString() ?: "?"
     }
 
-    private fun getOffset(lineOffset: Optional<LineOffset>): String {
-        return if (lineOffset.isPresent) lineOffset.get().offset.toString() else "?"
+    private fun getOffset(lineOffset: Optional<LineOffset>, sentence: Sentence): String {
+        return lineOffset.orElse(sentence.getOffset(0).orElse(null))?.offset?.toString() ?: "?"
     }
 }
