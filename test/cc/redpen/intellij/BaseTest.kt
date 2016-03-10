@@ -70,7 +70,6 @@ abstract class BaseTest {
 
     protected open fun mockFileOfType(typeName: String, text: String): PsiFile {
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
-        whenever(file.fileType.name).thenReturn(typeName)
         whenever(file.text).thenReturn(text)
         whenever(file.children).thenReturn(arrayOf(mock()))
         whenever(file.virtualFile.path).thenReturn("/path")
