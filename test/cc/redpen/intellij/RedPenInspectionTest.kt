@@ -90,8 +90,9 @@ class RedPenInspectionTest : BaseTest() {
     fun checkFile_convertsRedPenErrorsIntoIDEAProblemDescriptors() {
         val doc = redPen.parse(DocumentParser.PLAIN, "Hello")
         whenever(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3), errorGenerator.at(3, 5)))
-
         val manager = mock<InspectionManager>()
+        whenever(manager.createProblemDescriptor(any(), any<TextRange>(), any<String>(), any(), any<Boolean>(), any<LocalQuickFix>())).thenReturn(mock())
+
         val file = mockTextFile("Hello")
         val problems = inspection.checkFile(file, manager, true)
         assertNotNull(problems)
