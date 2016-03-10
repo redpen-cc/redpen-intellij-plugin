@@ -15,32 +15,19 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.xmlb.SerializationFilter
-import java.util.*
 
 open class RedPenInspection : LocalInspectionTool() {
-    override fun getDisplayName(): String {
-        return "RedPen Validation"
-    }
-
-    override fun getGroupDisplayName(): String {
-        return GroupNames.STYLE_GROUP_NAME
-    }
-
-    override fun getShortName(): String {
-        return "RedPen"
-    }
-
-    override fun isEnabledByDefault(): Boolean {
-        return true
-    }
-
-    override fun getStaticDescription(): String {
-        return "Validates text with RedPen, a proofreading tool.\nConfigure specific validators in Settings -> Editor -> RedPen."
-    }
+    override fun getShortName() = "RedPen"
+    override fun getDisplayName() = "RedPen Validation"
+    override fun getGroupDisplayName() = GroupNames.STYLE_GROUP_NAME
+    override fun isEnabledByDefault() = true
+    override fun getDefaultLevel() = HighlightDisplayLevel.ERROR
+    override fun getStaticDescription() =
+        "Validates text with RedPen, a proofreading tool.\nConfigure specific validators in Settings -> Editor -> RedPen."
 
     override fun checkFile(file: PsiFile, manager: InspectionManager, isOnTheFly: Boolean): Array<ProblemDescriptor>? {
         if (file.virtualFile is LightVirtualFile) return null
-        if (file.children.size == 0) return emptyArray()
+        if (file.children.isEmpty()) return null
 
         val provider = RedPenProvider.forProject(file.project)
         val parser = provider.getParser(file) ?: return null
@@ -56,7 +43,7 @@ open class RedPenInspection : LocalInspectionTool() {
         val element = file.children[0]
         val lines = text.split("(?<=\n)".toRegex())
 
-       return errors.map { e ->
+        return errors.map { e ->
             try {
                 val range = toRange(e, lines)
                 manager.createProblemDescriptor(element, range,
@@ -67,10 +54,6 @@ open class RedPenInspection : LocalInspectionTool() {
                 null
             }
         }.filterNotNull().toTypedArray()
-    }
-
-    override fun getDefaultLevel(): HighlightDisplayLevel {
-        return HighlightDisplayLevel.ERROR
     }
 
     open fun updateStatus(file: PsiFile, redPen: RedPen) {
@@ -96,7 +79,5 @@ open class RedPenInspection : LocalInspectionTool() {
         return result + lineOffset.offset
     }
 
-    public override fun getSerializationFilter(): SerializationFilter {
-        return SerializationFilter { a, o -> false }
-    }
+    public override fun getSerializationFilter() = SerializationFilter { a, o -> false }
 }
