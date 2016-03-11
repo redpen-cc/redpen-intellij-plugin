@@ -441,7 +441,7 @@ class SettingsPaneTest : BaseTest() {
 
     private fun validatorConfig(name: String, attributes: Map<String, String>): ValidatorConfiguration {
         val config = ValidatorConfiguration(name)
-        attributes.forEach{ e -> config.addAttribute(e.key, e.value) }
+        attributes.forEach{ e -> config.addProperty(e.key, e.value) }
         return config
     }
 }
