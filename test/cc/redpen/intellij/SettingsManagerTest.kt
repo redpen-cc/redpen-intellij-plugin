@@ -12,6 +12,7 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import org.mockito.Mockito.doNothing
+import java.util.*
 
 class SettingsManagerTest : BaseTest() {
     val config = config("en")

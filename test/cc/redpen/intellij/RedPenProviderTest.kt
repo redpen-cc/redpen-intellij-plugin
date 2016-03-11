@@ -15,7 +15,6 @@ import org.junit.Test
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
 
 class RedPenProviderTest : BaseTest() {
     val file = mockTextFile("hello")
@@ -147,13 +146,12 @@ class RedPenProviderTest : BaseTest() {
     }
 
     @Test
-    fun setConfig() {
-        val config = config("en")
+    fun setFileConfig() {
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
         whenever(project.basePath).thenReturn("/foo")
         whenever(file.virtualFile.path).thenReturn("/foo/path/to/foo")
 
-        provider.setConfig(file, config)
+        provider.setConfigFor(file, "en")
 
         assertEquals("en", provider.configKeysByFile["path/to/foo"])
     }

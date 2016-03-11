@@ -66,7 +66,7 @@ class StatusWidgetTest : BaseTest() {
         widget.registerActions()
         widget.actionGroup!!.childActionsOrStubs[0].actionPerformed(event)
 
-        verify(provider).setConfig(file, config)
+        verify(provider).setConfigFor(file, "en")
         verify(codeAnalyzer).restart()
         verify(actionManager).registerAction("RedPen /foo/bar", widget.actionGroup!!)
     }
