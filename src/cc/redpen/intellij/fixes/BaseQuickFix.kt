@@ -7,6 +7,7 @@ import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.openapi.application.Result
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 
@@ -40,10 +41,11 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
     override fun toString() = javaClass.simpleName + "[" + text + "]"
 
     companion object {
-        fun forValidator(error: ValidationError, config: Configuration, text: String): BaseQuickFix {
+        fun forValidator(error: ValidationError, config: Configuration, fullText: String, range: TextRange): BaseQuickFix {
+            val text = fullText.substring(range.startOffset, range.endOffset)
             return when (error.validatorName) {
                 "Hyphenation" -> HyphenateQuickFix(text)
-                "InvalidSymbol" -> InvalidSymbolQuickFix(config, text)
+                "InvalidSymbol" -> InvalidSymbolQuickFix(config, fullText, range)
                 "SymbolWithSpace" -> SymbolWithSpaceQuickFix(config, text)
                 "StartWithCapitalLetter" -> StartWithCapitalLetterQuickFix(text)
                 "NumberFormat" -> NumberFormatQuickFix(config, text)
