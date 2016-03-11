@@ -37,7 +37,7 @@ class QuickFixCompanionTest() : BaseTest() {
     @Test
     fun supportedSentenceLevelQuickFix() {
         val error = spy(ErrorGenerator.sentence(Sentence("Too long sentence", 1)))
-        doReturn("ParagraphStartsWith").whenever(error).validatorName
+        doReturn("ParagraphStartWith").whenever(error).validatorName
         val quickFix = BaseQuickFix.forValidator(error, mock(), "full text", TextRange(5, 9))
         assertTrue(quickFix is ParagraphStartWithQuickFix)
     }
