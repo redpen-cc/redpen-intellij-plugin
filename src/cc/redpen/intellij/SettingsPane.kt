@@ -68,21 +68,18 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         Messages.showMessageDialog("Validator property must be in key=value format: " + s, "Invalid validator property format", Messages.getErrorIcon())
     }
 
-    internal fun isCorrectValidatorPropertiesFormat(text: String): Boolean {
-        return parseProperties(text) != null
-    }
+    internal fun isCorrectValidatorPropertiesFormat(text: String) = parseProperties(text) != null
 
     open internal fun cloneConfigs() {
         provider.configs.forEach { e -> configs[e.key] = e.value.clone() }
     }
 
-    val pane: JPanel
-        get() {
-            initLanguages()
-            initTabs()
-            initButtons()
-            return root
-        }
+    fun createPane(): JPanel {
+        initLanguages()
+        initTabs()
+        initButtons()
+        return root
+    }
 
     open internal fun initButtons() {
         exportButton.addActionListener { a -> exportConfig() }

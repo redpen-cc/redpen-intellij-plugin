@@ -55,7 +55,7 @@ class SettingsPaneTest : BaseTest() {
         doNothing().whenever(settingsPane).initSymbols()
         doNothing().whenever(settingsPane).initButtons()
 
-        settingsPane.pane
+        settingsPane.createPane()
 
         verify(settingsPane).initLanguages()
         verify(settingsPane).initValidators()
@@ -68,7 +68,7 @@ class SettingsPaneTest : BaseTest() {
         doNothing().whenever(settingsPane).initTabs()
         doNothing().whenever(settingsPane).applyChanges()
 
-        settingsPane.pane
+        settingsPane.createPane()
         assertSame(provider.activeConfig.clone(), settingsPane.config)
         verify(settingsPane).initTabs()
 

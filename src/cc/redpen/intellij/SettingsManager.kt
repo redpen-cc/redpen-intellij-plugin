@@ -27,7 +27,7 @@ open class SettingsManager(val project: Project) : SearchableConfigurable {
     }
 
     override fun createComponent(): JComponent {
-        return settingsPane.pane
+        return settingsPane.createPane()
     }
 
     override fun isModified(): Boolean {
