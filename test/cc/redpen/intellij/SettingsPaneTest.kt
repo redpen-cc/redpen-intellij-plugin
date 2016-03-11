@@ -410,18 +410,6 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun save_appliesActiveCellEditorChanges() {
-        whenever(settingsPane.validators.isEditing).thenReturn(true)
-        whenever(settingsPane.symbols.isEditing).thenReturn(true)
-        doNothing().whenever(settingsPane).applyChanges()
-
-        settingsPane.save()
-
-        verify(settingsPane.validators.cellEditor).stopCellEditing()
-        verify(settingsPane.symbols.cellEditor).stopCellEditing()
-    }
-
-    @Test
     fun resetToDefaults() {
         settingsPane.initButtons()
         doNothing().whenever(settingsPane).initTabs()

@@ -115,10 +115,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         provider.configs.keys.forEach { k -> language.addItem(k) }
         language.selectedItem = provider.activeConfig.key
         language.addPopupMenuListener(object : PopupMenuListenerAdapter() {
-            override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) {
-                ensureTableEditorsStopped()
-                applyChanges()
-            }
+            override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) = applyChanges()
         })
         language.addActionListener { a -> initTabs() }
     }
@@ -136,7 +133,8 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         val symbolTable = config.symbolTable
         for (key in symbolTable.names) {
             val symbol = symbolTable.getSymbol(key)
-            (symbols.model as DefaultTableModel).addRow(arrayOf(symbol.type.toString(), symbol.value, String(symbol.invalidChars), symbol.isNeedBeforeSpace, symbol.isNeedAfterSpace))
+            (symbols.model as DefaultTableModel).addRow(arrayOf(symbol.type.toString(), symbol.value,
+                    String(symbol.invalidChars), symbol.isNeedBeforeSpace, symbol.isNeedAfterSpace))
         }
 
         symbols.doLayout()
@@ -216,18 +214,12 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         getEditedSymbols().forEach { symbolTable.overrideSymbol(it) }
     }
 
-    open internal fun ensureTableEditorsStopped() {
-        if (validators.isEditing) validators.cellEditor.stopCellEditing()
-        if (symbols.isEditing) symbols.cellEditor.stopCellEditing()
-    }
-
     open internal fun applyChanges() {
         applyValidatorsChanges()
         applySymbolsChanges()
     }
 
     open fun save() {
-        ensureTableEditorsStopped()
         applyChanges()
         provider.configs.putAll(configs)
         cloneConfigs()
