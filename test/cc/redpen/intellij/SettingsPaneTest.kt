@@ -13,8 +13,10 @@ import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyMap
 import javax.swing.CellEditor
+import javax.swing.DefaultCellEditor
 import javax.swing.JFileChooser.APPROVE_OPTION
 import javax.swing.JFileChooser.CANCEL_OPTION
+import javax.swing.JTextField
 import javax.swing.event.ChangeEvent
 import javax.swing.table.DefaultTableModel
 
@@ -141,11 +143,34 @@ class SettingsPaneTest : BaseTest() {
     }
 
     @Test
-    fun getEditedValidators_doesNotapplyActiveCellEditorChanges() {
+    fun getEditedValidators_doesNotApplyActiveCellEditorChanges() {
         settingsPane.config = cloneableConfig("en")
         whenever(settingsPane.validators.isEditing).thenReturn(true)
         settingsPane.getEditedValidators()
         verify(settingsPane.validators.cellEditor, never()).stopCellEditing()
+    }
+
+    @Test
+    fun getEditedValidators_usesCurrentlyOpenCellEditor() {
+        settingsPane.config = cloneableConfig("en")
+        settingsPane.initLanguages()
+        whenever(provider.initialConfigs["en"]!!.validatorConfigs).thenReturn(
+                listOf(validatorConfig("Hello", emptyMap())))
+
+        whenever(settingsPane.validators.model.rowCount).thenReturn(1)
+        whenever(settingsPane.validators.model.getValueAt(0, 0)).thenReturn(true)
+        whenever(settingsPane.validators.model.getValueAt(0, 1)).thenReturn("Hello")
+
+        val cellEditor = mock<DefaultCellEditor>()
+        whenever(settingsPane.validators.cellEditor).thenReturn(cellEditor)
+        val cellEditorField = mock<JTextField>()
+        whenever(cellEditor.component).thenReturn(cellEditorField)
+        whenever(cellEditorField.text).thenReturn("foo=bar")
+        whenever(settingsPane.validators.editingRow).thenReturn(0)
+
+        val activeValidators = settingsPane.getEditedValidators()
+
+        assertEquals(mapOf("foo" to "bar"), activeValidators[0].properties)
     }
 
     @Test
@@ -187,6 +212,34 @@ class SettingsPaneTest : BaseTest() {
 
         val symbols = settingsPane.getEditedSymbols()
         assertEquals(asList(Symbol(AMPERSAND, '&', "$%", true, false), Symbol(ASTERISK, '*', "", false, true)), symbols)
+    }
+
+
+    @Test
+    fun getEditedSymbols_usesCurrentlyOpenCellEditor() {
+        val model = settingsPane.symbols.model
+        whenever(model.rowCount).thenReturn(1)
+
+        whenever(model.getValueAt(0, 0)).thenReturn("AMPERSAND")
+        whenever(model.getValueAt(0, 1)).thenReturn('&')
+        whenever(model.getValueAt(0, 2)).thenReturn("%*")
+        whenever(model.getValueAt(0, 3)).thenReturn(true)
+        whenever(model.getValueAt(0, 4)).thenReturn(false)
+
+        val cellEditor = mock<DefaultCellEditor>()
+        whenever(settingsPane.symbols.cellEditor).thenReturn(cellEditor)
+        val cellEditorField = mock<JTextField>()
+        whenever(cellEditor.component).thenReturn(cellEditorField)
+        whenever(cellEditorField.text).thenReturn("$")
+        whenever(settingsPane.symbols.editingRow).thenReturn(0)
+        whenever(settingsPane.symbols.editingColumn).thenReturn(1)
+
+        assertEquals('$', settingsPane.getEditedSymbols()[0].value)
+
+        whenever(cellEditorField.text).thenReturn("abc")
+        whenever(settingsPane.symbols.editingColumn).thenReturn(2)
+
+        assertArrayEquals(charArrayOf('a', 'b', 'c'), settingsPane.getEditedSymbols()[0].invalidChars)
     }
 
     @Test

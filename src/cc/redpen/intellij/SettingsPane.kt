@@ -2,6 +2,7 @@ package cc.redpen.intellij
 
 import cc.redpen.RedPenException
 import cc.redpen.config.*
+import com.intellij.configurationStore.save
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.PopupMenuListenerAdapter
 import com.intellij.uiDesigner.core.GridConstraints
@@ -165,12 +166,16 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         val result = ArrayList<ValidatorConfiguration>()
         val model = validators.model
         val allConfigs = combinedValidatorConfigs()
+
+        val editorText = ((validators.cellEditor as? DefaultCellEditor)?.component as? JTextField)?.text
+        val editingRow = validators.editingRow
+        fun editableValueAt(i: Int) = if (editingRow == i && editorText != null) editorText else model.getValueAt(i, 2) as String
+
         for (i in 0..model.rowCount-1) {
             if (model.getValueAt(i, 0) as Boolean) {
                 val validator = allConfigs[model.getValueAt(i, 1)]!!.clone()
                 validator.properties.clear()
-                val properties = model.getValueAt(i, 2) as String
-                parseProperties(properties)?.forEach { validator.addProperty(it.key, it.value) }
+                parseProperties(editableValueAt(i))?.forEach { validator.addProperty(it.key, it.value) }
                 result.add(validator)
             }
         }
@@ -186,8 +191,15 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     open fun getEditedSymbols(): List<Symbol> {
         val model = symbols.model
+
+        val editorText = ((symbols.cellEditor as? DefaultCellEditor)?.component as? JTextField)?.text
+        val editingRow = symbols.editingRow
+        val editingColumn = symbols.editingColumn
+        fun editableValueAt(i: Int, j: Int) = if (editorText != null && editingRow == i && editingColumn == j) editorText
+                else model.getValueAt(i, j).toString()
+
         return (0..model.rowCount-1).map { i ->
-            Symbol(SymbolType.valueOf(model.getValueAt(i, 0) as String), model.getValueAt(i, 1).toString()[0], model.getValueAt(i, 2) as String,
+            Symbol(SymbolType.valueOf(model.getValueAt(i, 0) as String), editableValueAt(i, 1)[0], editableValueAt(i, 2),
                    model.getValueAt(i, 3) as Boolean, model.getValueAt(i, 4) as Boolean)
         }
     }
