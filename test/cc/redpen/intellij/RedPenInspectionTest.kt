@@ -22,7 +22,6 @@ import java.util.Collections.emptyList
 
 class RedPenInspectionTest : BaseTest() {
     internal var inspection = spy(RedPenInspection())
-    internal var errorGenerator = ErrorGenerator()
 
     @Test
     fun notSupportedFilesAreIgnored() {
@@ -75,21 +74,21 @@ class RedPenInspectionTest : BaseTest() {
 
     @Test
     fun toRange() {
-        val textRange = inspection.toRange(errorGenerator.at(5, 5), listOf("Hello"))
+        val textRange = inspection.toRange(ErrorGenerator.at(5, 5), listOf("Hello"))
         assertEquals(TextRange(5, 5), textRange)
     }
 
     @Test
     fun toRange_sentenceLevelError() {
         val sentence = Sentence("Hello.", listOf(LineOffset(1, 25)), emptyList())
-        val textRange = inspection.toRange(errorGenerator.sentence(sentence), listOf(sentence.content))
+        val textRange = inspection.toRange(ErrorGenerator.sentence(sentence), listOf(sentence.content))
         assertEquals(TextRange(25, 26), textRange)
     }
 
     @Test
     fun checkFile_convertsRedPenErrorsIntoIDEAProblemDescriptors() {
         val doc = redPen.parse(DocumentParser.PLAIN, "Hello")
-        whenever(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3), errorGenerator.at(3, 5)))
+        whenever(redPen.validate(doc)).thenReturn(asList(ErrorGenerator.at(0, 3), ErrorGenerator.at(3, 5)))
         val manager = mock<InspectionManager>()
         whenever(manager.createProblemDescriptor(any(), any<TextRange>(), any<String>(), any(), any<Boolean>(), any<LocalQuickFix>())).thenReturn(mock())
 
@@ -106,7 +105,7 @@ class RedPenInspectionTest : BaseTest() {
     @Test
     fun checkFile_skipErrorsThatFailToConvertToProblems() {
         val doc = redPen.parse(DocumentParser.PLAIN, "Hello")
-        whenever(redPen.validate(doc)).thenReturn(asList(errorGenerator.at(0, 3)))
+        whenever(redPen.validate(doc)).thenReturn(asList(ErrorGenerator.at(0, 3)))
         val manager = mock<InspectionManager>()
         whenever(manager.createProblemDescriptor(any(), any<TextRange>(), any<String>(), any(), any<Boolean>(), any<LocalQuickFix>())).thenThrow(RuntimeException())
 
@@ -117,7 +116,7 @@ class RedPenInspectionTest : BaseTest() {
     @Test
     fun checkFile_splitsTextIntoLinesPreservingAllCharacters() {
         val doc = redPen.parse(DocumentParser.PLAIN, "Hello\nworld")
-        val error = errorGenerator.at(1, 2)
+        val error = ErrorGenerator.at(1, 2)
         whenever(redPen.validate(doc)).thenReturn(listOf(error))
 
         inspection.checkFile(mockTextFile("Hello\nworld"), mock(), true)
@@ -149,21 +148,5 @@ class RedPenInspectionTest : BaseTest() {
     @Test
     fun doNotSerializeSettings() {
         assertFalse(inspection.serializationFilter.accepts(mock(), mock()));
-    }
-
-    internal class ErrorGenerator : WordFrequencyValidator() {
-        fun at(start: Int, end: Int): ValidationError {
-            val errors = ArrayList<ValidationError>()
-            setErrorList(errors)
-            addErrorWithPosition("Hello", Sentence("Hello", 1), start, end)
-            return errors[0]
-        }
-
-        fun sentence(sentence: Sentence): ValidationError {
-            val errors = ArrayList<ValidationError>()
-            setErrorList(errors)
-            addError("Hello", sentence)
-            return errors[0]
-        }
     }
 }

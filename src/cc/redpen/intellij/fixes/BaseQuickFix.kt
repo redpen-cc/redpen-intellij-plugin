@@ -41,7 +41,8 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
     override fun toString() = javaClass.simpleName + "[" + text + "]"
 
     companion object {
-        fun forValidator(error: ValidationError, config: Configuration, fullText: String, range: TextRange): BaseQuickFix {
+        fun forValidator(error: ValidationError, config: Configuration, fullText: String, range: TextRange): BaseQuickFix? {
+            if (isSentenceLevelError(error)) return null
             val text = fullText.substring(range.startOffset, range.endOffset)
             return when (error.validatorName) {
                 "Hyphenation" -> HyphenateQuickFix(text)
@@ -55,5 +56,7 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
                 else -> RemoveQuickFix(text)
             }
         }
+
+        private fun isSentenceLevelError(error: ValidationError) = !error.startPosition.isPresent
     }
 }

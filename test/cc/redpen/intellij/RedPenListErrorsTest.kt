@@ -16,7 +16,6 @@ import org.junit.Assert.*
 import java.util.*
 
 class RedPenListErrorsTest : BaseTest() {
-    internal var errorGenerator = RedPenInspectionTest.ErrorGenerator()
     internal val redPenListErrors = spy(RedPenListErrors())
 
     @Test
@@ -24,7 +23,7 @@ class RedPenListErrorsTest : BaseTest() {
         val file = mockTextFile("Hello\nworld!")
         val doc = redPen.parse(DocumentParser.PLAIN, "Hello\nworld!")
         whenever(file.name).thenReturn("foo.txt")
-        whenever(redPen.validate(doc)).thenReturn(Arrays.asList(errorGenerator.at(0, 3), errorGenerator.at(3, 5)))
+        whenever(redPen.validate(doc)).thenReturn(Arrays.asList(ErrorGenerator.at(0, 3), ErrorGenerator.at(3, 5)))
 
         val event = mock<AnActionEvent>()
         whenever(event.getData(PlatformDataKeys.PROJECT)).thenReturn(project)

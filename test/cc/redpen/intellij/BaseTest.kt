@@ -4,6 +4,9 @@ import cc.redpen.RedPen
 import cc.redpen.config.Configuration
 import cc.redpen.config.Symbol
 import cc.redpen.config.ValidatorConfiguration
+import cc.redpen.model.Sentence
+import cc.redpen.validator.ValidationError
+import cc.redpen.validator.section.WordFrequencyValidator
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -13,6 +16,7 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import org.junit.BeforeClass
 import org.mockito.Mockito.RETURNS_DEEP_STUBS
+import java.util.*
 
 abstract class BaseTest {
     val project = mock<Project>(RETURNS_DEEP_STUBS)
@@ -76,5 +80,21 @@ abstract class BaseTest {
         whenever(file.project).thenReturn(project)
         whenever(file.fileType.name).thenReturn(typeName)
         return file
+    }
+
+    object ErrorGenerator : WordFrequencyValidator() {
+        fun at(start: Int, end: Int): ValidationError {
+            val errors = ArrayList<ValidationError>()
+            setErrorList(errors)
+            addErrorWithPosition("Hello", Sentence("Hello", 1), start, end)
+            return errors[0]
+        }
+
+        fun sentence(sentence: Sentence): ValidationError {
+            val errors = ArrayList<ValidationError>()
+            setErrorList(errors)
+            addError("Hello", sentence)
+            return errors[0]
+        }
     }
 }
