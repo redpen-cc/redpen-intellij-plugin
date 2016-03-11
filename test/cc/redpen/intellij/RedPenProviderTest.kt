@@ -119,6 +119,17 @@ class RedPenProviderTest : BaseTest() {
     }
 
     @Test
+    fun loadJustImportedCustomConfig() {
+        provider.configDir.mkdirs()
+        provider.configs["za"] = config("za")
+        val za = File(provider.configDir, "za.xml")
+        FileOutputStream(za).use { it.write("<redpen-conf lang=\"za\">".toByteArray()) }
+
+        provider.save()
+        assertNotNull(provider.configs["za"])
+    }
+
+    @Test
     fun availableConfigKeys() {
         provider.configDir.mkdirs()
         val zaFile = File(provider.configDir, "za.xml")

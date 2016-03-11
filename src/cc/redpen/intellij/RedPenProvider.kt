@@ -92,7 +92,7 @@ open class RedPenProvider : SettingsSavingComponent {
         configs.values.forEach { c ->
             val file = File(configDir, c.key + ".xml")
 
-            if (file.lastModified() > configLastModifiedTimes[c.key] as Long) loadConfig(c.key)
+            if (file.lastModified() > configLastModifiedTimes[c.key] ?: 0) loadConfig(c.key)
             else if (c.key in defaultConfigKeys && c == initialConfigs[c.key]) file.delete()
             else {
                 FileOutputStream(file).use { out -> ConfigurationExporter().export(c, out) }
