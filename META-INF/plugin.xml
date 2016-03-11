@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>cc.redpen.intellij</id>
   <name>RedPen Plugin</name>
-  <version>1.2</version>
+  <version>1.3</version>
   <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
@@ -24,6 +24,13 @@
     ]]></description>
 
   <change-notes><![CDATA[
+    <b>1.3</b>
+    <ul>
+      <li>Upgraded to RedPen 1.5.2</li>
+      <li>Added Russian language</li>
+      <li>Added/improved quick fixes</li>
+    </ul>
+
     <b>1.2</b>
     <ul>
       <li>Upgraded to RedPen 1.5.0</li>
