@@ -42,7 +42,6 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
 
     companion object {
         fun forValidator(error: ValidationError, config: Configuration, fullText: String, range: TextRange): BaseQuickFix? {
-            if (isSentenceLevelError(error)) return null
             val text = fullText.substring(range.startOffset, range.endOffset)
             return when (error.validatorName) {
                 "Hyphenation" -> HyphenateQuickFix(text)
@@ -53,7 +52,8 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
                 "SpaceBeginningOfSentence" -> SpaceBeginningOfSentenceQuickFix(text)
                 "EndOfSentence" -> EndOfSentenceQuickFix(text)
                 "SuggestExpression" -> SuggestExpressionQuickFix(text, error.message)
-                else -> RemoveQuickFix(text)
+                "ParagraphStartWith" -> ParagraphStartWithQuickFix(config, fullText, range)
+                else -> if (isSentenceLevelError(error)) return null else RemoveQuickFix(text)
             }
         }
 
