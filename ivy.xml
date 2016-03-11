@@ -12,6 +12,8 @@
       <exclude org="org.slf4j"/>
       <exclude org="org.json"/>
     </dependency>
-    <dependency org="org.mockito" name="mockito-core" rev="2.0.+" conf="test->default"/>
+    <dependency org="com.nhaarman" name="mockito-kotlin" rev="0.3.0" conf="test->default">
+      <exclude org="org.jetbrains.kotlin"/>
+    </dependency>
   </dependencies>
 </ivy-module>

@@ -1,0 +1,10 @@
+<ivysettings>
+  <settings defaultResolver="maven2"/>
+  <resolvers>
+    <ibiblio name="maven2" m2compatible="true"/>
+    <bintray name="jcentral"/>
+  </resolvers>
+  <modules>
+    <module organisation="com.nhaarman" name=".*" resolver="jcentral"/>
+  </modules>
+</ivysettings>
