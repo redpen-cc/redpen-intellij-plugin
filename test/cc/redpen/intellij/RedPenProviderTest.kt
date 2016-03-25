@@ -175,9 +175,4 @@ class RedPenProviderTest : BaseTest() {
         order.verify(statusWidget).unregisterActions()
         order.verify(statusWidget).registerActions()
     }
-
-    @Test
-    fun buildsAgainstCorrectRedPenVersion() {
-        assertEquals("1.5.3", cc.redpen.RedPen.VERSION)
-    }
 }
