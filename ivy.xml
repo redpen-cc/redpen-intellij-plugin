@@ -8,7 +8,7 @@
   </configurations>
 
   <dependencies defaultconf="default->default">
-    <dependency org="cc.redpen" name="redpen-core" rev="1.5.3">
+    <dependency org="cc.redpen" name="redpen-core" rev="1.5.+">
       <exclude org="org.slf4j"/>
       <exclude org="org.json"/>
     </dependency>
