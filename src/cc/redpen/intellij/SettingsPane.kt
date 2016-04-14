@@ -2,7 +2,6 @@ package cc.redpen.intellij
 
 import cc.redpen.RedPenException
 import cc.redpen.config.*
-import com.intellij.configurationStore.save
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.PopupMenuListenerAdapter
 import com.intellij.uiDesigner.core.GridConstraints
