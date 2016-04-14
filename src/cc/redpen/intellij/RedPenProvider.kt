@@ -39,7 +39,7 @@ open class RedPenProvider : SettingsSavingComponent {
 
         val defaultConfigKeys = LinkedHashSet(Configuration.getDefaultConfigKeys())
 
-        fun forProject(project: Project) = project.getComponent(RedPenProvider::class.java) as RedPenProvider
+        fun forProject(project: Project) = project.getComponent(RedPenProvider::class.java)
     }
 
     internal constructor(project: Project) {
