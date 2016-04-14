@@ -38,7 +38,7 @@ open class StatusWidget constructor(project: Project) : EditorBasedWidget(projec
 
     var actionGroup: DefaultActionGroup? = null
     private val component = object: TextPanel.ExtraSize() {
-        protected override fun paintComponent(g: Graphics) {
+        override fun paintComponent(g: Graphics) {
             super.paintComponent(g)
             if (enabled && text != null) {
                 val arrows = AllIcons.Ide.Statusbar_arrows
