@@ -174,11 +174,13 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         return result
     }
 
-    fun parseProperties(text: String): Map<String, String>? {
-        return text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.map { it.split("=".toRegex(), 2) }.associate {
-            if (it.size < 2 || it[0].isEmpty()) return null
-            it[0].trim() to it[1]
-        }
+    internal fun parseProperties(text: String): Map<String, String>? {
+        return text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }
+            .map { it.split("=", limit=2) }
+            .associate {
+                if (it.size < 2 || it[0].isEmpty()) return null
+                it[0].trim() to it[1]
+            }
     }
 
     open fun getEditedSymbols(): List<Symbol> {
