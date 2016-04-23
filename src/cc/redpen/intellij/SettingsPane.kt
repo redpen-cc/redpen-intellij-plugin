@@ -21,13 +21,13 @@ import javax.swing.table.DefaultTableModel
 
 open class SettingsPane(internal var provider: RedPenProvider) {
     open val configs: MutableMap<String, Configuration> = LinkedHashMap()
-    internal var root = JPanel()
+    internal val root = JPanel()
     internal var validators = JTable(createValidatorsModel())
     internal var symbols = JTable(createSymbolsModel())
     internal var language = JComboBox<String>()
-    internal var exportButton = JButton("Export...")
-    internal var importButton = JButton("Import...")
-    internal var resetButton = JButton("Reset to defaults")
+    internal val exportButton = JButton("Export...")
+    internal val importButton = JButton("Import...")
+    internal val resetButton = JButton("Reset to defaults")
     internal var fileChooser = JFileChooser()
     internal var configurationExporter = ConfigurationExporter()
     internal var configurationLoader = ConfigurationLoader()
