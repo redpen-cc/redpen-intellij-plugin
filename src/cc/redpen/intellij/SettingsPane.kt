@@ -70,7 +70,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     internal fun isCorrectValidatorPropertiesFormat(text: String) = parseProperties(text) != null
 
     open internal fun cloneConfigs() {
-        provider.configs.forEach { e -> configs[e.key] = e.value.clone() }
+        provider.configs.forEach { configs[it.key] = it.value.clone() }
     }
 
     fun createPane(): JPanel {
@@ -81,9 +81,9 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open internal fun initButtons() {
-        exportButton.addActionListener { a -> exportConfig() }
-        importButton.addActionListener { a -> importConfig() }
-        resetButton.addActionListener { a -> resetToDefaults() }
+        exportButton.addActionListener { exportConfig() }
+        importButton.addActionListener { importConfig() }
+        resetButton.addActionListener { resetToDefaults() }
     }
 
     internal fun importConfig() {
@@ -108,12 +108,12 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open internal fun initLanguages() {
-        provider.configs.keys.forEach { k -> language.addItem(k) }
+        provider.configs.keys.forEach { language.addItem(it) }
         language.selectedItem = provider.activeConfig.key
         language.addPopupMenuListener(object : PopupMenuListenerAdapter() {
             override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) = applyChanges()
         })
-        language.addActionListener { a -> initTabs() }
+        language.addActionListener { initTabs() }
     }
 
     open internal fun initTabs() {
@@ -150,9 +150,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     private fun ValidatorConfiguration.asString() = properties.entries.joinToString("; ")
 
-    fun List<ValidatorConfiguration>.groupByName(): Map<String, ValidatorConfiguration> {
-        return associateBy({ it.configurationName }, { it })
-    }
+    fun List<ValidatorConfiguration>.groupByName() = associateBy { it.configurationName }
 
     fun combinedValidatorConfigs() = provider.initialConfigs[config.key]!!.validatorConfigs.groupByName() + config.validatorConfigs.groupByName()
 
@@ -227,7 +225,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     fun resetToDefaults() {
-        provider.initialConfigs.forEach { e -> configs[e.key] = e.value.clone() }
+        provider.initialConfigs.forEach { configs[it.key] = it.value.clone() }
         initTabs()
     }
 
