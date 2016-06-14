@@ -480,9 +480,20 @@ class SettingsPaneTest : BaseTest() {
         verifyNoMoreInteractions(settingsPane)
     }
 
+    @Test
+    fun parseProperties() {
+        val map = settingsPane.parseProperties("hello=world; world=hello;")
+        assertEquals(mapOf("hello" to "world", "world" to "hello"), map)
+    }
+
+    @Test
+    fun parseProperties_invalid() {
+        assertNull(settingsPane.parseProperties("hello=world; world"))
+    }
+
     private fun validatorConfig(name: String, attributes: Map<String, String>): ValidatorConfiguration {
         val config = ValidatorConfiguration(name)
-        attributes.forEach{ e -> config.addProperty(e.key, e.value) }
+        attributes.forEach { config.addProperty(it.key, it.value) }
         return config
     }
 }

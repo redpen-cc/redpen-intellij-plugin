@@ -2,7 +2,6 @@ package cc.redpen.intellij
 
 import cc.redpen.RedPenException
 import cc.redpen.config.*
-import com.intellij.configurationStore.save
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.PopupMenuListenerAdapter
 import com.intellij.uiDesigner.core.GridConstraints
@@ -22,13 +21,13 @@ import javax.swing.table.DefaultTableModel
 
 open class SettingsPane(internal var provider: RedPenProvider) {
     open val configs: MutableMap<String, Configuration> = LinkedHashMap()
-    internal var root = JPanel()
+    internal val root = JPanel()
     internal var validators = JTable(createValidatorsModel())
     internal var symbols = JTable(createSymbolsModel())
     internal var language = JComboBox<String>()
-    internal var exportButton = JButton("Export...")
-    internal var importButton = JButton("Import...")
-    internal var resetButton = JButton("Reset to defaults")
+    internal val exportButton = JButton("Export...")
+    internal val importButton = JButton("Import...")
+    internal val resetButton = JButton("Reset to defaults")
     internal var fileChooser = JFileChooser()
     internal var configurationExporter = ConfigurationExporter()
     internal var configurationLoader = ConfigurationLoader()
@@ -71,7 +70,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     internal fun isCorrectValidatorPropertiesFormat(text: String) = parseProperties(text) != null
 
     open internal fun cloneConfigs() {
-        provider.configs.forEach { e -> configs[e.key] = e.value.clone() }
+        provider.configs.forEach { configs[it.key] = it.value.clone() }
     }
 
     fun createPane(): JPanel {
@@ -82,9 +81,9 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open internal fun initButtons() {
-        exportButton.addActionListener { a -> exportConfig() }
-        importButton.addActionListener { a -> importConfig() }
-        resetButton.addActionListener { a -> resetToDefaults() }
+        exportButton.addActionListener { exportConfig() }
+        importButton.addActionListener { importConfig() }
+        resetButton.addActionListener { resetToDefaults() }
     }
 
     internal fun importConfig() {
@@ -109,12 +108,12 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     open internal fun initLanguages() {
-        provider.configs.keys.forEach { k -> language.addItem(k) }
+        provider.configs.keys.forEach { language.addItem(it) }
         language.selectedItem = provider.activeConfig.key
         language.addPopupMenuListener(object : PopupMenuListenerAdapter() {
             override fun popupMenuWillBecomeVisible(e: PopupMenuEvent?) = applyChanges()
         })
-        language.addActionListener { a -> initTabs() }
+        language.addActionListener { initTabs() }
     }
 
     open internal fun initTabs() {
@@ -151,9 +150,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
 
     private fun ValidatorConfiguration.asString() = properties.entries.joinToString("; ")
 
-    fun List<ValidatorConfiguration>.groupByName(): Map<String, ValidatorConfiguration> {
-        return associateBy({ it.configurationName }, { it })
-    }
+    fun List<ValidatorConfiguration>.groupByName() = associateBy { it.configurationName }
 
     fun combinedValidatorConfigs() = provider.initialConfigs[config.key]!!.validatorConfigs.groupByName() + config.validatorConfigs.groupByName()
 
@@ -177,11 +174,13 @@ open class SettingsPane(internal var provider: RedPenProvider) {
         return result
     }
 
-    fun parseProperties(text: String): Map<String, String>? {
-        return text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }.map { it.split("=".toRegex(), 2) }.associate {
-            if (it.size < 2 || it[0].isEmpty()) return null
-            it[0].trim() to it[1]
-        }
+    internal fun parseProperties(text: String): Map<String, String>? {
+        return text.split(";\\s*".toRegex()).filter { it.isNotEmpty() }
+            .map { it.split("=", limit=2) }
+            .associate {
+                if (it.size < 2 || it[0].isEmpty()) return null
+                it[0].trim() to it[1]
+            }
     }
 
     open fun getEditedSymbols(): List<Symbol> {
@@ -228,7 +227,7 @@ open class SettingsPane(internal var provider: RedPenProvider) {
     }
 
     fun resetToDefaults() {
-        provider.initialConfigs.forEach { e -> configs[e.key] = e.value.clone() }
+        provider.initialConfigs.forEach { configs[it.key] = it.value.clone() }
         initTabs()
     }
 
