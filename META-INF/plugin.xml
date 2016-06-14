@@ -24,6 +24,10 @@
     ]]></description>
 
   <change-notes><![CDATA[
+    <b>1.4.0</b>
+    <ul>
+      <li>Upgraded to RedPen 1.6.1</li>
+    </ul>
     <b>1.3.2</b>
     <ul>
       <li>Upgraded to RedPen 1.5.5</li>
