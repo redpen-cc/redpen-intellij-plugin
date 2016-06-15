@@ -47,6 +47,20 @@ class RedPenInspectionTest : BaseTest() {
     }
 
     @Test
+    fun ReVIEWIsSupported() {
+        whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
+        inspection.checkFile(mockFileOfType("ReVIEW", "re", "Hello"), mock(), true)
+        verify(redPen).parse(DocumentParser.REVIEW, "Hello")
+    }
+
+    @Test
+    fun LaTeXIsSupported() {
+        whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
+        inspection.checkFile(mockFileOfType("LaTeX", "tex", "Hello"), mock(), true)
+        verify(redPen).parse(DocumentParser.LATEX, "Hello")
+    }
+
+    @Test
     fun canParseEmptyDocument() {
         whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
         inspection.checkFile(mockTextFile(""), mock(), true)
