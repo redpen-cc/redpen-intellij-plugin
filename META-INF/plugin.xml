@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>cc.redpen.intellij</id>
   <name>RedPen Plugin</name>
-  <version>1.4.0</version>
+  <version>1.5.0</version>
   <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
@@ -18,12 +18,19 @@
         <li>Properties</li>
         <li>Markdown</li>
         <li>AsciiDoc</li>
+	<li>Re:VIEW</li>
+	<li>LaTeX</li>
       </ul>
 
       <p>Please report any issues on <a href="https://github.com/redpen-cc/redpen-intellij-plugin/issues">GitHub</a>.</p>
     ]]></description>
 
   <change-notes><![CDATA[
+    <b>1.5.0</b>
+    <ul>
+      <li>Added LaTeX file format support</li>
+      <li>Added Re:VIEW file format support</li>
+    </ul>
     <b>1.4.0</b>
     <ul>
       <li>Upgraded to RedPen 1.6.1</li>
