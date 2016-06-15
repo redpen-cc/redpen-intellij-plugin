@@ -35,7 +35,9 @@ open class RedPenProvider : SettingsSavingComponent {
                 "Markdown" to MARKDOWN,
                 "MultiMarkdown" to MARKDOWN,
                 "AsciiDoc" to ASCIIDOC,
-                "Properties" to PROPERTIES)
+                "Properties" to PROPERTIES,
+                "ReVIEW" to REVIEW,
+                "LaTeX" to LATEX)
 
         val defaultConfigKeys = LinkedHashSet(Configuration.getDefaultConfigKeys())
 
@@ -47,6 +49,20 @@ open class RedPenProvider : SettingsSavingComponent {
         this.configDir = File(project.basePath + '/' + DIRECTORY_STORE_FOLDER, "redpen")
         availableConfigKeys().forEach { loadConfig(it) }
         loadConfigKeysByFile()
+    }
+
+    fun guessFileType(fileName: String): String {
+        val file = File(fileName)
+        val extension =  file.extension
+        when (extension) {
+            "txt" -> return "PLAIN_TEXT";
+            "adoc", "asciidoc" -> return "AsciiDoc"
+            "markdown", "md" -> return "Markdown"
+            "tex", "latex" -> return "LaTeX"
+            "re", "review" -> return "ReVIEW"
+            "properties" -> return "Properties"
+            else -> return "PLAIN_TEXT";
+        }
     }
 
     /** For tests  */
@@ -126,7 +142,9 @@ open class RedPenProvider : SettingsSavingComponent {
     open fun getConfigKeyFor(file: PsiFile) = configKeysByFile.getProperty(relativePath(file)) ?: LanguageDetector().detectLanguage(file.text)
 
     open fun getParser(file: PsiFile): DocumentParser? {
-        return parsers[file.fileType.name]
+        val fileType = guessFileType(file.name)
+        LoggerFactory.getLogger(javaClass).warn("Detected: " + fileType + " for " + file.name)
+        return parsers[fileType]
     }
 
     open var activeConfig: Configuration
