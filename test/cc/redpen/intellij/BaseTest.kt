@@ -69,16 +69,17 @@ abstract class BaseTest {
     }
 
     protected fun mockTextFile(text: String): PsiFile {
-        return mockFileOfType("PLAIN_TEXT", text)
+        return mockFileOfType("PLAIN_TEXT", "txt", text)
     }
 
-    protected open fun mockFileOfType(typeName: String, text: String): PsiFile {
+    protected open fun mockFileOfType(typeName: String, extension: String, text: String): PsiFile {
         val file = mock<PsiFile>(RETURNS_DEEP_STUBS)
         whenever(file.text).thenReturn(text)
         whenever(file.children).thenReturn(arrayOf(mock()))
         whenever(file.virtualFile.path).thenReturn("/path")
         whenever(file.project).thenReturn(project)
         whenever(file.fileType.name).thenReturn(typeName)
+        whenever(file.name).thenReturn("sample." + extension)
         return file
     }
 

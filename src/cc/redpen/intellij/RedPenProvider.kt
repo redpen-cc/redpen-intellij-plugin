@@ -51,7 +51,10 @@ open class RedPenProvider : SettingsSavingComponent {
         loadConfigKeysByFile()
     }
 
-    fun guessFileType(fileName: String): String {
+    fun guessFileType(fileName: String?): String? {
+        if (fileName == null) {
+            return null;
+        }
         val file = File(fileName)
         val extension =  file.extension
         when (extension) {
@@ -61,7 +64,7 @@ open class RedPenProvider : SettingsSavingComponent {
             "tex", "latex" -> return "LaTeX"
             "re", "review" -> return "ReVIEW"
             "properties" -> return "Properties"
-            else -> return "PLAIN_TEXT";
+            else -> return null;
         }
     }
 
