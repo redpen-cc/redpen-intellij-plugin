@@ -5,18 +5,14 @@ import cc.redpen.model.Document
 import cc.redpen.model.Sentence
 import cc.redpen.parser.DocumentParser
 import cc.redpen.parser.LineOffset
-import cc.redpen.validator.ValidationError
-import cc.redpen.validator.section.WordFrequencyValidator
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiElement
 import com.intellij.testFramework.LightVirtualFile
 import com.nhaarman.mockito_kotlin.*
 import org.junit.Assert.*
 import org.junit.Test
-import java.util.*
 import java.util.Arrays.asList
 import java.util.Collections.emptyList
 
@@ -25,8 +21,8 @@ class RedPenInspectionTest : BaseTest() {
 
     @Test
     fun notSupportedFilesAreIgnored() {
-        assertNull(inspection.checkFile(mockFileOfType("JAVA", ""), mock(), true))
-        assertNull(inspection.checkFile(mockFileOfType("XML", ""), mock(), true))
+        assertNull(inspection.checkFile(mockFileOfType("JAVA", "java", ""), mock(), true))
+        assertNull(inspection.checkFile(mockFileOfType("XML", "xml", ""), mock(), true))
     }
 
     @Test
@@ -39,14 +35,14 @@ class RedPenInspectionTest : BaseTest() {
     @Test
     fun markdownIsSupported() {
         whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
-        inspection.checkFile(mockFileOfType("Markdown", "Hello"), mock(), true)
+        inspection.checkFile(mockFileOfType("Markdown", "md", "Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.MARKDOWN, "Hello")
     }
 
     @Test
     fun asciiDocIsSupported() {
         whenever(redPen.validate(any<Document>())).thenReturn(emptyList())
-        inspection.checkFile(mockFileOfType("AsciiDoc", "Hello"), mock(), true)
+        inspection.checkFile(mockFileOfType("AsciiDoc", "asciidoc", "Hello"), mock(), true)
         verify(redPen).parse(DocumentParser.ASCIIDOC, "Hello")
     }
 
