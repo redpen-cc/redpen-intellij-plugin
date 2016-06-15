@@ -95,7 +95,7 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <inspectionToolProvider implementation="cc.redpen.intellij.RedPenInspectionProvider"/>
-    <projectConfigurable groupId="editor" instance="cc.redpen.intellij.SettingsManager" id="reference.settings.ide.settings.redpen"/>
+    <projectConfigurable groupId="editor" instance="cc.redpen.intellij.SettingsManager" id="reference.settings.ide.settings.redpen" nonDefaultProject="true" />
   </extensions>
 
   <actions>
