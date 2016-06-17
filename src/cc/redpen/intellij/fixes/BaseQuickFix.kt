@@ -41,20 +41,22 @@ abstract class BaseQuickFix(var text: String) : LocalQuickFix {
     override fun toString() = javaClass.simpleName + "[" + text + "]"
 
     companion object {
-        fun forValidator(error: ValidationError, config: Configuration, fullText: String, range: TextRange): BaseQuickFix? {
+        fun forValidator(error: ValidationError, config: Configuration, fullText: String, range: TextRange): Array<BaseQuickFix> {
             val text = fullText.substring(range.startOffset, range.endOffset)
-            return when (error.validatorName) {
-                "Hyphenation" -> HyphenateQuickFix(text)
-                "InvalidSymbol" -> InvalidSymbolQuickFix(config, fullText, range)
-                "SymbolWithSpace" -> SymbolWithSpaceQuickFix(config, text)
-                "StartWithCapitalLetter" -> StartWithCapitalLetterQuickFix(text)
-                "NumberFormat" -> NumberFormatQuickFix(config, text)
-                "SpaceBeginningOfSentence" -> SpaceBeginningOfSentenceQuickFix(text)
-                "EndOfSentence" -> EndOfSentenceQuickFix(text)
-                "SuggestExpression" -> SuggestExpressionQuickFix(text, error.message)
-                "ParagraphStartWith" -> ParagraphStartWithQuickFix(config, fullText, range)
-                else -> if (isSentenceLevelError(error)) return null else RemoveQuickFix(text)
+            val mutableList : MutableList<BaseQuickFix> = arrayListOf()
+            when (error.validatorName) {
+                "Hyphenation" -> mutableList.add(HyphenateQuickFix(text))
+                "InvalidSymbol" -> mutableList.add(InvalidSymbolQuickFix(config, fullText, range))
+                "SymbolWithSpace" -> mutableList.add(SymbolWithSpaceQuickFix(config, text))
+                "StartWithCapitalLetter" -> mutableList.add(StartWithCapitalLetterQuickFix(text))
+                "NumberFormat" -> mutableList.add(NumberFormatQuickFix(config, text))
+                "SpaceBeginningOfSentence" -> mutableList.add(SpaceBeginningOfSentenceQuickFix(text))
+                "EndOfSentence" -> mutableList.add(EndOfSentenceQuickFix(text))
+                "SuggestExpression" -> mutableList.add(SuggestExpressionQuickFix(text, error.message))
+                "ParagraphStartWith" -> mutableList.add(ParagraphStartWithQuickFix(config, fullText, range))
+                else -> if (!isSentenceLevelError(error)) mutableList.add(RemoveQuickFix(text))
             }
+            return mutableList.toTypedArray()
         }
 
         private fun isSentenceLevelError(error: ValidationError) = !error.startPosition.isPresent
