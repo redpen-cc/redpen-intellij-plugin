@@ -37,7 +37,8 @@ open class RedPenProvider : SettingsSavingComponent {
                 "AsciiDoc" to ASCIIDOC,
                 "Properties" to PROPERTIES,
                 "ReVIEW" to REVIEW,
-                "LaTeX" to LATEX)
+                "LaTeX" to LATEX,
+                "ReST" to REST)
 
         val defaultConfigKeys = LinkedHashSet(Configuration.getDefaultConfigKeys())
 
@@ -64,6 +65,7 @@ open class RedPenProvider : SettingsSavingComponent {
             "tex", "latex" -> return "LaTeX"
             "re", "review" -> return "ReVIEW"
             "properties" -> return "Properties"
+            "rst", "rest" -> return "ReST"
             else -> return null;
         }
     }
