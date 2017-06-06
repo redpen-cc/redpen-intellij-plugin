@@ -1,7 +1,7 @@
 <idea-plugin version="2">
   <id>cc.redpen.intellij</id>
   <name>RedPen Plugin</name>
-  <version>1.8.0</version>
+  <version>1.8.1</version>
   <vendor url="http://redpen.cc">RedPen</vendor>
 
   <description><![CDATA[
@@ -27,6 +27,10 @@
     ]]></description>
 
   <change-notes><![CDATA[
+    <b>1.8.1</b>
+    <ul>
+      <li>Fix a failure</li>
+    </ul>
     <b>1.8.0</b>
     <ul>
       <li>Upgraded to RedPen 1.9.0</li>
