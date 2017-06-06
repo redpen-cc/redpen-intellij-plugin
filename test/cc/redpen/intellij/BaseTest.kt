@@ -6,7 +6,7 @@ import cc.redpen.config.Symbol
 import cc.redpen.config.ValidatorConfiguration
 import cc.redpen.model.Sentence
 import cc.redpen.validator.ValidationError
-import cc.redpen.validator.section.WordFrequencyValidator
+import cc.redpen.validator.document.WordFrequencyValidator
 import com.intellij.openapi.application.Application
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
