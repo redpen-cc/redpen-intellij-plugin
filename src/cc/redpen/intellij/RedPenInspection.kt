@@ -9,7 +9,7 @@ import com.intellij.codeInsight.daemon.GroupNames
 import com.intellij.codeInspection.InspectionManager
 import com.intellij.codeInspection.LocalInspectionTool
 import com.intellij.codeInspection.ProblemDescriptor
-import com.intellij.codeInspection.ProblemHighlightType.GENERIC_ERROR_OR_WARNING
+import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiFile
@@ -46,9 +46,13 @@ open class RedPenInspection : LocalInspectionTool() {
         return errors.map { e ->
             try {
                 val range = toRange(e, lines)
-                manager.createProblemDescriptor(element, range,
-                        e.message + " (" + e.validatorName + ")", GENERIC_ERROR_OR_WARNING, isOnTheFly,
-                        BaseQuickFix.forValidator(e, redPen.configuration, text, range))
+                manager.createProblemDescriptor(
+                        element,
+                        range,
+                        e.message + " (" + e.validatorName + ")",
+                        ProblemHighlightType.GENERIC_ERROR_OR_WARNING,
+                        isOnTheFly,
+                        *BaseQuickFix.forValidator(e, redPen.configuration, text, range))
             } catch (ex: Exception) {
                 Logger.getInstance(javaClass.name).warn(e.message + ": " + ex.toString());
                 null
